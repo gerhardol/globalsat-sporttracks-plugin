@@ -1,0 +1,60 @@
+// Copyright (C) 2010 Zone Five Software
+// Author: Aaron Averill
+using System;
+using System.Collections.Generic;
+using System.Xml;
+
+using ZoneFiveSoftware.Common.Visuals.Fitness;
+
+namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
+{
+    class Plugin : IPlugin
+    {
+        public Plugin()
+        {
+            instance = this;
+        }
+
+        #region IPlugin Members
+
+        public Guid Id
+        {
+            get { return new Guid("fb88d87e-5bea-4b70-892a-b97530108cfb"); }
+        }
+
+        public IApplication Application
+        {
+            get { return application; }
+            set { application = value; }
+        }
+
+        public string Name
+        {
+            get { return "SportTracks Globalsat Device Plugin"; }
+        }
+
+        public string Version
+        {
+            get { return GetType().Assembly.GetName().Version.ToString(3); }
+        }
+
+        public void ReadOptions(XmlDocument xmlDoc, XmlNamespaceManager nsmgr, XmlElement pluginNode)
+        {
+        }
+
+        public void WriteOptions(XmlDocument xmlDoc, XmlElement pluginNode)
+        {
+        }
+
+        #endregion
+
+        public static Plugin Instance
+        {
+            get { return instance; }
+        }
+
+        private static Plugin instance = null;
+
+        private IApplication application;
+    }
+}

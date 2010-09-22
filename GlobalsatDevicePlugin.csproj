@@ -1,0 +1,126 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{624A0F39-CE4C-4F50-923C-1BC9CA829AB6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ZoneFiveSoftware.SportTracks.Device.Globalsat</RootNamespace>
+    <AssemblyName>GlobalsatDevicePlugin</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Common.Data, Version=3.0.3839.34409, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files\Zone Five Software\SportTracks 3\Common.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Visuals, Version=3.0.3839.34414, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files\Zone Five Software\SportTracks 3\Common.Visuals.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="FitnessDevice_GH505.cs" />
+    <Compile Include="Gh505Device.cs" />
+    <Compile Include="Gh505Packet.cs" />
+    <Compile Include="Gh625Packet.cs" />
+    <Compile Include="Gh625Device.cs" />
+    <Compile Include="GhDeviceBase.cs" />
+    <Compile Include="GhPacketBase.cs" />
+    <Compile Include="ImportJob_GH505.cs" />
+    <Compile Include="ImportJob_GH625.cs" />
+    <Compile Include="FitnessDevice_GH625.cs" />
+    <Compile Include="DeviceConfigurationInfo.cs" />
+    <Compile Include="DeviceConfigurationDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DeviceConfigurationDlg.Designer.cs">
+      <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExtendFitnessDevices.cs" />
+    <Compile Include="FitnessDevice_GH615.cs" />
+    <Compile Include="Gh615Device.cs" />
+    <Compile Include="Gh615Packet.cs" />
+    <Compile Include="ImportJob_GH615.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResourceLookup.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Image_48_GH615.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DeviceConfigurationDlg.resx">
+      <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="plugin.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\Image_48_GH505.png" />
+    <Content Include="Resources\Image_48_GH625.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>cd "$(ProjectDir)Installer"
+Build.bat</PostBuildEvent>
+  </PropertyGroup>
+</Project>
