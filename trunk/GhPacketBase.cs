@@ -42,6 +42,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 Cadence; // Cadence, unknown units
         }
 
+        public class TrackPoint4
+        {
+            public Int32 Latitude; // Degrees * 1000000
+            public Int32 Longitude; // Degrees * 1000000
+            public Int16 Altitude; // Meters
+            public Int32 Speed; // Kilometers per hour * 100
+            public Byte HeartRate;
+            public Int32 IntervalTime; // Seconds * 10
+            public Int16 Power; // Power, unknown units
+            public Int16 Cadence; // Cadence, unknown units
+        }
+
         public class Response
         {
             public byte CommandId;
