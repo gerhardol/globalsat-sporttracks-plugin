@@ -70,11 +70,15 @@
     <Compile Include="Gh505Packet.cs" />
     <Compile Include="Gh625Packet.cs" />
     <Compile Include="Gh625Device.cs" />
+    <Compile Include="Gh625XTPacket.cs" />
+    <Compile Include="Gh625XTDevice.cs" />
     <Compile Include="GhDeviceBase.cs" />
     <Compile Include="GhPacketBase.cs" />
     <Compile Include="ImportJob_GH505.cs" />
     <Compile Include="ImportJob_GH625.cs" />
+    <Compile Include="ImportJob_GH625XT.cs" />
     <Compile Include="FitnessDevice_GH625.cs" />
+    <Compile Include="FitnessDevice_GH625XT.cs" />
     <Compile Include="DeviceConfigurationInfo.cs" />
     <Compile Include="DeviceConfigurationDlg.cs">
       <SubType>Form</SubType>
@@ -113,7 +117,7 @@
   <ItemGroup>
     <None Include="Resources\Image_48_GH505.png" />
     <None Include="Resources\Image_48_GB580.png" />
-    <Content Include="Resources\Image_48_GH625.png" />
+    <None Include="Resources\Image_48_GH625.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
