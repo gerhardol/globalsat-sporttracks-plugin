@@ -35,6 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             port.ReadTimeout = 1000;
             port.Open();
             byte[] packet = GhPacketBase.GetSystemConfiguration();
+            //Get the commandid, to match to returned packet
             byte commandId = GhPacketBase.SendPacketCommandId(packet);
             GhPacketBase.Response responsePacket = SendPacket(port, packet);
             return responsePacket.CommandId == commandId && responsePacket.PacketLength > 1;
@@ -44,7 +45,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             GhPacketBase.Response received = new GhPacketBase.Response();
 
-            port.Write(packet, 0, packet.Length);
+            try
+            {
+                port.Write(packet, 0, packet.Length);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
 
             received.CommandId = (byte)port.ReadByte();
             int hiPacketLen = port.ReadByte();
@@ -68,7 +77,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("COM" + i, 57600);
+                        port = new SerialPort("COM" + i, 115200);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
