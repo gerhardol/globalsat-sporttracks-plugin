@@ -1,6 +1,7 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
-<ProjectGuid>{624A0F39-CE4C-4F50-923C-1BC9CA829AB6}</ProjectGuid>
+    <ProjectGuid>{624A0F39-CE4C-4F50-923C-1BC9CA829AB6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZoneFiveSoftware.SportTracks.Device.Globalsat</RootNamespace>
@@ -67,7 +68,7 @@
     <None Include="Resources\Image_48_GB580.png" />
     <None Include="Resources\Image_48_GH625.png" />
   </ItemGroup>
-<!--
+  <!--
   <Import Project=".\Common\Common-Files.csproj" />
 -->
 </Project>
