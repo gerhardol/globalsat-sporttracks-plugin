@@ -9,6 +9,8 @@ Global
 		ST3.0Release|Any CPU = ST3.0Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{624A0F39-CE4C-4F50-923C-1BC9CA829AB6}.ST3.0Debug|Any CPU.ActiveCfg = ST3.0Debug|Any CPU
+		{624A0F39-CE4C-4F50-923C-1BC9CA829AB6}.ST3.0Release|Any CPU.ActiveCfg = ST3.0Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
