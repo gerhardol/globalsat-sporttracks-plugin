@@ -1,5 +1,3 @@
-// Copyright (C) 2010 Zone Five Software
-// Author: Aaron Averill
 using System;
 using System.Collections.Generic;
 using System.Xml;

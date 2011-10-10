@@ -10,10 +10,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ZoneFiveSoftware")]
 [assembly: AssemblyProduct("GlobalsatDevicePlugin")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCopyright("Copyright ©  2009 - 2011 Zone Five Software, LLC")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: ZoneFiveSoftware.Common.Visuals.Fitness.AssemblyPriviledgedPluginKey("56276709 12753032 32034946 35054631 64253860 43782686 52087633 23830405 1194730 19609858 61007840 55756074 29239830 39222598")]
+[assembly: ZoneFiveSoftware.Common.Visuals.Fitness.AssemblyPriviledgedPluginKey("56276709 12753032 32034946 35054631 64253860 43782686 52087633 23830405 31543153 19609858 61007840 55756074 29239830 39222598")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -32,4 +32,4 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("3.0.*")]
+[assembly: AssemblyVersion("3.1.*")]
