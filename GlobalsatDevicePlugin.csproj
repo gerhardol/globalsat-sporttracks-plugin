@@ -44,13 +44,15 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Common.Data, Version=3.0.3839.34409, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Common.Data, Version=3.0.3456.29594, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Zone Five Software\SportTracks 3\Common.Data.dll</HintPath>
+      <HintPath>..\..\Shared\Common.Data\bin\x86\Release\Common.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
-    <Reference Include="Common.Visuals, Version=3.0.3839.34414, Culture=neutral, processorArchitecture=x86">
+    <Reference Include="Common.Visuals, Version=3.0.3456.29598, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\Zone Five Software\SportTracks 3\Common.Visuals.dll</HintPath>
+      <HintPath>..\..\Shared\Common.Visuals\bin\x86\Release\Common.Visuals.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -59,6 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Gb580Packet.cs" />
+    <Compile Include="Gb580Device.cs" />
+    <Compile Include="ImportJob_GB580.cs" />
+    <Compile Include="FitnessDevice_GB580.cs" />
     <Compile Include="FitnessDevice_GH505.cs" />
     <Compile Include="Gh505Device.cs" />
     <Compile Include="Gh505Packet.cs" />
@@ -105,10 +111,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="plugin.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="Resources\Image_48_GH505.png" />
+    <None Include="Resources\Image_48_GB580.png" />
     <Content Include="Resources\Image_48_GH625.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
