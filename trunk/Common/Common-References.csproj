@@ -1,0 +1,165 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <Configuration Condition=" '$(Configuration)' == '' ">ST3.0Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <MapFileExtensions>true</MapFileExtensions>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>false</BootstrapperEnabled>
+  </PropertyGroup>
+ 
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" ('$(PluginId)' != '') and (('$(Configuration)' == 'ST2.1Release') or ('$(Configuration)' == 'ST2.1Debug')) ">
+    <StartProgram>$(ProgramFiles)\Zone Five Software\SportTracks 2.1\SportTracks.exe</StartProgram>
+	<StPluginPath>ZoneFiveSoftware\SportTracks\2.0\Plugins</StPluginPath>
+	<StPluginVersion>2</StPluginVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" ('$(PluginId)' != '') and (('$(Configuration)' == 'ST3.0Release') or ('$(Configuration)' == 'ST3.0Debug')) ">
+    <StartProgram>$(ProgramFiles)\Zone Five Software\SportTracks 3\SportTracks.exe</StartProgram>
+	<StPluginPath>ZoneFiveSoftware\SportTracks\3\Plugins</StPluginPath>
+	<StPluginVersion>3</StPluginVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" (('$(Configuration)' == 'ST3.0Debug') or ('$(Configuration)' == 'ST2.1Debug')) ">
+    <ConfigurationType>Debug</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" (('$(Configuration)' == 'ST3.0Release') or ('$(Configuration)' == 'ST2.1Release')) ">
+    <ConfigurationType>Release</ConfigurationType>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+ 
+  <!-- Configurations -->
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ST2.1Release|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);TRACE;ST_2_1</DefineConstants>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ST2.1Debug|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;ST_2_1</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ST3.0Release|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);TRACE;ST_3_0</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ST3.0Debug|AnyCPU' ">
+    <DefineConstants>$(DefineConstants);TRACE;DEBUG;ST_3_0</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+
+  <!-- The last conditional references are seen in VSE, the others will raise warnings -->  
+  <!-- references to ST API 2.1 -->
+  <!--
+  <ItemGroup Condition=" ('$(Configuration)' == 'ST2.1Release') or ('$(Configuration)' == 'ST2.1Debug') ">
+    <Reference Include="Common.Data, Version=2.1.3478.21402, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Zone Five Software\SportTracks 2.1\Common.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Common.Visuals, Version=2.1.3478.21407, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Zone Five Software\SportTracks 2.1\Common.Visuals.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  -->
+  <!-- references to ST API 3.0 -->
+  <ItemGroup Condition=" ('$(Configuration)' == 'ST3.0Release') or ('$(Configuration)' == 'ST3.0Debug') ">
+    <Reference Include="Common.Data, Version=3.0.4068.25375, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Zone Five Software\SportTracks 3\Common.Data.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Common.Visuals, Version=3.0.4068.25368, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(ProgramFiles)\Zone Five Software\SportTracks 3\Common.Visuals.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <!--
+  <PropertyGroup>
+    <PreBuildEvent>REM VSE2010 issue w open files
+REM adapt date format to local, to avoid errors
+IF exist "$(TargetPath)"*".locked" DEL "$(TargetPath)"*".locked"
+IF exist "$(TargetPath)" MOVE "$(TargetPath)" "$(TargetPath)."%25date:~5,2%25%25date:~8,2%25%25date:~10,4%25_@_%25time:~1,1%25h%25time:~3,2%25m%25time:~6,2%25s.locked</PreBuildEvent>
+  </PropertyGroup>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>:: This part is in the Common part of the properties
+:: Avoid editing from VSE
+$(ProjectDir)\Common\build.bat $(PluginId) $(StPluginVersion) $(ProjectName) $(ProjectDir) $(StPluginPath) $(TargetDir) $(ConfigurationType)
+</PostBuildEvent>
+  </PropertyGroup>
+
+</Project>
