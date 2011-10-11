@@ -104,7 +104,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/ttyUSB" + i, 57600);
+                        port = new SerialPort("/dev/ttyUSB" + i, 115200);
+                        if (ValidGlobalsatPort(port))
+                        {
+                            return port;
+                        }
+                        else if (port != null)
+                        {
+                            port.Close();
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        if (port != null)
+                        {
+                            port.Close();
+                        }
+                    }
+                }
+				for (int i = 0; i <= 30; i++)
+                {
+                    SerialPort port = null;
+                    try
+                    {
+                        port = new SerialPort("/dev/ttyACM" + i, 115200);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -127,7 +150,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/tty.usbserial", 57600);
+                        port = new SerialPort("/dev/tty.usbserial", 115200);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
