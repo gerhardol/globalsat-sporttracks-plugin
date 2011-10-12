@@ -26,7 +26,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Gb580Device device = new Gb580Device();
             try
             {
-                device.Open();
+                device.Open(115200);
                 IList<Gb580Packet.Train> headers = device.ReadTrainHeaders(monitor);
                 List<Gb580Packet.Train> fetch = new List<Gb580Packet.Train>();
 

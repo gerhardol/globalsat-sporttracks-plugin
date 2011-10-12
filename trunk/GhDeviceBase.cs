@@ -11,9 +11,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
-        public void Open()
+        public void Open(int baudrate)
         {
-            port = OpenPort();
+            port = OpenPort(baudrate);
         }
 
         public void Close()
@@ -68,7 +68,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
-        protected virtual SerialPort OpenPort()
+        protected virtual SerialPort OpenPort(int baudrate)
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
@@ -77,7 +77,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("COM" + i, 115200);
+                        port = new SerialPort("COM" + i, baudrate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -104,7 +104,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/ttyUSB" + i, 115200);
+                        port = new SerialPort("/dev/ttyUSB" + i, baudrate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -127,7 +127,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/ttyACM" + i, 115200);
+                        port = new SerialPort("/dev/ttyACM" + i, baudrate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -150,7 +150,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/tty.usbserial", 115200);
+                        port = new SerialPort("/dev/tty.usbserial", baudrate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
