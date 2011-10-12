@@ -50,9 +50,6 @@
     <Compile Include="ResourceLookup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Image_48_GH615.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="DeviceConfigurationDlg.resx">
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -66,7 +63,9 @@
   <ItemGroup>
     <None Include="Resources\Image_48_GH505.png" />
     <None Include="Resources\Image_48_GB580.png" />
+    <None Include="Resources\Image_48_GH615.png" />
     <None Include="Resources\Image_48_GH625.png" />
+    <None Include="Resources\Image_48_GH625XT.png" />
   </ItemGroup>
   <!--
   <Import Project=".\Common\Common-Files.csproj" />

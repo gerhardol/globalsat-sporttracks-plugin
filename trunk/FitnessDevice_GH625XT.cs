@@ -15,7 +15,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public FitnessDevice_GH625XT()
         {
             this.id = new Guid("53b374a0-f35e-11e0-be50-0800200c9a66");
-            this.image = Properties.Resources.Image_48_GH625;
+            this.image = Properties.Resources.Image_48_GH625XT;
             this.name = "Globalsat - GH625XT";
         }
 
