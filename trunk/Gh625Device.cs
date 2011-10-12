@@ -88,5 +88,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
+
+        protected override int baudRate { get { return 57600; } }
     }
 }

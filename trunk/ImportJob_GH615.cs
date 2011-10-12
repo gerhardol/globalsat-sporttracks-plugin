@@ -28,7 +28,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Gh615Device device = new Gh615Device();
             try
             {
-                device.Open(57600);
+                device.Open();
                 IList<Gh615Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                 List<Gh615Packet.TrackFileHeader> fetch = new List<Gh615Packet.TrackFileHeader>();
 

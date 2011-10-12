@@ -11,9 +11,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
-        public void Open(int baudrate)
+        public void Open()
         {
-            port = OpenPort(baudrate);
+            port = OpenPort();
         }
 
         public void Close()
@@ -68,7 +68,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
-        protected virtual SerialPort OpenPort(int baudrate)
+        protected virtual SerialPort OpenPort()
         {
             if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
@@ -77,7 +77,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("COM" + i, baudrate);
+                        port = new SerialPort("COM" + i, this.baudRate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -104,7 +104,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/ttyUSB" + i, baudrate);
+                        port = new SerialPort("/dev/ttyUSB" + i, this.baudRate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -127,7 +127,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/ttyACM" + i, baudrate);
+                        port = new SerialPort("/dev/ttyACM" + i, this.baudRate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -150,7 +150,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     SerialPort port = null;
                     try
                     {
-                        port = new SerialPort("/dev/tty.usbserial", baudrate);
+                        port = new SerialPort("/dev/tty.usbserial", this.baudRate);
                         if (ValidGlobalsatPort(port))
                         {
                             return port;
@@ -172,6 +172,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError);
         }
 
+        protected virtual int baudRate { get { return 115200; } }
         private SerialPort port;
     }
 }
