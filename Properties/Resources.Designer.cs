@@ -160,6 +160,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
             }
         }
         
+        internal static System.Drawing.Bitmap Image_48_GH625XT {
+            get {
+                object obj = ResourceManager.GetObject("Image_48_GH625XT", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Importa solo nuovi dati.
         /// </summary>
