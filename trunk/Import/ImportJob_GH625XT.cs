@@ -38,11 +38,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.configInfo = configInfo;
             this.monitor = monitor;
             this.importResults = importResults;
+            device = new Gh625XTDevice();
         }
 
+        public Gh625XTDevice Device { get { return this.device;} }
         public bool Import()
         {
-            Gh625XTDevice device = new Gh625XTDevice();
             try
             {
                 device.Open(this.configInfo);
@@ -153,6 +154,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         }
 
+        private Gh625XTDevice device;
         private string sourceDescription;
         private DeviceConfigurationInfo configInfo;
         private IJobMonitor monitor;

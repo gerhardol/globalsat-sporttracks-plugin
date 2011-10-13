@@ -10,6 +10,10 @@
   </PropertyGroup>
   <Import Project=".\Common\Common-References.csproj" />
   <ItemGroup>
+    <Compile Include="Device\GlobalsatDevice.cs" />
+    <Compile Include="Device\GlobalsatPacket.cs" />
+    <Compile Include="Import\FitnessDevice_Globalsat.cs" />
+    <Compile Include="Import\ImportJob_Globalsat.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Import\FitnessDevice_GB580.cs" />
     <Compile Include="Import\FitnessDevice_GH505.cs" />
