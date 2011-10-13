@@ -28,9 +28,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
-        public void Open()
+        public void Open(DeviceConfigurationInfo configInfo)
         {
-            port = OpenPort();
+            port = OpenPort(configInfo.ComPorts);
         }
 
         public void Close()
@@ -85,108 +85,62 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
-        protected virtual SerialPort OpenPort()
+        protected virtual SerialPort OpenPort(IList<string> comPorts)
         {
-            if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
+            if (comPorts == null || comPorts.Count == 0)
             {
-                for (int i = 1; i <= 30; i++)
+                comPorts = new List<string>();
+
+                if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
-                    SerialPort port = null;
-                    try
+                    for (int i = 1; i <= 30; i++)
                     {
-                        port = new SerialPort("COM" + i, this.baudRate);
-                        if (ValidGlobalsatPort(port))
-                        {
-                            return port;
-                        }
-                        else if (port != null)
-                        {
-                            port.Close();
-                        }
+                        comPorts.Add("COM" + i);
                     }
-                    catch (Exception)
+                }
+                else if (Environment.OSVersion.Platform == PlatformID.Unix)
+                {
+                    /* Linux */
+                    for (int i = 0; i <= 30; i++)
                     {
-                        if (port != null)
-                        {
-                            port.Close();
-                        }
+                        comPorts.Add("/dev/ttyUSB" + i);
+                        comPorts.Add("/dev/ttyACM" + i);
+                    }
+                    /* OSX */
+                    for (int i = 0; i <= 30; i++)
+                    {
+                        comPorts.Add("/dev/tty.usbserial" + i);
                     }
                 }
             }
-            else if (Environment.OSVersion.Platform == PlatformID.Unix)
+
+            string lastExceptionText = "";
+            foreach (string comPort in comPorts)
             {
-                /* Linux */
-                for (int i = 0; i <= 30; i++)
+                SerialPort port = null;
+                try
                 {
-                    SerialPort port = null;
-                    try
+                    port = new SerialPort(comPort, this.baudRate);
+                    if (ValidGlobalsatPort(port))
                     {
-                        port = new SerialPort("/dev/ttyUSB" + i, this.baudRate);
-                        if (ValidGlobalsatPort(port))
-                        {
-                            return port;
-                        }
-                        else if (port != null)
-                        {
-                            port.Close();
-                        }
+                        return port;
                     }
-                    catch (Exception)
+                    else if (port != null)
                     {
-                        if (port != null)
-                        {
-                            port.Close();
-                        }
+                        port.Close();
                     }
                 }
-				for (int i = 0; i <= 30; i++)
+                catch (Exception e)
                 {
-                    SerialPort port = null;
-                    try
+                    if (port != null)
                     {
-                        port = new SerialPort("/dev/ttyACM" + i, this.baudRate);
-                        if (ValidGlobalsatPort(port))
-                        {
-                            return port;
-                        }
-                        else if (port != null)
-                        {
-                            port.Close();
-                        }
+                        port.Close();
                     }
-                    catch (Exception)
-                    {
-                        if (port != null)
-                        {
-                            port.Close();
-                        }
-                    }
-                }
-                /* OSX */
-                {
-                    SerialPort port = null;
-                    try
-                    {
-                        port = new SerialPort("/dev/tty.usbserial", this.baudRate);
-                        if (ValidGlobalsatPort(port))
-                        {
-                            return port;
-                        }
-                        else if (port != null)
-                        {
-                            port.Close();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        if (port != null)
-                        {
-                            port.Close();
-                        }
-                    }
+                    lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + e;
                 }
             }
-            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError);
+            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError+
+            lastExceptionText);
         }
 
         protected virtual int baudRate { get { return 115200; } }
