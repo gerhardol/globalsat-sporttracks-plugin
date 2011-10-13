@@ -39,6 +39,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = ResourceLookup.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
+            labelComPort.Text = "COM Port:"; //TODO: Translate
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
 
@@ -61,6 +62,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(null);
                 configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
                 configInfo.HoursAdjustment = hoursAdjustment;
+                configInfo.ComPortsText = textBoxComPort.Text;
                 return configInfo;
             }
             set
@@ -68,6 +70,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 chkImportOnlyNew.Checked = value.ImportOnlyNew;
                 hoursAdjustment = value.HoursAdjustment;
                 txtHoursOffset.Text = hoursAdjustment.ToString();
+                textBoxComPort.Text = value.ComPortsText;
             }
         }
         #endregion
@@ -78,6 +81,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             theme = visualTheme;
             labelHoursOffset.ForeColor = visualTheme.ControlText;
             txtHoursOffset.ThemeChanged(visualTheme);
+            textBoxComPort.ThemeChanged(visualTheme);
             chkImportOnlyNew.ForeColor = visualTheme.ControlText;
             BackColor = visualTheme.Control;
         }

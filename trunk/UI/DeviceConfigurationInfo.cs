@@ -44,6 +44,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             case "hr":
                                 configInfo.HoursAdjustment = int.Parse(parts[1]);
                                 break;
+                            case "comport":
+                                configInfo.ComPortsText = parts[1]; 
+                                break;
                         }
                     }
                 }
@@ -58,10 +61,45 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override string ToString()
         {
             return "newonly=" + (ImportOnlyNew ? "1" : "0") +
-                ";hr=" + HoursAdjustment.ToString();
+                ";hr=" + HoursAdjustment.ToString() +
+                ";comport=" + this.ComPortsText;
         }
 
         public bool ImportOnlyNew = true;
         public int HoursAdjustment = 0;
+        public IList<string> ComPorts = null;
+        public string ComPortsText
+        {
+            get
+            {
+                string r = "";
+                if (ComPorts != null)
+                {
+                    const string sep = ", ";
+                    foreach (string s in ComPorts)
+                    {
+                        r += s + sep;
+                    }
+                    if (r.EndsWith(sep))
+                    {
+                        r = r.Remove(r.Length - sep.Length);
+                    }
+                }
+                return r;
+            }
+            set
+            {
+                this.ComPorts = new List<string>();
+                string[] ports = value.Split(',');
+                foreach (string port in ports)
+                {
+                    string port2 = port.Trim();
+                    if (!string.IsNullOrEmpty(port2))
+                    {
+                        ComPorts.Add(port2);
+                    }
+                }
+            }
+        }
     }
 }
