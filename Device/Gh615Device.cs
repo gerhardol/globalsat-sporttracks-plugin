@@ -80,6 +80,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
-        protected override int baudRate { get { return 57600; } }
+
+        protected override IList<int> BaudRates { get { return new List<int> { 57600 }; } }
+        public override IList<string> AllowedIds { get { return new List<string> { "GH-615" }; } }
     }
 }

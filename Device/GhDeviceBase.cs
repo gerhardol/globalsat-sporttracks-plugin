@@ -28,9 +28,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
-        public void Open(DeviceConfigurationInfo configInfo)
+        public string Open(DeviceConfigurationInfo configInfo)
         {
-            port = OpenPort(configInfo.ComPorts);
+            return OpenPort(configInfo.ComPorts);
         }
 
         public void Close()
@@ -47,15 +47,39 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             get { return port; }
         }
 
-        protected bool ValidGlobalsatPort(SerialPort port)
+        protected string ValidGlobalsatPort(SerialPort port)
         {
             port.ReadTimeout = 1000;
             port.Open();
-            byte[] packet = GhPacketBase.GetSystemConfiguration();
+            byte[] packet = GhPacketBase.GetWhoAmI();
             //Get the commandid, to match to returned packet
             byte commandId = GhPacketBase.SendPacketCommandId(packet);
-            GhPacketBase.Response responsePacket = SendPacket(port, packet);
-            return responsePacket.CommandId == commandId && responsePacket.PacketLength > 1;
+            GhPacketBase.Response response = SendPacket(port, packet);
+            string res = "";
+            if (response.CommandId == commandId && response.PacketLength > 1)
+            {
+                byte[] data = response.PacketData;
+                string devId = GhPacketBase.ByteArr2String(response.PacketData, 0, 8);
+                if (!string.IsNullOrEmpty(devId))
+                {
+                    if (this.AllowedIds == null)
+                    {
+                        res = devId;
+                    }
+                    else
+                    {
+                        foreach (string aId in this.AllowedIds)
+                        {
+                            if (devId.StartsWith(aId))
+                            {
+                                res = devId;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
@@ -71,7 +95,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw e;
             }
 
-
             received.CommandId = (byte)port.ReadByte();
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
@@ -85,7 +108,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
-        protected virtual SerialPort OpenPort(IList<string> comPorts)
+        protected virtual string OpenPort(IList<string> comPorts)
         {
             if (comPorts == null || comPorts.Count == 0)
             {
@@ -117,33 +140,40 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             string lastExceptionText = "";
             foreach (string comPort in comPorts)
             {
-                SerialPort port = null;
-                try
+                foreach (int baudRate in BaudRates)
                 {
-                    port = new SerialPort(comPort, this.baudRate);
-                    if (ValidGlobalsatPort(port))
+                    port = null;
+                    try
                     {
-                        return port;
+                        port = new SerialPort(comPort, baudRate);
+                        string id = ValidGlobalsatPort(port);
+                        if (!string.IsNullOrEmpty(id))
+                        {
+                            return id;
+                        }
+                        else if (port != null)
+                        {
+                            port.Close();
+                        }
                     }
-                    else if (port != null)
+                    catch (Exception e)
                     {
-                        port.Close();
+                        if (port != null)
+                        {
+                            port.Close();
+                        }
+                        //Add info about the last exception only
+                        //TODO: Only first line?
+                        lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + e;
                     }
-                }
-                catch (Exception e)
-                {
-                    if (port != null)
-                    {
-                        port.Close();
-                    }
-                    lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + e;
                 }
             }
             throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError+
             lastExceptionText);
         }
 
-        protected virtual int baudRate { get { return 115200; } }
+        protected virtual IList<int> BaudRates { get { return new List<int> { 115200 }; } }
+        public virtual IList<string> AllowedIds { get { return null; } }
         private SerialPort port;
     }
 }

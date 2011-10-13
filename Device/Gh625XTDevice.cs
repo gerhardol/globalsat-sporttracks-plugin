@@ -123,5 +123,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trains;
         }
+        public override IList<string> AllowedIds { get { return new List<string> { "GH-625XT" }; } }
     }
 }

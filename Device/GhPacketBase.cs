@@ -25,6 +25,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class GhPacketBase
     {
+        //Should same for all
+        public static byte CommandId_FINISH = 0x8A;
+
         public class TrackPoint
         {
             public Int32 Latitude; // Degrees * 1000000
@@ -84,10 +87,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return packet[3];
         }
 
-        public static byte[] GetSystemConfiguration()
+        //public static byte[] GetSystemConfiguration()
+        //{
+        //    byte[] payload = new byte[1];
+        //    payload[0] = 0x85;
+        //    return ConstructPayload(payload);
+        //}
+
+        public static byte[] GetWhoAmI()
         {
             byte[] payload = new byte[1];
-            payload[0] = 0x85;
+            payload[0] = 0xbf;
             return ConstructPayload(payload);
         }
 
@@ -143,73 +153,75 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         /// <summary>
-        /// Read a two byte integer in big-endian format starting at the offset.
+        /// Read a string starting at the offset.
         /// </summary>
-        protected static Int16 BigEndianReadInt16(byte[] data, int offset)
+        public static string ByteArr2String(byte[] byteArr, int startIndex, int length)
         {
-            return (Int16)((data[offset] << 8) + data[offset + 1]);
+            for (int i = startIndex; i < Math.Min(startIndex + length, byteArr.Length); i++)
+            {
+                if (byteArr[i] == 0x0)
+                {
+                    length = i - startIndex;
+                    break;
+                }
+            }
+            string str = UTF8Encoding.UTF8.GetString(byteArr, startIndex, length);
+            return str;
         }
 
         /// <summary>
-        /// Read a four byte integer in big-endian format starting at the offset.
+        /// Read a two byte integer starting at the offset.
         /// </summary>
-        protected static Int32 BigEndianReadInt32(byte[] data, int offset)
+        protected static Int16 ReadInt16(bool bigEndian, byte[] data, int offset)
         {
-            return (data[offset] << 24) + (data[offset + 1] << 16) + (data[offset + 2] << 8) + data[offset + 3];
+            if (bigEndian)
+            {
+                return (Int16)((data[offset] << 8) + data[offset + 1]);
+            }
+            else
+            {
+                return (Int16)((data[offset + 1] << 8) + data[offset]);
+            }
         }
 
         /// <summary>
-        /// Write a two byte integer in big-endian format starting at the offset.
+        /// Read a four byte integer starting at the offset.
         /// </summary>
-        protected static void BigEndianWrite(byte[] data, int offset, Int16 i)
+        protected static Int32 ReadInt32(bool bigEndian, byte[] data, int offset)
         {
-            byte[] b = BitConverter.GetBytes(i);
-            data[offset + 0] = b[1];
-            data[offset + 1] = b[0];
+            if (bigEndian)
+            {
+                return (data[offset] << 24) + (data[offset + 1] << 16) + (data[offset + 2] << 8) + data[offset + 3];
+            }
+            else
+            {
+                return (data[offset + 3] << 24) + (data[offset + 2] << 16) + (data[offset + 1] << 8) + data[offset];
+            }
         }
 
         /// <summary>
-        /// Write a four byte integer in big-endian format starting at the offset.
+        /// Write a two byte integer starting at the offset.
         /// </summary>
-        //protected static void BigEndianWrite(byte[] data, int offset, Int32 i)
-        //{
-        //    byte[] b = BitConverter.GetBytes(i);
-        //    data[offset + 0] = b[3];
-        //    data[offset + 1] = b[2];
-        //    data[offset + 2] = b[1];
-        //    data[offset + 3] = b[0];
-        //}
-
-        /// <summary>
-        /// Read a two byte integer in little-endian format starting at the offset.
-        /// </summary>
-        protected static Int16 ReadInt16(byte[] data, int offset)
+        protected static void Write(bool bigEndian, byte[] data, int offset, Int16 i)
         {
-            return (Int16)((data[offset + 1] << 8) + data[offset]);
-        }
-
-        /// <summary>
-        /// Read a four byte integer in little-endian format starting at the offset.
-        /// </summary>
-        protected static Int32 ReadInt32(byte[] data, int offset)
-        {
-            return (data[offset + 3] << 24) + (data[offset + 2] << 16) + (data[offset + 1] << 8) + data[offset];
-        }
-
-        /// <summary>
-        /// Write a two byte integer in little-endian format starting at the offset.
-        /// </summary>
-        protected static void Write(byte[] data, int offset, Int16 i)
-        {
-            byte[] b = BitConverter.GetBytes(i);
-            data[offset + 0] = b[0];
-            data[offset + 1] = b[1];
+            if (bigEndian)
+            {
+                byte[] b = BitConverter.GetBytes(i);
+                data[offset + 0] = b[1];
+                data[offset + 1] = b[0];
+            }
+            else
+            {
+                byte[] b = BitConverter.GetBytes(i);
+                data[offset + 0] = b[0];
+                data[offset + 1] = b[1];
+            }
         }
 
         /// <summary>
         /// Write a four byte integer in little-endian format starting at the offset.
         /// </summary>
-        //protected static void Write(byte[] data, int offset, Int32 i)
+        //protected static void Write(bigEndian, byte[] data, int offset, Int32 i)
         //{
         //    byte[] b = BitConverter.GetBytes(i);
         //    data[offset + 0] = b[0];

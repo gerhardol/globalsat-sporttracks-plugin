@@ -29,7 +29,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         public IList<IFitnessDevice> FitnessDevices
         {
-            get { return new IFitnessDevice[] { new FitnessDevice_GH615(), new FitnessDevice_GH625(), new FitnessDevice_GH505(), 
+            get { return new IFitnessDevice[] { new FitnessDevice_Globalsat(), new FitnessDevice_GH615(), new FitnessDevice_GH625(), new FitnessDevice_GH505(), 
                 new FitnessDevice_GH625XT(), new FitnessDevice_GB580() }; }
         }
     }
