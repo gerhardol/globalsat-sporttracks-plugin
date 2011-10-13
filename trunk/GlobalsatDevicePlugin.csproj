@@ -11,7 +11,6 @@
   <Import Project=".\Common\Common-References.csproj" />
   <ItemGroup>
     <Compile Include="Plugin.cs" />
-
     <Compile Include="Import\FitnessDevice_GB580.cs" />
     <Compile Include="Import\FitnessDevice_GH505.cs" />
     <Compile Include="Import\FitnessDevice_GH625.cs" />
@@ -23,7 +22,6 @@
     <Compile Include="Import\ImportJob_GH625.cs" />
     <Compile Include="Import\ImportJob_GH625XT.cs" />
     <Compile Include="Import\ExtendFitnessDevices.cs" />
-
     <Compile Include="Device\Gh615Device.cs" />
     <Compile Include="Device\Gh615Packet.cs" />
     <Compile Include="Device\Gb580Packet.cs" />
@@ -36,7 +34,6 @@
     <Compile Include="Device\Gh625XTDevice.cs" />
     <Compile Include="Device\GhDeviceBase.cs" />
     <Compile Include="Device\GhPacketBase.cs" />
-
     <Compile Include="UI\DeviceConfigurationInfo.cs" />
     <Compile Include="UI\DeviceConfigurationDlg.cs">
       <SubType>Form</SubType>
@@ -48,7 +45,6 @@
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-
     <Compile Include="ResourceLookup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -72,7 +68,7 @@
     <None Include="Resources\Image_48_GH615.png" />
     <None Include="Resources\Image_48_GH625.png" />
     <None Include="Resources\Image_48_GH625XT.png" />
+    <None Include="Resources\Image_48_GSSPORT.png" />
   </ItemGroup>
   <Import Project=".\Common\Common-Files.csproj" />
-
 </Project>
