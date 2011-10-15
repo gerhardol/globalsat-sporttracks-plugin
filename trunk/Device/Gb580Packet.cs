@@ -172,6 +172,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.LapCount = ReadInt16(endianFormat, payload, offset + 16);
         }
 
-        const bool endianFormat = false; //litle endian
+        const bool endianFormat = false; //little endian
     }
 }
