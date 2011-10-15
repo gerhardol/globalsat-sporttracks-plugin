@@ -32,8 +32,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class ImportJob_GH625XT : ImportJob
     {
-        public ImportJob_GH625XT(Gh625XTDevice device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
-        : base(device, sourceDescription, configInfo, monitor, importResults)
+        public ImportJob_GH625XT(Gh625XTDevice device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, monitor, importResults)
         {
         }
 
@@ -42,16 +42,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 Gh625XTDevice device = (Gh625XTDevice)this.device;
-                device.Open(this.configInfo);
+                device.Open();
                 IList<Gh625XTPacket.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                 List<Gh625XTPacket.TrackFileHeader> fetch = new List<Gh625XTPacket.TrackFileHeader>();
 
-                if (configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
                     IDictionary<DateTime, List<Gh625XTPacket.TrackFileHeader>> headersByStart = new Dictionary<DateTime, List<Gh625XTPacket.TrackFileHeader>>();
                     foreach (Gh625XTPacket.TrackFileHeader header in headers)
                     {
-                        DateTime start = header.StartTime.AddHours(configInfo.HoursAdjustment);
+                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
                             headersByStart.Add(start, new List<Gh625XTPacket.TrackFileHeader>());

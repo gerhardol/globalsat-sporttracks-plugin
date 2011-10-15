@@ -32,26 +32,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class ImportJob_GB580 : ImportJob
     {
-        public ImportJob_GB580(GhDeviceBase device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
-        : base(device, sourceDescription, configInfo, monitor, importResults)
+        public ImportJob_GB580(GhDeviceBase device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, monitor, importResults)
         {
         }
 
         public override bool Import()
         {
-            Gb580Device device = new Gb580Device();
             try
             {
-                device.Open(this.configInfo);
+                Gb580Device device = (Gb580Device)this.device;
+                device.Open();
                 IList<Gb580Packet.Train> headers = device.ReadTrainHeaders(monitor);
                 List<Gb580Packet.Train> fetch = new List<Gb580Packet.Train>();
 
-                if (configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
                     IDictionary<DateTime, List<Gb580Packet.Train>> headersByStart = new Dictionary<DateTime, List<Gb580Packet.Train>>();
                     foreach (Gb580Packet.Train header in headers)
                     {
-                        DateTime start = header.StartTime.AddHours(configInfo.HoursAdjustment);
+                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
                             headersByStart.Add(start, new List<Gb580Packet.Train>());

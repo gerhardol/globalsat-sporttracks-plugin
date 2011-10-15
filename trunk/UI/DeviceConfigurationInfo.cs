@@ -23,11 +23,10 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class DeviceConfigurationInfo
+    public class DeviceConfigurationInfo
     {
-        public static DeviceConfigurationInfo Parse(string configurationInfo)
+        public static DeviceConfigurationInfo Parse(DeviceConfigurationInfo configInfo, string configurationInfo)
         {
-            DeviceConfigurationInfo configInfo = new DeviceConfigurationInfo();
             if (configurationInfo != null)
             {
                 string[] configurationParams = configurationInfo.Split(';');
@@ -44,8 +43,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             case "hr":
                                 configInfo.HoursAdjustment = int.Parse(parts[1]);
                                 break;
-                            case "comport":
-                                configInfo.ComPortsText = parts[1]; 
+                            case "comports":
+                                configInfo.ComPortsText = parts[1];
+                                break;
+                            case "BaudRatesText":
+                                configInfo.BaudRatesText = parts[1];
+                                break;
+                            case "allowedids":
+                                configInfo.AllowedIdsText = parts[1];
                                 break;
                         }
                     }
@@ -54,7 +59,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return configInfo;
         }
 
-        private DeviceConfigurationInfo()
+        public DeviceConfigurationInfo()
         {
         }
 
@@ -62,9 +67,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return "newonly=" + (ImportOnlyNew ? "1" : "0") +
                 ";hr=" + HoursAdjustment.ToString() +
-                ";comport=" + this.ComPortsText;
+                ";comports=" + this.ComPortsText +
+                ";baudrates=" + this.BaudRatesText +
+                ";allowedids=" + this.AllowedIdsText;
         }
 
+        public int MaxPacketPayload = 2500;
+        public int MaxNrWaypoints = 100;
+        public IList<int> BaudRates = new List<int> { 115200 };
+        public IList<string> AllowedIds = null;
         public bool ImportOnlyNew = true;
         public int HoursAdjustment = 0;
         public IList<string> ComPorts = null;
@@ -97,6 +108,69 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (!string.IsNullOrEmpty(port2))
                     {
                         ComPorts.Add(port2);
+                    }
+                }
+            }
+        }
+        public string BaudRatesText
+        {
+            get
+            {
+                string r = "";
+                if (BaudRates != null)
+                {
+                    const string sep = ", ";
+                    foreach (int s in BaudRates)
+                    {
+                        r += s + sep;
+                    }
+                    if (r.EndsWith(sep))
+                    {
+                        r = r.Remove(r.Length - sep.Length);
+                    }
+                }
+                return r;
+            }
+            set
+            {
+                this.BaudRates = new List<int>();
+                string[] ids = value.Split(',');
+                foreach (string port in ids)
+                {
+                    int port2 = int.Parse(port);
+                    BaudRates.Add(port2);
+                }
+            }
+        }
+        public string AllowedIdsText
+        {
+            get
+            {
+                string r = "";
+                if (AllowedIds != null)
+                {
+                    const string sep = ", ";
+                    foreach (string s in AllowedIds)
+                    {
+                        r += s + sep;
+                    }
+                    if (r.EndsWith(sep))
+                    {
+                        r = r.Remove(r.Length - sep.Length);
+                    }
+                }
+                return r;
+            }
+            set
+            {
+                this.AllowedIds = new List<string>();
+                string[] ids = value.Split(',');
+                foreach (string port in ids)
+                {
+                    string port2 = port.Trim();
+                    if (!string.IsNullOrEmpty(port2))
+                    {
+                        AllowedIds.Add(port2);
                     }
                 }
             }
