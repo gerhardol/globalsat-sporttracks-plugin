@@ -84,8 +84,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
         {
-            GhPacketBase.Response received = new GhPacketBase.Response();
-
+            byte sendCommandId = GhPacketBase.SendPacketCommandId(packet);
+            if (sendCommandId == GlobalsatPacket.CommandGetScreenshot)
+            {
+                port.ReadTimeout = 3000;
+            }
             try
             {
                 port.Write(packet, 0, packet.Length);
@@ -95,16 +98,31 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw e;
             }
 
+            GhPacketBase.Response received = new GhPacketBase.Response();
+
             received.CommandId = (byte)port.ReadByte();
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
             received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
+            if (received.PacketLength > 2500)
+            {
+                //Max paxket length - can ite differ from device to device?
+                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+            }
             received.PacketData = new byte[received.PacketLength];
             for (Int16 b = 0; b < received.PacketLength; b++)
             {
                 received.PacketData[b] = (byte)port.ReadByte();
             }
             received.Checksum = (byte)port.ReadByte();
+            if (!GhPacketBase.ValidResponseCrc(received))
+            {
+                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+            }
+            if (received.CommandId != sendCommandId)
+            {
+                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+            }
             return received;
         }
 
@@ -137,7 +155,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
 
-            string lastExceptionText = "";
+            Exception lastException = new Exception();
             foreach (string comPort in comPorts)
             {
                 foreach (int baudRate in BaudRates)
@@ -162,12 +180,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         {
                             port.Close();
                         }
-                        //Add info about the last exception only
-                        //TODO: Only first line?
-                        lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + e;
+                        //info about the last exception only
+                        lastException = e;
                     }
                 }
             }
+            string lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + lastException.Message;
             throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError+
             lastExceptionText);
         }

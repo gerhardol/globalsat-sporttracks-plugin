@@ -51,6 +51,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public const byte HeaderTypeLaps = 0xAA;
         public const byte HeaderTypeTrackPoints = 0x55;
 
+        public static byte ResponseInsuficientMemory = 0x95;
+        public static byte ResponseResendTrackSection = 0x92;
+        public static byte ResponseSendTrackFinish = 0x9A;
+
         public class TrackPoint
         {
             public Int32 Latitude; // Degrees * 1000000
@@ -149,16 +153,31 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             data[1] = hiPayloadLen;
             data[2] = loPayloadLen;
 
-            byte checksum = 0;
-            checksum ^= hiPayloadLen;
-            checksum ^= loPayloadLen;
             for (int i = 0; i < payloadLen; i++)
             {
                 data[3 + i] = payload[i];
+            }
+            data[payloadLen + 3] = GetCrc(payloadLen, payload);
+            return data;
+        }
+
+        protected static byte GetCrc(Int16 payLoadLen, byte[] payload)
+        {
+            byte checksum = 0;
+
+            byte[] b = BitConverter.GetBytes(payLoadLen);
+            checksum ^= b[0];
+            checksum ^= b[1];
+            for (int i = 0; i < payload.Length; i++)
+            {
                 checksum ^= payload[i];
             }
-            data[payloadLen + 3] = checksum;
-            return data;
+            return checksum;
+        }
+
+        public static bool ValidResponseCrc(GhPacketBase.Response response)
+        {
+            return (GetCrc(response.PacketLength, response.PacketData) == response.Checksum);
         }
 
         /// <summary>
