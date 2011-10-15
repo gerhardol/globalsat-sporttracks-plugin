@@ -29,6 +29,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Device : GhDeviceBase
     {
+        public override ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        {
+            return new ImportJob_GH505(this, sourceDescription, configInfo, monitor, importResults);
+        }
+
         public IList<Gh505Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;

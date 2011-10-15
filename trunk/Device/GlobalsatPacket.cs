@@ -25,8 +25,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class GlobalsatPacket : GhPacketBase
     {
-        private GlobalsatPacket()
-        {
-        }
     }
 }

@@ -73,7 +73,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            ImportJob_GH625 job = new ImportJob_GH625(ConfiguredDescription(configurationInfo), DeviceConfigurationInfo.Parse(configurationInfo), monitor, importResults);
+            Gh625Device device = new Gh625Device();
+            ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), DeviceConfigurationInfo.Parse(configurationInfo), monitor, importResults);
             return job.Import();
         }
 

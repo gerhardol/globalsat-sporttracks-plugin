@@ -134,10 +134,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return points;
         }
 
-        private Gh505Packet()
-        {
-        }
-
         private static void ReadHeader(Header header, byte[] payload, int offset)
         {
             header.StartTime = ReadDateTime(payload, offset).ToUniversalTime();

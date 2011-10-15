@@ -25,7 +25,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class GhPacketBase
     {
-        //Should same for all
+        //The Gloabalsat specs does not explicitly write that the format is same for all
 
         public const byte CommandWhoAmI = 0xBF;
         public const byte CommandGetSystemInformation = 0x85;
@@ -137,32 +137,36 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return packet[3];
         }
 
-        //public static byte[] GetSystemInformation()
-        //{
-        //    byte[] payload = new byte[1];
-        //    payload[0] = CommandGetSystemInformation;
-        //    return ConstructPayload(payload);
-        //}
+        public static byte[] GetPacket(byte cmd, int len)
+        {
+            byte[] payload = new byte[len];
+            payload[0] = cmd;
+            return ConstructPayload(payload);
+        }
 
         public static byte[] GetWhoAmI()
         {
-            byte[] payload = new byte[1];
-            payload[0] = CommandWhoAmI;
-            return ConstructPayload(payload);
+            return GetPacket(CommandWhoAmI, 1);
+        }
+
+        public static byte[] GetSystemInformation()
+        {
+            return GetPacket(CommandGetSystemInformation, 1);
+        }
+
+        public static byte[] GetSystemConfiguration2()
+        {
+            return GetPacket(CommandGetSystemConfiguration, 1);
         }
 
         public static byte[] GetTrackFileHeaders()
         {
-            byte[] payload = new byte[1];
-            payload[0] = CommandGetTrackFileHeaders;
-            return ConstructPayload(payload);
+            return GetPacket(CommandGetTrackFileHeaders, 1);
         }
 
         public static byte[] GetNextSection()
         {
-            byte[] payload = new byte[1];
-            payload[0] = CommandGetNextSection;
-            return ConstructPayload(payload);
+            return GetPacket(CommandGetNextSection, 1);
         }
 
         protected static byte[] ConstructPayload(byte[] payload)
