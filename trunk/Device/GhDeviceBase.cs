@@ -110,16 +110,25 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             received.PacketData = new byte[received.PacketLength];
-            for (Int16 b = 0; b < received.PacketLength; b++)
+            try
             {
-                received.PacketData[b] = (byte)port.ReadByte();
+                for (Int16 b = 0; b < received.PacketLength; b++)
+                {
+                    received.PacketData[b] = (byte)port.ReadByte();
+                }
+                received.Checksum = (byte)port.ReadByte();
+            }catch(Exception e)
+            {
+            //TODO: DEBUG timeout often occurs for GH-505
             }
-            received.Checksum = (byte)port.ReadByte();
             if (!GhPacketBase.ValidResponseCrc(received))
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
-            if (received.CommandId != sendCommandId)
+            if (received.CommandId != sendCommandId &&
+                !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
+                received.CommandId == GhPacketBase.CommandId_FINISH) &&
+                sendCommandId == GhPacketBase.CommandGetNextSection))
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
