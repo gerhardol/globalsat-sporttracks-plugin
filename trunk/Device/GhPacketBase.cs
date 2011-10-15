@@ -55,6 +55,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public static byte ResponseResendTrackSection = 0x92;
         public static byte ResponseSendTrackFinish = 0x9A;
 
+        public class Header
+        {
+            public DateTime StartTime;
+            public Int32 TrackPointCount; //Int16 in some devices
+            public TimeSpan TotalTime;
+            public Int32 TotalDistanceMeters;
+            public Int16 LapCount; //Not used in all
+        }
+
+        public class Lap
+        {
+            public TimeSpan EndTime;
+            public TimeSpan LapTime;
+            public Int32 LapDistanceMeters;
+            public Int16 LapCalories;
+            public Int32 MaximumSpeed; //Int16 for some devices
+            public byte MaximumHeartRate;
+            public byte AverageHeartRate;
+            //    public Int16 StartPointIndex;
+            //    public Int16 EndPointIndex;
+        }
+
         public class TrackPoint
         {
             public Int32 Latitude; // Degrees * 1000000

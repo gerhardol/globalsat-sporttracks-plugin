@@ -25,19 +25,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTPacket : GhPacketBase
     {
-        public class Header
-        {
-            public DateTime StartTime;
-            public Int32 TrackPointCount;
-            public TimeSpan TotalTime;
-            public Int32 TotalDistanceMeters;
-            public short LapCount;
-        }
 
-        public class TrackFileHeader : Header
-        {
-            public Int32 TrackPointIndex;
-        }
+        const int dbTrainHeaderLength = 29;
+        const int dbTrainHeaderCType = 28;
+        const int dbTrainHeadLength = 58;
+        const int dbLapLength = 41;
+        const int dbTrackPoint4Length = 25;
 
         public class Train : Header
         {
@@ -45,30 +38,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-        //    public Int16 StartPointIndex;
-        //    public Int16 EndPointIndex;
+            //    public Int16 StartPointIndex;
+            //    public Int16 EndPointIndex;
             public IList<TrackPoint4> TrackPoints = new List<TrackPoint4>();
             public IList<Lap> Laps = new List<Lap>();
         }
 
-        public class Lap
+        public class TrackFileHeader : Header
         {
-            public TimeSpan EndTime;
-            public TimeSpan LapTime;
-            public Int32 LapDistanceMeters;
-            public Int16 LapCalories;
-            public Int32 MaximumSpeed;
-            public byte MaximumHeartRate;
-            public byte AverageHeartRate;
-        //    public Int16 StartPointIndex;
-        //    public Int16 EndPointIndex;
+            public Int32 TrackPointIndex;
         }
-
-        const int dbTrainHeaderLength = 29;
-        const int dbTrainHeaderCType = 28;
-        const int dbTrainHeadLength = 58;
-        const int dbLapLength = 41;
-        const int dbTrackPoint4Length = 25;
 
         public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
         {

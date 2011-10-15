@@ -25,16 +25,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh615Packet : GhPacketBase
     {
-        public class Header
+        public new class Header : GhPacketBase.Header
         {
-            public DateTime StartTime;
-            public TimeSpan TotalTime;
-            public Int32 TotalDistanceMeters;
+            //public DateTime StartTime;
+            //public TimeSpan TotalTime;
+            //public Int32 TotalDistanceMeters;
             public Int16 TotalCalories;
             public Int16 MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-            public Int16 TrackPointCount;
+            //public Int16 TrackPointCount;
         }
 
         public class TrackFileHeader : Header

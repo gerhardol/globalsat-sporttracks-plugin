@@ -25,15 +25,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Packet : GhPacketBase
     {
-        public class Header
-        {
-            public DateTime StartTime;
-            public Int16 TrackPointCount;
-            public TimeSpan TotalTime;
-            public Int32 TotalDistanceMeters;
-            public short LapCount;
-        }
-
         public class TrackFileHeader : Header
         {
             public Int16 TrackPointIndex;
@@ -49,19 +40,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    public Int16 EndPointIndex;
             public IList<TrackPoint2> TrackPoints = new List<TrackPoint2>();
             public IList<Lap> Laps = new List<Lap>();
-        }
-
-        public class Lap
-        {
-            public TimeSpan EndTime;
-            public TimeSpan LapTime;
-            public Int32 LapDistanceMeters;
-            public Int16 LapCalories;
-            public Int16 MaximumSpeed;
-            public byte MaximumHeartRate;
-            public byte AverageHeartRate;
-        //    public Int16 StartPointIndex;
-        //    public Int16 EndPointIndex;
         }
 
         public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
