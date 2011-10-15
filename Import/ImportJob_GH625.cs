@@ -30,17 +30,14 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class ImportJob_GH625
+    class ImportJob_GH625 : ImportJob
     {
-        public ImportJob_GH625(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public ImportJob_GH625(GhDeviceBase device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, configInfo, monitor, importResults)
         {
-            this.sourceDescription = sourceDescription.Replace(Environment.NewLine, " ");
-            this.configInfo = configInfo;
-            this.monitor = monitor;
-            this.importResults = importResults;
         }
 
-        public bool Import()
+public override bool Import()
         {
             Gh625Device device = new Gh625Device();
             try
@@ -165,10 +162,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
         }
-
-        private string sourceDescription;
-        private DeviceConfigurationInfo configInfo;
-        private IJobMonitor monitor;
-        private IImportResults importResults;
     }
 }

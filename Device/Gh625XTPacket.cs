@@ -148,11 +148,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return points;
         }
 
-        private Gh625XTPacket()
-        {
-        }
-
-
         //Both for DB_TRAINHEADER and DB_TRAIN
         private static void ReadHeader(Header header, byte[] payload, int offset)
         {

@@ -30,22 +30,18 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class ImportJob_GH625XT
+    class ImportJob_GH625XT : ImportJob
     {
-        public ImportJob_GH625XT(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public ImportJob_GH625XT(Gh625XTDevice device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, configInfo, monitor, importResults)
         {
-            this.sourceDescription = sourceDescription.Replace(Environment.NewLine, " ");
-            this.configInfo = configInfo;
-            this.monitor = monitor;
-            this.importResults = importResults;
-            device = new Gh625XTDevice();
         }
 
-        public Gh625XTDevice Device { get { return this.device;} }
-        public bool Import()
+        public override bool Import()
         {
             try
             {
+                Gh625XTDevice device = (Gh625XTDevice)this.device;
                 device.Open(this.configInfo);
                 IList<Gh625XTPacket.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                 List<Gh625XTPacket.TrackFileHeader> fetch = new List<Gh625XTPacket.TrackFileHeader>();
@@ -151,13 +147,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
             }
-
         }
-
-        private Gh625XTDevice device;
-        private string sourceDescription;
-        private DeviceConfigurationInfo configInfo;
-        private IJobMonitor monitor;
-        private IImportResults importResults;
     }
 }

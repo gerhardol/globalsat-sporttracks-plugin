@@ -23,14 +23,25 @@ using System.Text;
 
 using System.IO.Ports;
 using ZoneFiveSoftware.Common.Visuals;
+using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
+        //Import kept in separate structure
+        public virtual ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        {
+            return null;
+        }
+
         public string Open(DeviceConfigurationInfo configInfo)
         {
-            return OpenPort(configInfo.ComPorts);
+            if (port == null)
+            {
+                OpenPort(configInfo.ComPorts);
+            }
+            return devId;
         }
 
         public void Close()
@@ -42,9 +53,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        protected SerialPort Port
+        public SerialPort Port
         {
             get { return port; }
+        }
+
+        public void CopyPort(GhDeviceBase b)
+        {
+            this.port = b.port;
+            this.devId = b.devId;
         }
 
         protected string ValidGlobalsatPort(SerialPort port)
@@ -58,7 +75,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             string res = "";
             if (response.CommandId == commandId && response.PacketLength > 1)
             {
-                byte[] data = response.PacketData;
                 string devId = GhPacketBase.ByteArr2String(response.PacketData, 0, 8);
                 if (!string.IsNullOrEmpty(devId))
                 {
@@ -85,7 +101,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
         {
             byte sendCommandId = GhPacketBase.SendPacketCommandId(packet);
-            if (sendCommandId == GlobalsatPacket.CommandGetScreenshot)
+            if (sendCommandId == GhPacketBase.CommandGetScreenshot)
             {
                 port.ReadTimeout = 3000;
             }
@@ -104,9 +120,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
             received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
-            if (received.PacketLength > 2500)
+            if (received.PacketLength > MaxPacketPayload)
             {
-                //Max paxket length - can ite differ from device to device?
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             received.PacketData = new byte[received.PacketLength];
@@ -117,9 +132,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     received.PacketData[b] = (byte)port.ReadByte();
                 }
                 received.Checksum = (byte)port.ReadByte();
-            }catch(Exception e)
+            }
+            catch(Exception e)
             {
             //TODO: DEBUG timeout often occurs for GH-505
+                throw e;
             }
             if (!GhPacketBase.ValidResponseCrc(received))
             {
@@ -135,7 +152,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
-        protected virtual string OpenPort(IList<string> comPorts)
+        protected virtual void OpenPort(IList<string> comPorts)
         {
             if (comPorts == null || comPorts.Count == 0)
             {
@@ -165,9 +182,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
 
             Exception lastException = new Exception();
-            foreach (string comPort in comPorts)
+            foreach (int baudRate in BaudRates)
             {
-                foreach (int baudRate in BaudRates)
+                foreach (string comPort in comPorts)
                 {
                     port = null;
                     try
@@ -176,7 +193,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         string id = ValidGlobalsatPort(port);
                         if (!string.IsNullOrEmpty(id))
                         {
-                            return id;
+                            this.devId = id;
+                            return;
                         }
                         else if (port != null)
                         {
@@ -199,8 +217,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             lastExceptionText);
         }
 
+        public const int MaxPacketPayload = 2500;
+        public virtual int MaxNrWaypoints { get { return 100; } }
         protected virtual IList<int> BaudRates { get { return new List<int> { 115200 }; } }
         public virtual IList<string> AllowedIds { get { return null; } }
         private SerialPort port;
+        private string devId = "";
     }
 }
