@@ -26,11 +26,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     class GhPacketBase
     {
         //Should same for all
-        public const byte CommandId_FINISH = 0x8A;
-        public const byte CommandGetNextSection = 0x81;
 
-        public const byte CommandGetSystemInformation = 0x85;
         public const byte CommandWhoAmI = 0xBF;
+        public const byte CommandGetSystemInformation = 0x85;
         public const byte CommandGetSystemConfiguration = 0x86;
         public const byte CommandSetSystemConfiguration = 0x96;
         public const byte CommandSetSystemInformation = 0x98;
@@ -45,6 +43,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public const byte CommandGetTrackFileHeaders = 0x78;
         public const byte CommandGetTrackFileSections = 0x80;
+        public const byte CommandGetNextSection = 0x81;
+        //public const byte CommandReGetLastSection = 0x82;
+        public const byte CommandId_FINISH = 0x8A;
         public const byte CommandSendTrackStart = 0x90;
         public const byte CommandSendTrackSection = 0x91;
 
