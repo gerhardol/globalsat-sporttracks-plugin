@@ -32,26 +32,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class ImportJob_GH615 : ImportJob
     {
-        public ImportJob_GH615(GhDeviceBase device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
-        : base(device, sourceDescription, configInfo, monitor, importResults)
+        public ImportJob_GH615(GhDeviceBase device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, monitor, importResults)
         {
         }
 
         public override bool Import()
         {
-            Gh615Device device = new Gh615Device();
             try
             {
-                device.Open(this.configInfo);
+                Gh615Device device = (Gh615Device)this.device;
+                device.Open();
                 IList<Gh615Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                 List<Gh615Packet.TrackFileHeader> fetch = new List<Gh615Packet.TrackFileHeader>();
 
-                if (configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
                     IDictionary<DateTime, List<Gh615Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, List<Gh615Packet.TrackFileHeader>>();
                     foreach (Gh615Packet.TrackFileHeader header in headers)
                     {
-                        DateTime start = header.StartTime.AddHours(configInfo.HoursAdjustment);
+                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
                             headersByStart.Add(start, new List<Gh615Packet.TrackFileHeader>());
@@ -97,7 +97,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 if (section.StartPointIndex == 0)
                 {
-                    pointTime = section.StartTime.ToUniversalTime().AddHours(configInfo.HoursAdjustment);
+                    pointTime = section.StartTime.ToUniversalTime().AddHours(device.configInfo.HoursAdjustment);
                     activity = importResults.AddActivity(pointTime);
                     allActivities.Add(activity);
                     activity.Metadata.Source = string.Format(CommonResources.Text.Devices.ImportJob_ActivityImportSource, sourceDescription);

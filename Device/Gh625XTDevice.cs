@@ -29,9 +29,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTDevice : GhDeviceBase
     {
-        public override ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public Gh625XTDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
+        public Gh625XTDevice() : base(new FitnessDevice_GH625XT()) { }
+
+        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
-            return new ImportJob_GH625XT(this, sourceDescription, configInfo, monitor, importResults);
+            return new ImportJob_GH625XT(this, sourceDescription, monitor, importResults);
         }
 
         public IList<Gh625XTPacket.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
@@ -128,6 +131,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trains;
         }
-        public override IList<string> AllowedIds { get { return new List<string> { "GH-625XT" }; } }
     }
 }

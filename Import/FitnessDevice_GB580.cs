@@ -27,7 +27,7 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class FitnessDevice_GB580 : IFitnessDevice
+    class FitnessDevice_GB580 : FitnessDevice_Globalsat
     {
         public FitnessDevice_GB580()
         {
@@ -36,50 +36,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.name = "Globalsat - GB-580";
         }
 
-        public Guid Id
+        public override bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            get { return id; }
-        }
-
-        public string Name
-        {
-            get { return name; }
-        }
-
-        public Image Image
-        {
-            get { return image; }
-        }
-
-        public string ConfiguredDescription(string configurationInfo)
-        {
-            return Name;
-        }
-
-        public string Configure(string configurationInfo)
-        {
-            DeviceConfigurationDlg dialog = new DeviceConfigurationDlg();
-            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(configurationInfo);
-            dialog.ConfigurationInfo = configInfo;
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                return dialog.ConfigurationInfo.ToString();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
-        {
-            Gb580Device device = new Gb580Device();
-            ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), DeviceConfigurationInfo.Parse(configurationInfo), monitor, importResults);
+            Gb580Device device = new Gb580Device(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
+            ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
             return job.Import();
         }
 
-        private Guid id;
-        private Image image;
-        private string name;
+        public override DeviceConfigurationInfo DefaultConfig
+        {
+            get
+            {
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
+                info.AllowedIds = new List<string> { "GB-580" };
+                return info;
+            }
+        }
     }
 }

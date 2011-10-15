@@ -24,18 +24,36 @@ using System.Text;
 using System.IO.Ports;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
+using ZoneFiveSoftware.Common.Data.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     abstract class GhDeviceBase
     {
+        public GhDeviceBase(DeviceConfigurationInfo configInfo)
+        {
+            this.configInfo = configInfo;
+        }
+
+        public GhDeviceBase(FitnessDevice_Globalsat fitDev)
+        {
+            this.configInfo = fitDev.DefaultConfig;
+            foreach (IConfiguredDevice c in Plugin.Instance.Application.SystemPreferences.FitnessDevices)
+            {
+                if (c.Id == fitDev.Id)
+                {
+                    this.configInfo = DeviceConfigurationInfo.Parse(configInfo, c.Configuration);
+                }
+            }
+        }
+
         //Import kept in separate structure
-        public virtual ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
             return null;
         }
 
-        public string Open(DeviceConfigurationInfo configInfo)
+        public string Open()
         {
             if (port == null)
             {
@@ -78,13 +96,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string devId = GhPacketBase.ByteArr2String(response.PacketData, 0, 8);
                 if (!string.IsNullOrEmpty(devId))
                 {
-                    if (this.AllowedIds == null)
+                    if (configInfo.AllowedIds == null)
                     {
                         res = devId;
                     }
                     else
                     {
-                        foreach (string aId in this.AllowedIds)
+                        foreach (string aId in configInfo.AllowedIds)
                         {
                             if (devId.StartsWith(aId))
                             {
@@ -98,7 +116,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return res;
         }
 
-        protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
+        protected GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
+        {
+            return SendPacket(port, packet, configInfo);
+        }
+        protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet, DeviceConfigurationInfo configInfo)
         {
             byte sendCommandId = GhPacketBase.SendPacketCommandId(packet);
             if (sendCommandId == GhPacketBase.CommandGetScreenshot)
@@ -120,7 +142,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
             received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
-            if (received.PacketLength > MaxPacketPayload)
+            if (received.PacketLength > configInfo.MaxPacketPayload)
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
@@ -182,7 +204,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
 
             Exception lastException = new Exception();
-            foreach (int baudRate in BaudRates)
+            foreach (int baudRate in configInfo.BaudRates)
             {
                 foreach (string comPort in comPorts)
                 {
@@ -217,11 +239,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             lastExceptionText);
         }
 
-        public const int MaxPacketPayload = 2500;
-        public virtual int MaxNrWaypoints { get { return 100; } }
-        protected virtual IList<int> BaudRates { get { return new List<int> { 115200 }; } }
-        public virtual IList<string> AllowedIds { get { return null; } }
-        private SerialPort port;
+        public DeviceConfigurationInfo configInfo;
+        private SerialPort port = null;
         private string devId = "";
     }
 }

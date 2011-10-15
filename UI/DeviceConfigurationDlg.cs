@@ -32,10 +32,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public partial class DeviceConfigurationDlg : Form
     {
-        public DeviceConfigurationDlg()
+        public DeviceConfigurationDlg(DeviceConfigurationInfo configInfo)
         {
             InitializeComponent();
 
+            this.configInfo = configInfo;
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = ResourceLookup.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
@@ -59,18 +60,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(null);
                 configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
-                configInfo.HoursAdjustment = hoursAdjustment;
                 configInfo.ComPortsText = textBoxComPort.Text;
                 return configInfo;
-            }
-            set
-            {
-                chkImportOnlyNew.Checked = value.ImportOnlyNew;
-                hoursAdjustment = value.HoursAdjustment;
-                txtHoursOffset.Text = hoursAdjustment.ToString();
-                textBoxComPort.Text = value.ComPortsText;
             }
         }
         #endregion
@@ -96,24 +88,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         void txtHoursOffset_Validated(object sender, EventArgs e)
         {
-            int value = hoursAdjustment;
             try
             {
                 if (txtHoursOffset.Text.Trim().Length == 0)
                 {
-                    value = 0;
+                    configInfo.HoursAdjustment = 0;
                 }
                 else
                 {
-                    value = (int)double.Parse(txtHoursOffset.Text);
+                    configInfo.HoursAdjustment = (int)double.Parse(txtHoursOffset.Text);
                 }
             }
             catch { }
-            if (value != hoursAdjustment)
-            {
-                hoursAdjustment = value;
-            }
-            txtHoursOffset.Text = hoursAdjustment.ToString();
+            txtHoursOffset.Text = configInfo.HoursAdjustment.ToString();
         }
 
         void btnOk_Click(object sender, EventArgs e)
@@ -136,7 +123,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         #region Private members
         private ITheme theme;
-        private int hoursAdjustment = 0;
+        private DeviceConfigurationInfo configInfo;
         #endregion
 
     }

@@ -32,26 +32,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class ImportJob_GH505 : ImportJob
     {
-        public ImportJob_GH505(GhDeviceBase device, string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
-        : base(device, sourceDescription, configInfo, monitor, importResults)
+        public ImportJob_GH505(GhDeviceBase device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        : base(device, sourceDescription, monitor, importResults)
         {
         }
 
         public override bool Import()
         {
-            Gh505Device device = new Gh505Device();
             try
             {
-                device.Open(this.configInfo);
+                Gh505Device device = (Gh505Device)this.device;
+                device.Open();
                 IList<Gh505Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                 List<Gh505Packet.TrackFileHeader> fetch = new List<Gh505Packet.TrackFileHeader>();
 
-                if (configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
                     IDictionary<DateTime, List<Gh505Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, List<Gh505Packet.TrackFileHeader>>();
                     foreach (Gh505Packet.TrackFileHeader header in headers)
                     {
-                        DateTime start = header.StartTime.AddHours(configInfo.HoursAdjustment);
+                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
                             headersByStart.Add(start, new List<Gh505Packet.TrackFileHeader>());

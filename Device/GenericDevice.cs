@@ -1,5 +1,5 @@
 /*
-Copyright (C) 2010 Zone Five Software
+Copyright (C) 2011 Gerhard Olsson
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -14,7 +14,6 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library. If not, see <http://www.gnu.org/licenses/>.
  */
-// Author: Gerhard Olsson
 
 
 using System;
@@ -30,23 +29,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     //A generic device that should resolve to the actual device
     class GenericDevice : GhDeviceBase
     {
-        public override ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
+        public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
+
+        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
             if (device == null) { return null; }
-            return device.ImportJob(sourceDescription, configInfo, monitor, importResults);
+            return device.ImportJob(sourceDescription, monitor, importResults);
         }
 
-        public GhDeviceBase Device(DeviceConfigurationInfo configInfo)
+        public GhDeviceBase Device()
         {
             string devId = null;
-            devId = base.Open(configInfo);
+            devId = base.Open();
             if (!string.IsNullOrEmpty(devId))
             {
+                IList<GhDeviceBase> Devices = new List<GhDeviceBase> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device() };
                 foreach (GhDeviceBase g in Devices)
                 {
-                    if (g.AllowedIds != null)
+                    if (g.configInfo.AllowedIds != null)
                     {
-                        foreach (string s in g.AllowedIds)
+                        foreach (string s in g.configInfo.AllowedIds)
                         {
                             if (devId.StartsWith(s))
                             {
@@ -56,14 +59,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                         }
                     }
-
                 }
             }
             return null;
         }
 
         GhDeviceBase device = null;
-        private IList<GhDeviceBase> Devices = new List<GhDeviceBase> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh615Device() };
-        protected override IList<int> BaudRates { get { return new List<int> { 115200, 57600 }; } }
     }
 }

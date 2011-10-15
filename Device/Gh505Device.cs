@@ -29,9 +29,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Device : GhDeviceBase
     {
-        public override ImportJob ImportJob(string sourceDescription, DeviceConfigurationInfo configInfo, IJobMonitor monitor, IImportResults importResults)
+        public Gh505Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
+        public Gh505Device() : base(new FitnessDevice_GH505()) { }
+
+        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
-            return new ImportJob_GH505(this, sourceDescription, configInfo, monitor, importResults);
+            return new ImportJob_GH505(this, sourceDescription, monitor, importResults);
         }
 
         public IList<Gh505Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
@@ -127,6 +130,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trains;
         }
-        public override IList<string> AllowedIds { get { return new List<string> { "GH-50" }; } }
     }
 }
