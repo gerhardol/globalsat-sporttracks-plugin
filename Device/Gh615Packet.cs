@@ -53,11 +53,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             byte[] payload = new byte[3 + trackPointIndexes.Count * 2];
             payload[0] = 0x80;
-            Write(bigEndian, payload, 1, (Int16)trackPointIndexes.Count);
+            Write(endianFormat, payload, 1, (Int16)trackPointIndexes.Count);
             int offset = 3;
             foreach (Int16 index in trackPointIndexes)
             {
-                Write(bigEndian, payload, offset, index);
+                Write(endianFormat, payload, offset, index);
                 offset += 2;
             }
             return ConstructPayload(payload);
@@ -72,8 +72,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 int trackStart = i*24;
                 TrackFileHeader header = new TrackFileHeader();
                 ReadHeader(header, payload, trackStart);
-                header.TrackPointCount = ReadInt16(bigEndian, payload, trackStart + 20);
-                header.TrackPointIndex = ReadInt16(bigEndian, payload, trackStart + 22);
+                header.TrackPointCount = ReadInt16(endianFormat, payload, trackStart + 20);
+                header.TrackPointIndex = ReadInt16(endianFormat, payload, trackStart + 22);
                 headers.Add(header);
             }
             return headers;
@@ -85,19 +85,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             TrackFileSection section = new TrackFileSection();
             ReadHeader(section, payload, 0);
-            section.TrackPointCount = ReadInt16(bigEndian, payload, 20);
-            section.StartPointIndex = ReadInt16(bigEndian, payload, 22);
-            section.EndPointIndex = ReadInt16(bigEndian, payload, 24);
+            section.TrackPointCount = ReadInt16(endianFormat, payload, 20);
+            section.StartPointIndex = ReadInt16(endianFormat, payload, 22);
+            section.EndPointIndex = ReadInt16(endianFormat, payload, 24);
             int offset = 26;
             while (offset < payload.Length)
             {
                 TrackPoint point = new TrackPoint();
-                point.Latitude = ReadInt32(bigEndian, payload, offset);
-                point.Longitude = ReadInt32(bigEndian, payload, offset + 4);
-                point.Altitude = ReadInt16(bigEndian, payload, offset + 8);
-                point.Speed = ReadInt16(bigEndian, payload, offset + 10);
+                point.Latitude = ReadInt32(endianFormat, payload, offset);
+                point.Longitude = ReadInt32(endianFormat, payload, offset + 4);
+                point.Altitude = ReadInt16(endianFormat, payload, offset + 8);
+                point.Speed = ReadInt16(endianFormat, payload, offset + 10);
                 point.HeartRate = payload[offset + 12];
-                point.IntervalTime = ReadInt16(bigEndian, payload, offset + 13);
+                point.IntervalTime = ReadInt16(endianFormat, payload, offset + 13);
                 section.TrackPoints.Add(point);
                 offset += 15;
             }
@@ -111,14 +111,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private static void ReadHeader(Header header, byte[] payload, int offset)
         {
             header.StartTime = ReadDateTime(payload, offset);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(bigEndian, payload, offset + 6)) / 10);
-            header.TotalDistanceMeters = ReadInt32(bigEndian, payload, offset + 10);
-            header.TotalCalories = ReadInt16(bigEndian, payload, offset + 14);
-            header.MaximumSpeed = ReadInt16(bigEndian, payload, offset + 16);
+            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, payload, offset + 6)) / 10);
+            header.TotalDistanceMeters = ReadInt32(endianFormat, payload, offset + 10);
+            header.TotalCalories = ReadInt16(endianFormat, payload, offset + 14);
+            header.MaximumSpeed = ReadInt16(endianFormat, payload, offset + 16);
             header.MaximumHeartRate = payload[offset + 18];
             header.AverageHeartRate = payload[offset + 19];
         }
 
-        const bool bigEndian = true;
+        const bool endianFormat = true; //big endian
     }
 }
