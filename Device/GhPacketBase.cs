@@ -26,7 +26,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     class GhPacketBase
     {
         //Should same for all
-        public static byte CommandId_FINISH = 0x8A;
+        public const byte CommandId_FINISH = 0x8A;
+        public const byte CommandGetNextSection = 0x81;
+
+        public const byte CommandGetSystemInformation = 0x85;
+        public const byte CommandWhoAmI = 0xBF;
+        public const byte CommandGetSystemConfiguration = 0x86;
+        public const byte CommandSetSystemConfiguration = 0x96;
+        public const byte CommandSetSystemInformation = 0x98;
+        public const byte CommandGetScreenshot = 0x83;
+
+        public const byte CommandGetWaypoints = 0x77;
+        public const byte CommandSendWaypoint = 0x76;
+        public const byte CommandDeleteWaypoints = 0x75;
+
+        public const byte CommandSendRoute = 0x93;
+        public const byte CommandDeleteAllRoutes = 0x97;
+
+        public const byte CommandGetTrackFileHeaders = 0x78;
+        public const byte CommandGetTrackFileSections = 0x80;
+        public const byte CommandSendTrackStart = 0x90;
+        public const byte CommandSendTrackSection = 0x91;
+
+        public const byte HeaderTypeLaps = 0xAA;
+        public const byte HeaderTypeTrackPoints = 0x55;
 
         public class TrackPoint
         {
@@ -87,31 +110,31 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return packet[3];
         }
 
-        //public static byte[] GetSystemConfiguration()
+        //public static byte[] GetSystemInformation()
         //{
         //    byte[] payload = new byte[1];
-        //    payload[0] = 0x85;
+        //    payload[0] = CommandGetSystemInformation;
         //    return ConstructPayload(payload);
         //}
 
         public static byte[] GetWhoAmI()
         {
             byte[] payload = new byte[1];
-            payload[0] = 0xbf;
+            payload[0] = CommandWhoAmI;
             return ConstructPayload(payload);
         }
 
         public static byte[] GetTrackFileHeaders()
         {
             byte[] payload = new byte[1];
-            payload[0] = 0x78;
+            payload[0] = CommandGetTrackFileHeaders;
             return ConstructPayload(payload);
         }
 
         public static byte[] GetNextSection()
         {
             byte[] payload = new byte[1];
-            payload[0] = 0x81;
+            payload[0] = CommandGetNextSection;
             return ConstructPayload(payload);
         }
 

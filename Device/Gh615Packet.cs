@@ -52,7 +52,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
         {
             byte[] payload = new byte[3 + trackPointIndexes.Count * 2];
-            payload[0] = 0x80;
+            payload[0] = CommandGetTrackFileSections;
             Write(endianFormat, payload, 1, (Int16)trackPointIndexes.Count);
             int offset = 3;
             foreach (Int16 index in trackPointIndexes)
