@@ -25,17 +25,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625Packet : GhPacketBase
     {
-        public class Header
+        public new class Header : GhPacketBase.Header
         {
-            public DateTime StartTime;
-            public byte LapCount;
-            public TimeSpan TotalTime;
-            public Int32 TotalDistanceMeters;
+            //public DateTime StartTime;
+            //public byte LapCount;
+            //public TimeSpan TotalTime;
+            //public Int32 TotalDistanceMeters;
             public Int16 TotalCalories;
             public Int16 MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-            public Int16 TrackPointCount;
+            //public Int16 TrackPointCount;
         }
 
         public class TrackFileHeader : Header
@@ -49,19 +49,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 EndPointIndex;
             public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
-        }
-
-        public class Lap
-        {
-            public TimeSpan EndTime;
-            public TimeSpan LapTime;
-            public Int32 LapDistanceMeters;
-            public Int16 LapCalories;
-            public Int16 MaximumSpeed;
-            public byte MaximumHeartRate;
-            public byte AverageHeartRate;
-            public Int16 StartPointIndex;
-            public Int16 EndPointIndex;
         }
 
         public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
@@ -116,8 +103,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lap.MaximumSpeed = ReadInt16(endianFormat, payload, offset + 14);
                 lap.MaximumHeartRate = payload[offset + 16];
                 lap.AverageHeartRate = payload[offset + 17];
-                lap.StartPointIndex = ReadInt16(endianFormat, payload, 18);
-                lap.EndPointIndex = ReadInt16(endianFormat, payload, 20);
+                //lap.StartPointIndex = ReadInt16(endianFormat, payload, 18);
+                //lap.EndPointIndex = ReadInt16(endianFormat, payload, 20);
                 section.Laps.Add(lap);
                 offset += 22;
             }
