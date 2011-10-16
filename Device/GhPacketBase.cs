@@ -146,9 +146,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             byte[] data = new byte[5 + this.PacketLength];
             data[0] = 0x02;
-            //Add CommandId to length
-            Write(true, data, 1, (Int16)(this.PacketLength + 1));
+            //Add CommandId to length, always big endian
+            //Write(true, data, 1, (Int16)(this.PacketLength + 1));
+            byte[] b = BitConverter.GetBytes((Int16)(this.PacketLength + 1));
+            data[1] = b[1];
+            data[2] = b[0];
             data[3] = this.CommandId;
+
             for (int i = 0; i < this.PacketLength; i++)
             {
                 data[4 + i] = this.PacketData[i];
@@ -219,49 +223,49 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// <summary>
         /// Read a two byte integer starting at the offset.
         /// </summary>
-        protected static Int16 ReadInt16(bool bigEndian, byte[] data, int offset)
+        protected Int16 ReadInt16(int offset)
         {
-            if (bigEndian)
+            if (endianFormat)
             {
-                return (Int16)((data[offset] << 8) + data[offset + 1]);
+                return (Int16)((this.PacketData[offset] << 8) + this.PacketData[offset + 1]);
             }
             else
             {
-                return (Int16)((data[offset + 1] << 8) + data[offset]);
+                return (Int16)((this.PacketData[offset + 1] << 8) + this.PacketData[offset]);
             }
         }
 
         /// <summary>
         /// Read a four byte integer starting at the offset.
         /// </summary>
-        protected static Int32 ReadInt32(bool bigEndian, byte[] data, int offset)
+        protected Int32 ReadInt32(int offset)
         {
-            if (bigEndian)
+            if (endianFormat)
             {
-                return (data[offset] << 24) + (data[offset + 1] << 16) + (data[offset + 2] << 8) + data[offset + 3];
+                return (this.PacketData[offset] << 24) + (this.PacketData[offset + 1] << 16) + (this.PacketData[offset + 2] << 8) + this.PacketData[offset + 3];
             }
             else
             {
-                return (data[offset + 3] << 24) + (data[offset + 2] << 16) + (data[offset + 1] << 8) + data[offset];
+                return (this.PacketData[offset + 3] << 24) + (this.PacketData[offset + 2] << 16) + (this.PacketData[offset + 1] << 8) + this.PacketData[offset];
             }
         }
 
         /// <summary>
         /// Write a two byte integer starting at the offset.
         /// </summary>
-        protected static void Write(bool bigEndian, byte[] data, int offset, Int16 i)
+        protected void Write(int offset, Int16 i)
         {
-            if (bigEndian)
+            if (endianFormat)
             {
                 byte[] b = BitConverter.GetBytes(i);
-                data[offset + 0] = b[1];
-                data[offset + 1] = b[0];
+                this.PacketData[offset + 0] = b[1];
+                this.PacketData[offset + 1] = b[0];
             }
             else
             {
                 byte[] b = BitConverter.GetBytes(i);
-                data[offset + 0] = b[0];
-                data[offset + 1] = b[1];
+                this.PacketData[offset + 0] = b[0];
+                this.PacketData[offset + 1] = b[1];
             }
         }
 
@@ -277,6 +281,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    data[offset + 3] = b[3];
         //}
 
+        //bigEndian: true, littleEndian: false
         protected virtual bool endianFormat { get { return true; } }
     }
 }
