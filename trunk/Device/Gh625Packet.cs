@@ -60,8 +60,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 int trackStart = i * 31;
                 TrackFileHeader header = new TrackFileHeader();
                 ReadHeader(header, trackStart);
-                header.TrackPointCount = ReadInt16(endianFormat, this.PacketData, trackStart + 25);
-                header.TrackPointIndex = ReadInt16(endianFormat, this.PacketData, trackStart + 27);
+                header.TrackPointCount = ReadInt16(trackStart + 25);
+                header.TrackPointIndex = ReadInt16(trackStart + 27);
                 headers.Add(header);
             }
             return headers;
@@ -74,23 +74,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             TrackFileSection section = new TrackFileSection();
             ReadHeader(section, 0);
             section.LapCount = this.PacketData[6];
-            section.TrackPointCount = ReadInt16(endianFormat, this.PacketData, 25);
-            section.StartPointIndex = ReadInt16(endianFormat, this.PacketData, 27);
-            section.EndPointIndex = ReadInt16(endianFormat, this.PacketData, 29);
+            section.TrackPointCount = ReadInt16(25);
+            section.StartPointIndex = ReadInt16(27);
+            section.EndPointIndex = ReadInt16(29);
 
             int offset = 31;
             while (offset < this.PacketLength)
             {
                 Lap lap = new Lap();
-                lap.EndTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset)) / 10);
-                lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset + 4)) / 10);
-                lap.LapDistanceMeters = ReadInt32(endianFormat, this.PacketData, offset + 8);
-                lap.LapCalories = ReadInt16(endianFormat, this.PacketData, offset + 12);
-                lap.MaximumSpeed = ReadInt16(endianFormat, this.PacketData, offset + 14);
+                lap.EndTime = TimeSpan.FromSeconds(((double)ReadInt32(offset)) / 10);
+                lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 4)) / 10);
+                lap.LapDistanceMeters = ReadInt32(offset + 8);
+                lap.LapCalories = ReadInt16(offset + 12);
+                lap.MaximumSpeed = ReadInt16(offset + 14);
                 lap.MaximumHeartRate = this.PacketData[offset + 16];
                 lap.AverageHeartRate = this.PacketData[offset + 17];
-                //lap.StartPointIndex = ReadInt16(endianFormat, this.PacketData, 18);
-                //lap.EndPointIndex = ReadInt16(endianFormat, this.PacketData, 20);
+                //lap.StartPointIndex = ReadInt16(18);
+                //lap.EndPointIndex = ReadInt16(20);
                 section.Laps.Add(lap);
                 offset += 22;
             }
@@ -103,20 +103,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             TrackFileSection section = new TrackFileSection();
             ReadHeader(section, 0);
-            section.TrackPointCount = ReadInt16(endianFormat, this.PacketData, 25);
-            section.StartPointIndex = ReadInt16(endianFormat, this.PacketData, 27);
-            section.EndPointIndex = ReadInt16(endianFormat, this.PacketData, 29);
+            section.TrackPointCount = ReadInt16(25);
+            section.StartPointIndex = ReadInt16(27);
+            section.EndPointIndex = ReadInt16(29);
 
             int offset = 31;
             while (offset < this.PacketLength)
             {
                 TrackPoint point = new TrackPoint();
-                point.Latitude = ReadInt32(endianFormat, this.PacketData, offset);
-                point.Longitude = ReadInt32(endianFormat, this.PacketData, offset + 4);
-                point.Altitude = ReadInt16(endianFormat, this.PacketData, offset + 8);
-                point.Speed = ReadInt16(endianFormat, this.PacketData, offset + 10);
+                point.Latitude = ReadInt32(offset);
+                point.Longitude = ReadInt32(offset + 4);
+                point.Altitude = ReadInt16(offset + 8);
+                point.Speed = ReadInt16(offset + 10);
                 point.HeartRate = this.PacketData[offset + 12];
-                point.IntervalTime = ReadInt16(endianFormat, this.PacketData, offset + 13);
+                point.IntervalTime = ReadInt16(offset + 13);
                 section.TrackPoints.Add(point);
                 offset += 15;
             }
@@ -126,10 +126,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private void ReadHeader(Header header, int offset)
         {
             header.StartTime = ReadDateTime(this.PacketData, offset);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset + 7)) / 10);
-            header.TotalDistanceMeters = ReadInt32(endianFormat, this.PacketData, offset + 11);
-            header.TotalCalories = ReadInt16(endianFormat, this.PacketData, offset + 15);
-            header.MaximumSpeed = ReadInt16(endianFormat, this.PacketData, offset + 17);
+            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 7)) / 10);
+            header.TotalDistanceMeters = ReadInt32(offset + 11);
+            header.TotalCalories = ReadInt16(offset + 15);
+            header.MaximumSpeed = ReadInt16(offset + 17);
             header.MaximumHeartRate = this.PacketData[offset + 19];
             header.AverageHeartRate = this.PacketData[offset + 20];
         }

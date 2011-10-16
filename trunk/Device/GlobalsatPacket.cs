@@ -50,11 +50,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GlobalsatPacket GetTrackFileSections(IList<Int16> trackPointIndexes)
         {
             GlobalsatPacket packet = new GlobalsatPacket(CommandGetTrackFileSections, (Int16)(2 + trackPointIndexes.Count * 2));
-            Write(endianFormat, packet.PacketData, 0, (Int16)trackPointIndexes.Count);
+            packet.Write(0, (Int16)trackPointIndexes.Count);
             int offset = 2;
             foreach (Int16 index in trackPointIndexes)
             {
-                Write(endianFormat, packet.PacketData, offset, index);
+                packet.Write(offset, index);
                 offset += 2;
             }
             return packet;
@@ -76,7 +76,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 //Always bigendian?
-                nrSentWaypoints = ReadInt16(true, PacketData, 0);
+                nrSentWaypoints = this.ReadInt16(0);
             }
             catch { }
 
@@ -85,7 +85,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual GlobalsatPacket DeleteAllWaypoints()
         {
             GlobalsatPacket packet = new GlobalsatPacket(CommandDeleteWaypoints, 2);
-            Write(endianFormat, packet.PacketData, 0, 100);
+            packet.Write(0, 100);
             return packet;
         }
 
@@ -102,7 +102,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             int offset = 0;
 
-            Write(endianFormat, packet.PacketData, offset, (short)nrWaypoints);
+            packet.Write(offset, (short)nrWaypoints);
             offset += 2;
 
             for (int i = 0; i < nrWaypoints && nrWaypoints < MaxNrWaypoints; i++)
