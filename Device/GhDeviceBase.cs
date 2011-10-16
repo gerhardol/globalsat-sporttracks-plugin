@@ -28,7 +28,7 @@ using ZoneFiveSoftware.Common.Data.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    abstract class GhDeviceBase
+    public abstract class GhDeviceBase
     {
         public GhDeviceBase(DeviceConfigurationInfo configInfo)
         {
@@ -113,6 +113,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
             }
+			/* TODO show "devId" in some sort of error message, if not null and "res" is still "" */
             return res;
         }
 
@@ -189,16 +190,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 else if (Environment.OSVersion.Platform == PlatformID.Unix)
                 {
-                    /* Linux */
+                    /* Linux & OSX */
+					/* TODO Check if file exists, well maybe this is fast enough and a check is not needed atleast in Linux */
                     for (int i = 0; i <= 30; i++)
                     {
-                        comPorts.Add("/dev/ttyUSB" + i);
-                        comPorts.Add("/dev/ttyACM" + i);
-                    }
-                    /* OSX */
-                    for (int i = 0; i <= 30; i++)
-                    {
-                        comPorts.Add("/dev/tty.usbserial" + i);
+                        comPorts.Add("/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
+                        comPorts.Add("/dev/ttyACM" + i); /* Linux: gh505/gh561/(gh580??) */
+                        comPorts.Add("/dev/tty.usbserial" + i); /* OSX */
                     }
                 }
             }

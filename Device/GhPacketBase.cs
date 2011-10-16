@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class GhPacketBase
+    public class GhPacketBase
     {
         //The Gloabalsat specs does not explicitly write that the format is same for all
 
