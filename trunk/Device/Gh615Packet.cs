@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gh615Packet : GhPacketBase
+    class Gh615Packet : GlobalsatPacket
     {
         public new class Header : GhPacketBase.Header
         {
@@ -49,72 +49,61 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
         }
 
-        public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
+        public IList<TrackFileHeader> UnpackTrackHeaders()
         {
-            byte[] payload = new byte[3 + trackPointIndexes.Count * 2];
-            payload[0] = CommandGetTrackFileSections;
-            Write(endianFormat, payload, 1, (Int16)trackPointIndexes.Count);
-            int offset = 3;
-            foreach (Int16 index in trackPointIndexes)
-            {
-                Write(endianFormat, payload, offset, index);
-                offset += 2;
-            }
-            return ConstructPayload(payload);
-        }
-
-        public static IList<TrackFileHeader> UnpackTrackHeaders(byte[] payload)
-        {
-            int numHeaders = payload.Length / 24;
+            int numHeaders = this.PacketData.Length / 24;
             IList<TrackFileHeader> headers = new List<TrackFileHeader>();
             for (int i = 0; i < numHeaders; i++)
             {
                 int trackStart = i*24;
                 TrackFileHeader header = new TrackFileHeader();
-                ReadHeader(header, payload, trackStart);
-                header.TrackPointCount = ReadInt16(endianFormat, payload, trackStart + 20);
-                header.TrackPointIndex = ReadInt16(endianFormat, payload, trackStart + 22);
+                ReadHeader(header, trackStart);
+                header.TrackPointCount = ReadInt16(endianFormat, this.PacketData, trackStart + 20);
+                header.TrackPointIndex = ReadInt16(endianFormat, this.PacketData, trackStart + 22);
                 headers.Add(header);
             }
             return headers;
         }
 
-        public static TrackFileSection UnpackTrackSection(byte[] payload)
+        public TrackFileSection UnpackTrackSection()
         {
-            if (payload.Length < 26) return null;
+            if (this.PacketData.Length < 26) return null;
 
             TrackFileSection section = new TrackFileSection();
-            ReadHeader(section, payload, 0);
-            section.TrackPointCount = ReadInt16(endianFormat, payload, 20);
-            section.StartPointIndex = ReadInt16(endianFormat, payload, 22);
-            section.EndPointIndex = ReadInt16(endianFormat, payload, 24);
+            ReadHeader(section, 0);
+            section.TrackPointCount = ReadInt16(endianFormat, this.PacketData, 20);
+            section.StartPointIndex = ReadInt16(endianFormat, this.PacketData, 22);
+            section.EndPointIndex = ReadInt16(endianFormat, this.PacketData, 24);
             int offset = 26;
-            while (offset < payload.Length)
+            while (offset < this.PacketData.Length)
             {
                 TrackPoint point = new TrackPoint();
-                point.Latitude = ReadInt32(endianFormat, payload, offset);
-                point.Longitude = ReadInt32(endianFormat, payload, offset + 4);
-                point.Altitude = ReadInt16(endianFormat, payload, offset + 8);
-                point.Speed = ReadInt16(endianFormat, payload, offset + 10);
-                point.HeartRate = payload[offset + 12];
-                point.IntervalTime = ReadInt16(endianFormat, payload, offset + 13);
+                point.Latitude = ReadInt32(endianFormat, this.PacketData, offset);
+                point.Longitude = ReadInt32(endianFormat, this.PacketData, offset + 4);
+                point.Altitude = ReadInt16(endianFormat, this.PacketData, offset + 8);
+                point.Speed = ReadInt16(endianFormat, this.PacketData, offset + 10);
+                point.HeartRate = this.PacketData[offset + 12];
+                point.IntervalTime = ReadInt16(endianFormat, this.PacketData, offset + 13);
                 section.TrackPoints.Add(point);
                 offset += 15;
             }
             return section;
         }
 
-        private static void ReadHeader(Header header, byte[] payload, int offset)
+        private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(payload, offset);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, payload, offset + 6)) / 10);
-            header.TotalDistanceMeters = ReadInt32(endianFormat, payload, offset + 10);
-            header.TotalCalories = ReadInt16(endianFormat, payload, offset + 14);
-            header.MaximumSpeed = ReadInt16(endianFormat, payload, offset + 16);
-            header.MaximumHeartRate = payload[offset + 18];
-            header.AverageHeartRate = payload[offset + 19];
+            header.StartTime = ReadDateTime(this.PacketData, offset);
+            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset + 6)) / 10);
+            header.TotalDistanceMeters = ReadInt32(endianFormat, this.PacketData, offset + 10);
+            header.TotalCalories = ReadInt16(endianFormat, this.PacketData, offset + 14);
+            header.MaximumSpeed = ReadInt16(endianFormat, this.PacketData, offset + 16);
+            header.MaximumHeartRate = this.PacketData[offset + 18];
+            header.AverageHeartRate = this.PacketData[offset + 19];
         }
 
-        const bool endianFormat = true; //big endian
+        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        {
+            return new Gh625XTPacket().ResponseWaypoints(); //xxx
+        }
     }
 }

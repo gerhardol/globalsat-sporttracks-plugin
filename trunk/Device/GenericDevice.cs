@@ -27,7 +27,7 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     //A generic device that should resolve to the actual device
-    class GenericDevice : GhDeviceBase
+    class GenericDevice : GlobalsatProtocol
     {
         public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
@@ -38,14 +38,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return device.ImportJob(sourceDescription, monitor, importResults);
         }
 
-        public GhDeviceBase Device()
+        public GlobalsatProtocol Device()
         {
             string devId = null;
             devId = base.Open();
             if (!string.IsNullOrEmpty(devId))
             {
-                IList<GhDeviceBase> Devices = new List<GhDeviceBase> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device() };
-                foreach (GhDeviceBase g in Devices)
+                IList<GlobalsatProtocol> Devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device() };
+                foreach (GlobalsatProtocol g in Devices)
                 {
                     if (g.configInfo.AllowedIds != null)
                     {
@@ -64,6 +64,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        GhDeviceBase device = null;
+        GlobalsatProtocol device = null;
     }
 }

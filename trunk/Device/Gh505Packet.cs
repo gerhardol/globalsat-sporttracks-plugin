@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gh505Packet : GhPacketBase
+    class Gh505Packet : GlobalsatPacket
     {
         public class TrackFileHeader : Header
         {
@@ -42,107 +42,119 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public IList<Lap> Laps = new List<Lap>();
         }
 
-        public static byte[] GetTrackFileSections(IList<Int16> trackPointIndexes)
+        public IList<TrackFileHeader> UnpackTrackHeaders()
         {
-            byte[] payload = new byte[3 + trackPointIndexes.Count * 2];
-            payload[0] = CommandGetTrackFileSections;
-            Write(endianFormat, payload, 1, (Int16)trackPointIndexes.Count);
-            int offset = 3;
-            foreach (Int16 index in trackPointIndexes)
-            {
-                Write(endianFormat, payload, offset, index);
-                offset += 2;
-            }
-            return ConstructPayload(payload);
-        }
-
-        public static IList<TrackFileHeader> UnpackTrackHeaders(byte[] payload)
-        {
-            int numHeaders = payload.Length / 24;
+            int numHeaders = this.PacketLength / 24;
             IList<TrackFileHeader> headers = new List<TrackFileHeader>();
             for (int i = 0; i < numHeaders; i++)
             {
                 int trackStart = i * 24;
                 TrackFileHeader header = new TrackFileHeader();
-                ReadHeader(header, payload, trackStart);
-                header.TrackPointIndex = ReadInt16(endianFormat, payload, trackStart + 18);
+                ReadHeader(header, trackStart);
+                header.TrackPointIndex = ReadInt16(endianFormat, this.PacketData, trackStart + 18);
                 headers.Add(header);
             }
             return headers;
         }
 
-        public static Train UnpackTrainHeader(byte[] payload)
+        public Train UnpackTrainHeader()
         {
-            if (payload.Length < 52) return null;
+            if (this.PacketLength < 52) return null;
 
             Train train = new Train();
-            ReadHeader(train, payload, 0);
-            train.TotalCalories = ReadInt16(endianFormat, payload, 24);
-            train.MaximumSpeed = ReadInt16(endianFormat, payload, 26);
-            train.MaximumHeartRate = payload[28];
-            train.AverageHeartRate = payload[29];
+            ReadHeader(train, 0);
+            train.TotalCalories = ReadInt16(endianFormat, this.PacketData, 24);
+            train.MaximumSpeed = ReadInt16(endianFormat, this.PacketData, 26);
+            train.MaximumHeartRate = this.PacketData[28];
+            train.AverageHeartRate = this.PacketData[29];
             return train;
         }
 
-        public static IList<Lap> UnpackLaps(byte[] payload)
+        public IList<Lap> UnpackLaps()
         {
-            if (payload.Length < 24) return new List<Lap>();
+            if (this.PacketLength < 24) return new List<Lap>();
 
             IList<Lap> laps = new List<Lap>();
 
             int offset = 24;
-            while (offset < payload.Length)
+            while (offset < this.PacketLength)
             {
                 Lap lap = new Lap();
 
-                lap.EndTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, payload, offset)) / 10);
-                lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, payload, offset + 4)) / 10);
-                lap.LapDistanceMeters = ReadInt32(endianFormat, payload, offset + 8);
-                lap.LapCalories = ReadInt16(endianFormat, payload, offset + 12);
-                lap.MaximumSpeed = ReadInt16(endianFormat, payload, offset + 14);
-                lap.MaximumHeartRate = payload[offset + 16];
-                lap.AverageHeartRate = payload[offset + 17];
-                //lap.StartPointIndex = ReadInt16(endianFormat, payload, 18);
-                //lap.EndPointIndex = ReadInt16(endianFormat, payload, 20);
+                lap.EndTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset)) / 10);
+                lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset + 4)) / 10);
+                lap.LapDistanceMeters = ReadInt32(endianFormat, this.PacketData, offset + 8);
+                lap.LapCalories = ReadInt16(endianFormat, this.PacketData, offset + 12);
+                lap.MaximumSpeed = ReadInt16(endianFormat, this.PacketData, offset + 14);
+                lap.MaximumHeartRate = this.PacketData[offset + 16];
+                lap.AverageHeartRate = this.PacketData[offset + 17];
+                //lap.StartPointIndex = ReadInt16(endianFormat, this.PacketData, 18);
+                //lap.EndPointIndex = ReadInt16(endianFormat, this.PacketData, 20);
                 laps.Add(lap);
                 offset += 36;
             }
             return laps;
         }
 
-        public static IList<TrackPoint2> UnpackTrackPoints(byte[] payload)
+        public IList<TrackPoint2> UnpackTrackPoints()
         {
-            if (payload.Length < 24) return new List<TrackPoint2>();
+            if (this.PacketLength < 24) return new List<TrackPoint2>();
 
             IList<TrackPoint2> points = new List<TrackPoint2>();
 
             int offset = 24;
-            while (offset < payload.Length)
+            while (offset < this.PacketLength)
             {
                 TrackPoint2 point = new TrackPoint2();
-                point.Latitude = ReadInt32(endianFormat, payload, offset);
-                point.Longitude = ReadInt32(endianFormat, payload, offset + 4);
-                point.Altitude = ReadInt16(endianFormat, payload, offset + 8);
-                point.Speed = ReadInt16(endianFormat, payload, offset + 10);
-                point.HeartRate = payload[offset + 12];
-                point.IntervalTime = ReadInt32(endianFormat, payload, offset + 16);
-                point.Cadence = ReadInt16(endianFormat, payload, offset + 20);
-                point.Power = ReadInt16(endianFormat, payload, offset + 24);
+                point.Latitude = ReadInt32(endianFormat, this.PacketData, offset);
+                point.Longitude = ReadInt32(endianFormat, this.PacketData, offset + 4);
+                point.Altitude = ReadInt16(endianFormat, this.PacketData, offset + 8);
+                point.Speed = ReadInt16(endianFormat, this.PacketData, offset + 10);
+                point.HeartRate = this.PacketData[offset + 12];
+                point.IntervalTime = ReadInt32(endianFormat, this.PacketData, offset + 16);
+                point.Cadence = ReadInt16(endianFormat, this.PacketData, offset + 20);
+                point.Power = ReadInt16(endianFormat, this.PacketData, offset + 24);
                 points.Add(point);
                 offset += 28;
             }
             return points;
         }
 
-        private static void ReadHeader(Header header, byte[] payload, int offset)
+        private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(payload, offset).ToUniversalTime();
-            header.TrackPointCount = ReadInt16(endianFormat, payload, offset + 6);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, payload, offset + 8)) / 10);
-            header.TotalDistanceMeters = ReadInt32(endianFormat, payload, offset + 12);
-            header.LapCount = ReadInt16(endianFormat, payload, offset + 16);
+            header.StartTime = ReadDateTime(this.PacketData, offset).ToUniversalTime();
+            header.TrackPointCount = ReadInt16(endianFormat, this.PacketData, offset + 6);
+            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(endianFormat, this.PacketData, offset + 8)) / 10);
+            header.TotalDistanceMeters = ReadInt32(endianFormat, this.PacketData, offset + 12);
+            header.LapCount = ReadInt16(endianFormat, this.PacketData, offset + 16);
         }
 
-        const bool endianFormat = false; //little endian
+        public int LocationLength { get { return 20; } }
+        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        {
+            int nrWaypoints = PacketLength / 20;
+            IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
+
+            for (int i = 0; i < nrWaypoints; i++)
+            {
+                int index = i * 20;
+
+                string waypointName = ByteArr2String(PacketData, index, 6);
+                int iconNr = (int)PacketData[index + 7];
+                short altitude = ReadInt16(endianFormat, PacketData, index + 8);
+                // 10-11 ?
+                int latitudeInt = ReadInt32(endianFormat, PacketData, index + 12);
+                int longitudeInt = ReadInt32(endianFormat, PacketData, index + 16);
+                double latitude = (double)latitudeInt / 1000000.0;
+                double longitude = (double)longitudeInt / 1000000.0;
+
+                GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
+                waypoints.Add(waypoint);
+            }
+
+            return waypoints;
+        }
+
+        protected override bool endianFormat { get { return false; } } //little endian
     }
 }

@@ -47,11 +47,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        //Import kept in separate structure
-        public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
-        {
-            return null;
-        }
+        public virtual GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
 
         public string Open()
         {
@@ -84,14 +80,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected string ValidGlobalsatPort(SerialPort port)
         {
-            port.ReadTimeout = 1000;
-            port.Open();
-            byte[] packet = GhPacketBase.GetWhoAmI();
-            //Get the commandid, to match to returned packet
-            byte commandId = GhPacketBase.SendPacketCommandId(packet);
-            GhPacketBase.Response response = SendPacket(port, packet);
+            GlobalsatPacket packet = new GlobalsatPacket(GlobalsatPacket.CommandWhoAmI);
+            GhPacketBase response = SendPacket(packet);
             string res = "";
-            if (response.CommandId == commandId && response.PacketLength > 1)
+            if (response.CommandId == packet.CommandId && response.PacketLength > 1)
             {
                 string devId = GhPacketBase.ByteArr2String(response.PacketData, 0, 8);
                 if (!string.IsNullOrEmpty(devId))
@@ -117,27 +109,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return res;
         }
 
-        protected GhPacketBase.Response SendPacket(SerialPort port, byte[] packet)
+        public virtual GhPacketBase SendPacket(GlobalsatPacket packet)
         {
-            return SendPacket(port, packet, configInfo);
-        }
-        protected static GhPacketBase.Response SendPacket(SerialPort port, byte[] packet, DeviceConfigurationInfo configInfo)
-        {
-            byte sendCommandId = GhPacketBase.SendPacketCommandId(packet);
-            if (sendCommandId == GhPacketBase.CommandGetScreenshot)
+            if (!port.IsOpen)
             {
-                port.ReadTimeout = 3000;
+                port.Open();
+            }
+            if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
+            {
+                port.ReadTimeout = 5000;
+            }
+            else
+            {
+                port.ReadTimeout = 1000;
             }
             try
             {
-                port.Write(packet, 0, packet.Length);
+                byte[] sendPayload = packet.ConstructPayload();
+                port.Write(sendPayload, 0, sendPayload.Length);
             }
             catch (Exception e)
             {
                 throw e;
             }
 
-            GhPacketBase.Response received = new GhPacketBase.Response();
+            //Use packet factory, to make sure the packet matches the device
+            GhPacketBase received = this.PacketFactory;
 
             received.CommandId = (byte)port.ReadByte();
             int hiPacketLen = port.ReadByte();
@@ -161,15 +158,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //TODO: DEBUG timeout often occurs for GH-505
                 throw e;
             }
-            if (!GhPacketBase.ValidResponseCrc(received))
+            port.Close();
+            if (!received.ValidResponseCrc())
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
-            if (received.CommandId != sendCommandId &&
+            if (received.CommandId != packet.CommandId &&
                 !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
                 received.CommandId == GhPacketBase.CommandId_FINISH) &&
-                sendCommandId == GhPacketBase.CommandGetNextSection))
+                (packet.CommandId == GhPacketBase.CommandGetNextSection ||
+                 packet.CommandId == GhPacketBase.CommandGetTrackFileSections)))
             {
+                if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
+                {
+                    //TODO
+                    //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
+                }
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             return received;
@@ -232,9 +236,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
             }
+            //TODO: Filter out cannot open port, so not port30 always comes up?
             string lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + lastException.Message;
-            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError+
-            lastExceptionText);
+            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError +
+              lastExceptionText);
         }
 
         public DeviceConfigurationInfo configInfo;
