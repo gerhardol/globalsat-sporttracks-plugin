@@ -27,24 +27,27 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gh625Device : GhDeviceBase
+    public class Gh625Device : GlobalsatProtocol
     {
         public Gh625Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public Gh625Device() : base(new FitnessDevice_GH625()) { }
+
+        public override GlobalsatPacket PacketFactory { get { return new Gh625Packet(); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
             return new ImportJob_GH625(this, sourceDescription, monitor, importResults);
         }
+
         public IList<Gh625Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
             Int16[] tracks = new Int16[2];
 
-            byte[] getHeadersPacket = Gh625Packet.GetTrackFileHeaders();
-            byte[] data = SendPacket(Port, getHeadersPacket).PacketData;
-            return Gh625Packet.UnpackTrackHeaders(data);
+            GlobalsatPacket getHeadersPacket = new Gh625Packet().GetTrackFileHeaders();
+            Gh625Packet response = (Gh625Packet)SendPacket(getHeadersPacket);
+            return response.UnpackTrackHeaders();
         }
 
         public IList<Gh625Packet.TrackFileSection> ReadTracks(IList<Gh625Packet.TrackFileHeader> tracks, IJobMonitor monitor)
@@ -61,9 +64,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gh625Packet.TrackFileSection> trackSections = new List<Gh625Packet.TrackFileSection>();
-            byte[] getFilesPacket = Gh625Packet.GetTrackFileSections(trackIndexes);
-            byte[] getNextPacket = Gh625Packet.GetNextSection();
-            byte[] data = SendPacket(Port, getFilesPacket).PacketData;
+            GlobalsatPacket getFilesPacket = new Gh625Packet().GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = new Gh625Packet().GetNextSection();
+            Gh625Packet response = (Gh625Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
 
@@ -75,7 +78,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (numInCurrentTrain == 0)
                 {
                     // The section is a laps section (the first of the section)
-                    trackSection = Gh625Packet.UnpackTrackSectionLaps(data);
+                    trackSection = response.UnpackTrackSectionLaps();
                     if (trackSection != null)
                     {
                         numInCurrentTrain = trackSection.TrackPointCount;
@@ -85,7 +88,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 else
                 {
                     // The section is a GPS/HRM detail section
-                    trackSection = Gh625Packet.UnpackTrackSection(data);
+                    trackSection = response.UnpackTrackSection();
                     if (trackSection != null)
                     {
                         int pointsInThisSection = trackSection.EndPointIndex - trackSection.StartPointIndex + 1;
@@ -105,7 +108,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (trackSection != null)
                 {
                     trackSections.Add(trackSection);
-                    data = SendPacket(Port, getNextPacket).PacketData;
+                    response = (Gh625Packet)SendPacket(getNextPacket);
                 }
             } while (trackSection != null);
 

@@ -25,6 +25,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GhPacketBase
     {
+        //Public properties - Mostly response, send handles PacketData
+        public byte CommandId;
+        public Int16 PacketLength;
+        //PacketData contains the usefuldata, not everything to send
+        public byte[] PacketData;
+        //Only used when receiving - sending is only included in the sent data
+        public byte Checksum;
+
+        public GhPacketBase(byte CommandId, Int16 PacketLength)
+        {
+            this.CommandId = CommandId;
+            this.PacketLength = PacketLength;
+            this.PacketData = new byte[PacketLength];
+        }
+        public GhPacketBase()
+        {
+        }
+
         //The Gloabalsat specs does not explicitly write that the format is same for all
 
         public const byte CommandWhoAmI = 0xBF;
@@ -52,9 +70,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public const byte HeaderTypeLaps = 0xAA;
         public const byte HeaderTypeTrackPoints = 0x55;
 
-        public static byte ResponseInsuficientMemory = 0x95;
-        public static byte ResponseResendTrackSection = 0x92;
-        public static byte ResponseSendTrackFinish = 0x9A;
+        public const byte ResponseInsuficientMemory = 0x95;
+        public const byte ResponseResendTrackSection = 0x92;
+        public const byte ResponseSendTrackFinish = 0x9A;
 
         public class Header
         {
@@ -124,87 +142,47 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 Cadence; // Cadence, unknown units
         }
 
-        public class Response
+        public byte[] ConstructPayload()
         {
-            public byte CommandId;
-            public Int16 PacketLength;
-            public byte[] PacketData;
-            public byte Checksum;
-        }
-
-        public static byte SendPacketCommandId(byte[] packet)
-        {
-            return packet[3];
-        }
-
-        public static byte[] GetPacket(byte cmd, int len)
-        {
-            byte[] payload = new byte[len];
-            payload[0] = cmd;
-            return ConstructPayload(payload);
-        }
-
-        public static byte[] GetWhoAmI()
-        {
-            return GetPacket(CommandWhoAmI, 1);
-        }
-
-        public static byte[] GetSystemInformation()
-        {
-            return GetPacket(CommandGetSystemInformation, 1);
-        }
-
-        public static byte[] GetSystemConfiguration2()
-        {
-            return GetPacket(CommandGetSystemConfiguration, 1);
-        }
-
-        public static byte[] GetTrackFileHeaders()
-        {
-            return GetPacket(CommandGetTrackFileHeaders, 1);
-        }
-
-        public static byte[] GetNextSection()
-        {
-            return GetPacket(CommandGetNextSection, 1);
-        }
-
-        protected static byte[] ConstructPayload(byte[] payload)
-        {
-            Int16 payloadLen = (Int16)payload.Length;
-            byte[] payloadLenBytes = BitConverter.GetBytes(payloadLen);
-            byte hiPayloadLen = payloadLenBytes[1];
-            byte loPayloadLen = payloadLenBytes[0];
-            byte[] data = new byte[4 + payloadLen];
+            byte[] data = new byte[5 + this.PacketLength];
             data[0] = 0x02;
-            data[1] = hiPayloadLen;
-            data[2] = loPayloadLen;
-
-            for (int i = 0; i < payloadLen; i++)
+            //Add CommandId to length
+            Write(true, data, 1, (Int16)(this.PacketLength + 1));
+            data[3] = this.CommandId;
+            for (int i = 0; i < this.PacketLength; i++)
             {
-                data[3 + i] = payload[i];
+                data[4 + i] = this.PacketData[i];
             }
-            data[payloadLen + 3] = GetCrc(payloadLen, payload);
+            data[this.PacketLength + 4] = GetCrc(false);
             return data;
         }
 
-        protected static byte GetCrc(Int16 payLoadLen, byte[] payload)
+        private byte GetCrc(bool received)
         {
             byte checksum = 0;
 
-            byte[] b = BitConverter.GetBytes(payLoadLen);
+            int len = this.PacketLength;
+            if (!received)
+            {
+                len++;
+            }
+            byte[] b = BitConverter.GetBytes(len);
             checksum ^= b[0];
             checksum ^= b[1];
-            for (int i = 0; i < payload.Length; i++)
+            if (!received)
             {
-                checksum ^= payload[i];
+                checksum ^= this.CommandId;
+            }
+            for (int i = 0; i < this.PacketLength; i++)
+            {
+                checksum ^= this.PacketData[i];
             }
             return checksum;
         }
 
-        public static bool ValidResponseCrc(GhPacketBase.Response response)
+        public bool ValidResponseCrc()
         {
-            return (GetCrc(response.PacketLength, response.PacketData) == response.Checksum);
+            return (GetCrc(true) == this.Checksum);
         }
 
         /// <summary>
@@ -298,5 +276,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    data[offset + 2] = b[2];
         //    data[offset + 3] = b[3];
         //}
+
+        protected virtual bool endianFormat { get { return true; } }
     }
 }

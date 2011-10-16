@@ -157,7 +157,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
             }
-
         }
     }
 }

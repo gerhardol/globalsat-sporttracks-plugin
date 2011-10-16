@@ -27,10 +27,12 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gh505Device : GhDeviceBase
+    class Gh505Device : GlobalsatProtocol
     {
         public Gh505Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public Gh505Device() : base(new FitnessDevice_GH505()) { }
+
+        public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -41,9 +43,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
-            byte[] getHeadersPacket = Gh505Packet.GetTrackFileHeaders();
-            byte[] data = SendPacket(Port, getHeadersPacket).PacketData;
-            return Gh505Packet.UnpackTrackHeaders(data);
+            GlobalsatPacket getHeadersPacket = new Gh505Packet().GetTrackFileHeaders();
+            Gh505Packet response = (Gh505Packet)SendPacket(getHeadersPacket);
+            return response.UnpackTrackHeaders();
         }
 
         private enum ReadMode
@@ -67,9 +69,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gh505Packet.Train> trains = new List<Gh505Packet.Train>();
-            byte[] getFilesPacket = Gh505Packet.GetTrackFileSections(trackIndexes);
-            byte[] getNextPacket = Gh505Packet.GetNextSection();
-            GhPacketBase.Response response = SendPacket(Port, getFilesPacket);
+            GlobalsatPacket getFilesPacket = new Gh505Packet().GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = new Gh505Packet().GetNextSection();
+            Gh505Packet response = (Gh505Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
 
@@ -78,12 +80,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int pointsToRead = 0;
             while (response.CommandId != Gh505Packet.CommandId_FINISH)
             {
-                byte[] data = response.PacketData;
                 switch (readMode)
                 {
                     case ReadMode.Header:
                         {
-                            Gh505Packet.Train train = Gh505Packet.UnpackTrainHeader(data);
+                            Gh505Packet.Train train = response.UnpackTrainHeader();
                             if (train != null)
                             {
                                 trains.Add(train);
@@ -96,7 +97,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     case ReadMode.Laps:
                         {
                             Gh505Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<Gh505Packet.Lap> laps = Gh505Packet.UnpackLaps(data);
+                            IList<Gh505Packet.Lap> laps = response.UnpackLaps();
                             foreach (Gh505Packet.Lap lap in laps) currentTrain.Laps.Add(lap);
                             trainLapsToRead -= laps.Count;
                             if (trainLapsToRead == 0)
@@ -108,7 +109,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     case ReadMode.Points:
                         {
                             Gh505Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<GhPacketBase.TrackPoint2> points = Gh505Packet.UnpackTrackPoints(data);
+                            IList<GhPacketBase.TrackPoint2> points = response.UnpackTrackPoints();
                             foreach (GhPacketBase.TrackPoint2 point in points) currentTrain.TrackPoints.Add(point);
                             pointsToRead -= points.Count;
                             pointsRead += points.Count;
@@ -124,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
 
                 }
-                response = SendPacket(Port, getNextPacket);
+                response = (Gh505Packet)SendPacket(getNextPacket);
             }
 
             monitor.PercentComplete = 1;

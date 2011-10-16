@@ -52,6 +52,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             txtHoursOffset.Validated += new EventHandler(txtHoursOffset_Validated);
             btnOk.Click += new EventHandler(btnOk_Click);
             btnCancel.Click += new EventHandler(btnCancel_Click);
+            chkImportOnlyNew.Checked = configInfo.ImportOnlyNew;
+            this.txtHoursOffset.Text = configInfo.HoursAdjustment.ToString();
+            this.textBoxComPort.Text = configInfo.ComPortsText;
         }
 
         #region Public properties

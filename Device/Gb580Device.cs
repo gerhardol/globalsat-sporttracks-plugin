@@ -27,10 +27,12 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gb580Device : GhDeviceBase
+    class Gb580Device : GlobalsatProtocol
     {
         public Gb580Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public Gb580Device() : base (new FitnessDevice_GB580()) { }
+
+        public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -41,9 +43,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
-            byte[] getHeadersPacket = Gb580Packet.GetTrackFileHeaders();
-            byte[] data = SendPacket(Port, getHeadersPacket).PacketData;
-            return Gb580Packet.UnpackTrainHeaders(data);
+            GlobalsatPacket getHeadersPacket = new Gb580Packet().GetTrackFileHeaders();
+            Gb580Packet response = (Gb580Packet)SendPacket(getHeadersPacket);
+            return response.UnpackTrainHeaders();
         }
 
         private enum ReadMode
@@ -67,9 +69,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gb580Packet.Train> trains = new List<Gb580Packet.Train>();
-            byte[] getFilesPacket = Gb580Packet.GetTrackFileSections(trackIndexes);
-            byte[] getNextPacket = Gb580Packet.GetNextSection();
-            GhPacketBase.Response response = SendPacket(Port, getFilesPacket);
+            GlobalsatPacket getFilesPacket = new Gb580Packet().GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = new  Gb580Packet().GetNextSection();
+            Gb580Packet response = (Gb580Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
 
@@ -78,12 +80,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int pointsToRead = 0;
             while (response.CommandId != Gb580Packet.CommandId_FINISH)
             {
-                byte[] data = response.PacketData;
                 switch (readMode)
                 {
                     case ReadMode.Header:
                         {
-                            Gb580Packet.Train train = Gb580Packet.UnpackTrainHeader(data);
+                            Gb580Packet.Train train = response.UnpackTrainHeader();
                             if (train != null)
                             {
                                 trains.Add(train);
@@ -96,7 +97,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     case ReadMode.Laps:
                         {
                             Gb580Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<Gb580Packet.Lap> laps = Gb580Packet.UnpackLaps(data);
+                            IList<Gb580Packet.Lap> laps = response.UnpackLaps();
                             foreach (Gb580Packet.Lap lap in laps) currentTrain.Laps.Add(lap);
                             trainLapsToRead -= laps.Count;
                             if (trainLapsToRead == 0)
@@ -108,7 +109,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     case ReadMode.Points:
                         {
                             Gb580Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<GhPacketBase.TrackPoint3> points = Gb580Packet.UnpackTrackPoints(data);
+                            IList<GhPacketBase.TrackPoint3> points = response.UnpackTrackPoints();
                             foreach (GhPacketBase.TrackPoint3 point in points) currentTrain.TrackPoints.Add(point);
                             pointsToRead -= points.Count;
                             pointsRead += points.Count;
@@ -124,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
 
                 }
-                response = SendPacket(Port, getNextPacket);
+                response = (Gb580Packet)SendPacket(getNextPacket);
             }
 
             monitor.PercentComplete = 1;
