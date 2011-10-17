@@ -90,11 +90,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             get
             {
                 DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-				/* 
-				 * In order of relesed, maybe this should be reversed to be a little bit faster on the newer devices 
-				 * but it is a suboptimization this part of the code is fast enough, better to have it readable/understandable 
-				 */
-                info.AllowedIds = new List<string> {"GH-615","GH-625M", "GH-625B", "KM", "GH-50", "GB-580", "GH-625XT" };
                 info.BaudRates = new List<int> { 115200, 57600 };
                 return info;
             }
