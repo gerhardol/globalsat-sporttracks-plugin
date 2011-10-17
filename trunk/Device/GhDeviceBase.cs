@@ -88,7 +88,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string devId = GhPacketBase.ByteArr2String(response.PacketData, 0, 8);
                 if (!string.IsNullOrEmpty(devId))
                 {
-                    if (configInfo.AllowedIds == null)
+                    if (configInfo.AllowedIds == null || configInfo.AllowedIds.Count == 0)
                     {
                         res = devId;
                     }
