@@ -145,13 +145,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             received.PacketData = new byte[received.PacketLength];
+            byte checksum;
             try
             {
                 for (Int16 b = 0; b < received.PacketLength; b++)
                 {
                     received.PacketData[b] = (byte)port.ReadByte();
                 }
-                received.Checksum = (byte)port.ReadByte();
+                checksum = (byte)port.ReadByte();
             }
             catch(Exception e)
             {
@@ -159,7 +160,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw e;
             }
             port.Close();
-            if (!received.ValidResponseCrc())
+            if (!received.ValidResponseCrc(checksum))
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }

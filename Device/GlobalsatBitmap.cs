@@ -19,11 +19,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatBitmap
     {
-        public static Bitmap GetBitmap625(byte[] binData)
+        public static Bitmap GetBitmap(int bpp, System.Drawing.Size size, byte[] binData)
         {
-            int width = 120;
-            int height = 80;
+            if (bpp == 1)
+            {
+                return GetBitmapBpp0(size.Width, size.Height, binData);
+            }
+            else{
+                return GetBitmapBpp2(size.Width, size.Height, binData);
+            }
+        }
 
+        protected static Bitmap GetBitmapBpp0(int width, int height, byte[] binData)
+        {
             int i = 0;
             bool[,] matrix = new bool[width, height];
 
@@ -43,93 +51,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return bmp;
         }
 
-        //Same as GH505? merge
-        public static Bitmap GetBitmapGH625XT(byte[] binData)
+        //GH625 same as GH561
+        protected static Bitmap GetBitmapBpp2(int width, int height, byte[] binData)
         {
-            int width = 128;
-            int height = 96;
-            int bpp = 2;
-
-            int i = 0;
-            float[,] matrix = new float[width, height];
-
-            // each row is a byte
-            int nrRows = (int)Math.Ceiling((double)height / 8.0);
-            int nrCols = (int)Math.Ceiling((double)width / 8.0);
-            nrCols *= bpp;
-
-            for (int row = 0; row < height; row++)
-            {
-                for (int col = 0; col < nrCols; col++)
-                {
-
-                    SetBytePixelGray(matrix, row, col, binData[i], bpp);
-                    i++;
-                }
-            }
-
-            Bitmap bmp = Matrix2BitmapGray(matrix);
-
-            return bmp;
-        }
-        public static Bitmap GetBitmapGH505(byte[] binData)
-        {
-            int width = 128;
-            int height = 96;
-
-            int i = 0;
-            bool[,] matrix = new bool[width, height];
-
-            // each row is a byte
-            int nrRows = (int)Math.Ceiling((double)height / 8.0);
-            for (int col = 0; col < width; col++)
-            {
-                for (int row = 0; row < nrRows; row++)
-                {
-                    SetBytePixels(matrix, row, col, binData[i]);
-                    i++;
-                }
-            }
-
-            Bitmap bmp = Matrix2Bitmap(matrix);
-
-            return bmp;
-        }
-
-
-        public static Bitmap GetBitmapGH561(byte[] binData)
-        {
-            int width = 128;
-            int height = 96;
-            int bpp = 2;
-            
-            int i = 0;
-            float[,] matrix = new float[width, height];
-
-            // each row is a byte
-            int nrRows = (int)Math.Ceiling((double)height / 8.0);
-            int nrCols = (int)Math.Ceiling((double)width / 8.0);
-            nrCols *= bpp;
-
-            for (int row = 0; row < height; row++)
-            {
-                for (int col = 0; col < nrCols; col++)
-                {
-                
-                    SetBytePixelGray(matrix, row, col, binData[i], bpp);
-                    i++;
-                }
-            }
-
-            Bitmap bmp = Matrix2BitmapGray(matrix);
-            
-            return bmp;
-        }
-
-        public static Bitmap GetBitmapGB580(byte[] binData)
-        {
-            int width = 128;
-            int height = 128;
             int bpp = 2;
 
             int i = 0;

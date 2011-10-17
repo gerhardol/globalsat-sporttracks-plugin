@@ -156,5 +156,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         protected override bool endianFormat { get { return false; } } //little endian
+        protected override int ScreenBpp { get { return 1; } }
     }
 }

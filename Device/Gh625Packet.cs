@@ -138,5 +138,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return new Gh625XTPacket().ResponseWaypoints(); //xxx
         }
+        protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
+        protected override int ScreenBpp { get { return 1; } }
     }
 }

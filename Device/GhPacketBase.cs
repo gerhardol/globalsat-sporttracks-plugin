@@ -31,7 +31,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //PacketData contains the usefuldata, not everything to send
         public byte[] PacketData;
         //Only used when receiving - sending is only included in the sent data
-        public byte Checksum;
+        //Not stored now
+        //public byte Checksum;
 
         public GhPacketBase(byte CommandId, Int16 PacketLength)
         {
@@ -184,9 +185,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return checksum;
         }
 
-        public bool ValidResponseCrc()
+        public bool ValidResponseCrc(byte checksum)
         {
-            return (GetCrc(true) == this.Checksum);
+            return (GetCrc(true) == checksum);
         }
 
         /// <summary>
@@ -283,5 +284,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //bigEndian: true, littleEndian: false
         protected virtual bool endianFormat { get { return true; } }
+        protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
+        protected virtual int ScreenBpp { get { return 2; } }
     }
 }
