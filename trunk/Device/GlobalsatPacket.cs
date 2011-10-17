@@ -23,6 +23,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private static string InvalidOperation = "Invalid Operation";
 
+        //Implemented in DeviceBase
         //public GlobalsatPacket GetWhoAmI()
         //{
         //    return new GlobalsatPacket(CommandWhoAmI);
@@ -60,32 +61,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return packet;
         }
 
+        public GlobalsatPacket GetScreenshot()
+        {
+            return new GlobalsatPacket(CommandGetScreenshot);
+        }
+
         //public virtual GlobalsatPacket GetDeviceIdentification() { throw new Exception(InvalidOperation); }
         //public abstract GlobalsatPacket GetSystemInformation();
         //public abstract GlobalsatPacket GetSystemConfiguration();
         //public abstract GlobalsatPacket GetWaypoints();
         //public abstract GlobalsatPacket DeleteAllWaypoints();
+        public virtual GlobalsatProtocol.GlobalsatSystemInformation ResponseSystemInformation() { throw new Exception(InvalidOperation); }
         public virtual IList<GlobalsatWaypoint> ResponseWaypoints()
         {
             return new List<GlobalsatWaypoint>();
         }
         public virtual int GetSentWaypoints()
         {
-            int nrSentWaypoints = 0;
-
-            try
-            {
-                //Always bigendian?
-                nrSentWaypoints = this.ReadInt16(0);
-            }
-            catch { }
+            //TODO: Size check
+            int nrSentWaypoints = this.ReadInt16(0);
 
             return nrSentWaypoints;
         }
         public virtual GlobalsatPacket DeleteAllWaypoints()
         {
             GlobalsatPacket packet = new GlobalsatPacket(CommandDeleteWaypoints, 2);
-            packet.Write(0, 100);
+            packet.Write(0, (Int16)100);
             return packet;
         }
 
@@ -127,10 +128,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual GlobalsatPacket DeleteWaypoints(List<string> waypointNames) { throw new Exception(InvalidOperation); }
         public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual GlobalsatPacket SetSystemConfiguration(byte[] data) { throw new Exception(InvalidOperation); }
-
-
         public virtual List<GlobalsatPacket> SendTrack(IGPSRoute gpsRoute) { throw new Exception(InvalidOperation); }
 
-        public virtual GlobalsatPacket GetScreenshot() { throw new Exception(InvalidOperation); }
+        public virtual System.Drawing.Bitmap ResponseScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.PacketData); }
     }
 }

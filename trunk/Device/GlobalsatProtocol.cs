@@ -26,6 +26,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GlobalsatProtocol(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GlobalsatProtocol(FitnessDevice_Globalsat fitDev) : base(fitDev) { }
 
+        //The device creating the packet, used by Send()
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
 
         //Import kept in separate structure
@@ -34,140 +35,190 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        //public void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker)
-        //{
-        //    if (worker.CancellationPending)
-        //    {
-        //        return;
-        //    }
+        public void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker)
+        {
+            if (worker.CancellationPending)
+            {
+                return;
+            }
 
-        //    this.Open();
-        //    try
-        //    {
-        //        List<GlobalsatPacket> packets = _packetFactory.SendTrack(gpsRoute);
+            this.Open();
+            try
+            {
+                List<GlobalsatPacket> packets = PacketFactory.SendTrack(gpsRoute);
 
-        //        int i = 0;
-        //        foreach (GlobalsatPacket packet in packets)
-        //        {
-        //            GlobalsatPacket response = null;
-        //            int nrAttempts = 0;
+                int i = 0;
+                foreach (GlobalsatPacket packet in packets)
+                {
+                    GlobalsatPacket response = null;
+                    int nrAttempts = 0;
 
-        //            do
-        //            {
-                        
-        //                try
-        //                {
-        //                    response = this.SendPacket(packet);
-        //                    break;
-        //                }
-        //                catch(Exception ex1)
-        //                {
-        //                    nrAttempts++;
-        //                    if (nrAttempts >= 3)
-        //                    {
-        //                        throw ex1;
-        //                    }
-        //                }
+                    do
+                    {
 
-        //            }
-        //            while (nrAttempts < 3);
+                        try
+                        {
+                            response = (GlobalsatPacket)this.SendPacket(packet);
+                            break;
+                        }
+                        catch (Exception ex1)
+                        {
+                            nrAttempts++;
+                            if (nrAttempts >= 3)
+                            {
+                                throw ex1;
+                            }
+                        }
 
-        //            if (response != null && response.CommandId != packet.PacketCommandId)
-        //            {
-        //                if (response.CommandId == GhPacketBase.ResponseInsuficientMemory)
-        //                {
-        //                    throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
-        //                }
-        //                if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
-        //                {
-        //                    // TODO resend
-        //                    throw new Exception(Properties.Resources.Device_SendTrack_Error);
-        //                }
-        //                else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
-        //                {
-        //                    return;
-        //                }
-        //                else
-        //                {
-        //                    throw new Exception(Properties.Resources.Device_SendTrack_Error);
-        //                }
-        //            }
+                    }
+                    while (nrAttempts < 3);
 
-        //            device.Port.Close();
-        //            device.Port.Open();
+                    if (response != null)
+                    {
+                        if (response.CommandId == GhPacketBase.ResponseInsuficientMemory)
+                        {
+                            //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
+                        }
+                        else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                        {
+                            // TODO resend
+                            //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                        }
+                        else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                        }
+                        //TODO:
+                        throw new Exception("Send track error" + response.CommandId);
+                    }
 
-                    
-        //            i++;
-        //            double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
+                    this.Port.Close();
+                    this.Port.Open();
 
-        //            worker.ReportProgress((int)progress);
+                    i++;
+                    double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
 
+                    worker.ReportProgress((int)progress);
 
-        //            if (worker.CancellationPending)
-        //            {
-        //                return;
-        //            }
-
-        //        }
-                
-
-        //        // should not reach here if finish ack was received
-        //        //throw new Exception(Properties.Resources.Device_SendTrack_Error);
-        //    }
-        //    catch(Exception ex)
-        //    {
-        //        //TODO: popup instead of exception
-        //        throw ex;
-        //        //throw new Exception(Properties.Resources.Device_SendTrack_Error);
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+                    if (worker.CancellationPending)
+                    {
+                        return;
+                    }
+                }
+                // should not reach here if finish ack was received
+                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+            }
+            catch (Exception ex)
+            {
+                //TODO: popup instead of exception
+                throw ex;
+                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
 
 
-        //public void SendRoute(GlobalsatRoute route)
-        //{
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = _packetFactory.SendRoute(route);
-        //        GlobalsatPacket response = device.SendPacket(packet);
+        public void SendRoute(GlobalsatRoute route)
+        {
+            this.Open();
+            try
+            {
+                GlobalsatPacket packet = PacketFactory.SendRoute(route);
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+            }
+            catch
+            {
+                //throw new Exception(Properties.Resources.Device_SendRoute_Error);
+                throw;
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
 
-        //    }
-        //    catch
-        //    {
-        //        //throw new Exception(Properties.Resources.Device_SendRoute_Error);
-        //        throw;
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+        public GlobalsatSystemInformation GetSystemInformation()
+        {
+            this.Open();
+            try
+            {
+                GlobalsatPacket packet = PacketFactory.GetSystemInformation();
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-        //public GlobalsatSystemInformation GetSystemInformation()
-        //{
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = GhPacketBase.GetSystemInformation();
-        //        GlobalsatPacket response = device.SendPacket(packet);
+                GlobalsatSystemInformation systemInfo = response.ResponseSystemInformation();
+                return systemInfo;
+            }
+            catch
+            {
+                throw;
+                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
 
-        //        GlobalsatSystemInformation systemInfo = response.GetSystemInformation();
-        //        return systemInfo;
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //        throw new Exception(Properties.Resources.Device_GetInfo_Error);
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+        public GlobalsatDeviceConfiguration GetDeviceConfigurationData()
+        {
+            GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
+
+            this.Open();
+            try
+            {
+                GlobalsatPacket packet = PacketFactory.GetSystemInformation();
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+
+                GlobalsatSystemInformation systemInfo = response.ResponseSystemInformation();
+                devConfig.DeviceName = systemInfo.DeviceName;
+                //devConfig.SystemInfoData = response.PacketData;
+
+                packet = PacketFactory.GetSystemConfiguration2();
+                response = (GlobalsatPacket)this.SendPacket(packet);
+
+                devConfig.SystemConfigData = response.PacketData;
+                return devConfig;
+            }
+            catch
+            {
+                throw;
+                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
+
+
+
+        public void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig)
+        {
+
+            this.Open();
+            try
+            {
+                GlobalsatPacket packet = PacketFactory.SetSystemConfiguration(devConfig.SystemConfigData);
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+
+            }
+            catch
+            {
+                throw;
+                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
 
         public IList<GlobalsatWaypoint> GetWaypoints()
         {
@@ -191,6 +242,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.Close();
             }
         }
+
         public int SendWaypoints(List<GlobalsatWaypoint> waypoints)
         {
             this.Open();
@@ -251,107 +303,85 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        //public void GetSystemConfiguration()
-        //{
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = _packetFactory.GetSystemConfiguration();
-        //        GlobalsatPacket response = this.SendPacket(packet);
+        public Bitmap GetScreenshot()
+        {
 
-        //        GlobalsatSystemConfiguration systemConfig = response.GetSystemConfiguration();
+            this.Open();
+            try
+            {
+                GlobalsatPacket packet = PacketFactory.GetScreenshot();
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                return response.ResponseScreenshot();
+            }
+            catch
+            {
+                throw;
+                throw new Exception(""); // TODO create message  Properties.Resources.Device_GetInfo_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
 
-        //        //return systemInfo;
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //        throw new Exception("Error getting device config");
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+        public class GlobalsatSystemInformation
+        {
 
-        //public GlobalsatDeviceConfiguration GetDeviceConfigurationData()
-        //{
-        //    GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
+            public string UserName;
+            public bool IsFemale;
+            public int Age;
+            public int WeightPounds;
+            public int WeightKg;
+            public int HeightInches;
+            public int HeightCm;
+            public DateTime BirthDate;
 
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = _packetFactory.GetSystemInformation();
-        //        GlobalsatPacket response = this.SendPacket(packet);
-
-        //        GlobalsatSystemInformation systemInfo = response.GetSystemInformation();
-        //        devConfig.DeviceName = systemInfo.DeviceName;
-        //        //devConfig.SystemInfoData = response.PacketData;
-
-
-        //        packet = _packetFactory.GetSystemConfiguration();
-        //        response = this.SendPacket(packet);
-
-        //        devConfig.SystemConfigData = response.PacketData;
-
-
-        //        return devConfig;
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //        throw new Exception(Properties.Resources.Device_GetInfo_Error);
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+            public string DeviceName;
+            public double Version;
+            public string Firmware;
+            public int WaypointCount;
+            public int TrackpointCount;
+            public int ManualRouteCount;
+            public int PcRouteCount;
 
 
 
-        //public void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig)
-        //{
-            
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = _packetFactory.SetSystemConfiguration(devConfig.SystemConfigData);
-        //        this.SendPacket(packet);
-               
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //        throw new Exception(Properties.Resources.Device_GetInfo_Error);
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+            public GlobalsatSystemInformation(string deviceName, double version, string firmware,
+                string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
+                int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
+            {
+                this.UserName = userName;
+                this.IsFemale = isFemale;
+                this.Age = age;
+                this.WeightPounds = weightPounds;
+                this.WeightKg = weightKg;
+                this.HeightInches = heightInches;
+                this.HeightCm = heightCm;
+                this.BirthDate = birthDate;
+                this.DeviceName = deviceName;
+                this.Version = version;
+                this.Firmware = firmware;
+                this.WaypointCount = waypointCount;
+                this.TrackpointCount = trackpointCount;
+                this.ManualRouteCount = manualRouteCount;
+                this.PcRouteCount = pcRouteCount;
+            }
 
 
 
-        //public Bitmap GetScreenshot()
-        //{
+            public GlobalsatSystemInformation(string deviceName, string firmware,
+                int waypointCount, int pcRouteCount)
+            {
+                this.DeviceName = deviceName;
+                this.Firmware = firmware;
+                this.WaypointCount = waypointCount;
+                this.PcRouteCount = pcRouteCount;
+            }
+        }
 
-        //    this.Open();
-        //    try
-        //    {
-        //        GlobalsatPacket packet = _packetFactory.GetScreenshot();
-        //        GlobalsatPacket response = this.SendPacket(packet);
-        //        return response.GetScreenshot();
-        //    }
-        //    catch
-        //    {
-        //        throw;
-        //        throw new Exception(""); // TODO create message  Properties.Resources.Device_GetInfo_Error);
-        //    }
-        //    finally
-        //    {
-        //        this.Close();
-        //    }
-        //}
+        public class GlobalsatDeviceConfiguration {
+            public string DeviceName;
+            public byte[] SystemConfigData;
+        }
     }
 }
