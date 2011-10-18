@@ -51,7 +51,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return bmp;
         }
 
-        //GH625 same as GH561
         protected static Bitmap GetBitmapBpp2(int width, int height, byte[] binData)
         {
             int bpp = 2;

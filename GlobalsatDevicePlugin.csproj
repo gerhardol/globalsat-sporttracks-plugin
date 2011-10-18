@@ -12,10 +12,13 @@
   <ItemGroup>
     <Compile Include="Data\GlobalsatRoute.cs" />
     <Compile Include="Data\GlobalsatWaypoint.cs" />
+    <Compile Include="Device\Gh561Device.cs" />
+    <Compile Include="Device\Gh561XTPacket.cs" />
     <Compile Include="Device\GenericDevice.cs" />
     <Compile Include="Device\GlobalsatBitmap.cs" />
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
+    <Compile Include="Import\FitnessDevice_GH561.cs" />
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
     <Compile Include="Import\ImportJob_Globalsat.cs" />
     <Compile Include="Plugin.cs" />
