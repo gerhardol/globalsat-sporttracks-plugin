@@ -35,7 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        public void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker)
+        public virtual void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker)
         {
             if (worker.CancellationPending)
             {
@@ -125,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        public void SendRoute(GlobalsatRoute route)
+        public virtual void SendRoute(GlobalsatRoute route)
         {
             this.Open();
             try
@@ -144,7 +144,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public GlobalsatSystemInformation GetSystemInformation()
+        public virtual GlobalsatSystemInformation GetSystemInformation()
         {
             this.Open();
             try
@@ -166,7 +166,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public GlobalsatDeviceConfiguration GetDeviceConfigurationData()
+        public virtual GlobalsatDeviceConfiguration GetDeviceConfigurationData()
         {
             GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
 
@@ -197,9 +197,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-
-
-        public void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig)
+        public virtual void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig)
         {
 
             this.Open();
@@ -220,7 +218,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public IList<GlobalsatWaypoint> GetWaypoints()
+        public virtual IList<GlobalsatWaypoint> GetWaypoints()
         {
 
             this.Open();
@@ -243,7 +241,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public int SendWaypoints(List<GlobalsatWaypoint> waypoints)
+        public virtual int SendWaypoints(List<GlobalsatWaypoint> waypoints)
         {
             this.Open();
             try
@@ -264,7 +262,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public void DeleteWaypoints(IList<string> waypointNames)
+        public virtual void DeleteWaypoints(IList<string> waypointNames)
         {
             this.Open();
             try
@@ -284,7 +282,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        public void DeleteAllWaypoints()
+        public virtual void DeleteAllWaypoints()
         {
             this.Open();
             try
@@ -303,7 +301,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public Bitmap GetScreenshot()
+        public virtual Bitmap GetScreenshot()
         {
 
             this.Open();
