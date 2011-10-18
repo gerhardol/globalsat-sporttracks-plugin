@@ -75,7 +75,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GenericDevice device = new GenericDevice(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
             if (device.Device() != null)
             {
-                ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
+                ImportJob job = device.Device().ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
                 if (job == null)
                 {
                     return false;
