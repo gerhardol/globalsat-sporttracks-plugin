@@ -54,6 +54,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             if (devId.StartsWith(s))
                             {
                                 g.CopyPort(this);
+                                //Copy settings from generic
+                                g.configInfo.HoursAdjustment = this.configInfo.HoursAdjustment;
+                                g.configInfo.ImportOnlyNew = this.configInfo.ImportOnlyNew;
                                 device = g;
                                 return g;
                             }
