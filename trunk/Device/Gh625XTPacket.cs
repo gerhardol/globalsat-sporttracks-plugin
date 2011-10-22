@@ -178,7 +178,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public int LocationLength { get { return 18; } }
 
-        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
             int nrWaypoints = PacketLength / LocationLength;
             IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);

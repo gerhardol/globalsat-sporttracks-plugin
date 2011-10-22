@@ -132,9 +132,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.LapCount = ReadInt16(offset + 16);
         }
 
-        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
-            return new Gh505Packet().ResponseWaypoints(); //xxx
+            return new Gh505Packet().ResponseGetWaypoints(); //xxx
         }
 
         protected override bool endianFormat { get { return false; } } //little endian

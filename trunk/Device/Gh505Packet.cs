@@ -33,11 +33,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public class Train : Header
         {
             public Int16 TotalCalories;
-            public double MaximumSpeed;
+            //public double MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-        //    public Int16 StartPointIndex;
-        //    public Int16 EndPointIndex;
+            //public Int16 StartPointIndex;
+            //public Int16 EndPointIndex;
             public IList<TrackPoint2> TrackPoints = new List<TrackPoint2>();
             public IList<Lap> Laps = new List<Lap>();
         }
@@ -130,7 +130,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public int LocationLength { get { return 20; } }
-        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
             int nrWaypoints = PacketLength / 20;
             IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
