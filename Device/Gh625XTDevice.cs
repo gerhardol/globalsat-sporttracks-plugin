@@ -41,7 +41,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public IList<Gh625XTPacket.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
         {
-            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+            monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, CommonResources.Text.LabelActivity);
 
             GlobalsatPacket getHeadersPacket = new Gh625XTPacket().GetTrackFileHeaders();
             Gh625XTPacket response = (Gh625XTPacket)SendPacket(getHeadersPacket);
