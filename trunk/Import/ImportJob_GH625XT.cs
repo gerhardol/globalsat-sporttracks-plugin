@@ -58,10 +58,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         headersByStart[start].Add(header);
                     }
+                    DateTime now = DateTime.UtcNow;
                     foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                     {
                         DateTime findTime = activity.StartTime;
-                        if (headersByStart.ContainsKey(findTime) /*&& (DateTime.Now-findTime).TotalDays > 1*/)
+                        if (headersByStart.ContainsKey(findTime) && (now-findTime).TotalSeconds > device.configInfo.SecondsAlwaysImport)
                         {
                             headersByStart.Remove(findTime);
                         }
@@ -147,7 +148,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     lap.AverageCadencePerMinute = lapPacket.AverageCadence;
                     lap.AveragePowerWatts = lapPacket.AveragePower;
                     //TODO: Localise outputs?
-                    lap.Notes = string.Format("MaxSpeed{0:0.##}m/s MaxHr={1} MinAlt={2}m MaxAlt={3}m",
+                    lap.Notes = string.Format("MaxSpeed:{0:0.##}m/s MaxHr:{1} MinAlt:{2}m MaxAlt:{3}m",
                         lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude);
                     //Not adding Power/Cadence - not available
                     //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",

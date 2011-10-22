@@ -41,7 +41,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 configInfo.ImportOnlyNew = parts[1] == "1";
                                 break;
                             case "hr":
-                                configInfo.HoursAdjustment = int.Parse(parts[1]);
+                                configInfo.HoursAdjustment = float.Parse(parts[1]);
+                                break;
+                            case "SecondsAlwaysImport":
+                                configInfo.SecondsAlwaysImport = int.Parse(parts[1]);
                                 break;
                             case "comports":
                                 configInfo.ComPortsText = parts[1];
@@ -67,6 +70,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return "newonly=" + (ImportOnlyNew ? "1" : "0") +
                 ";hr=" + HoursAdjustment.ToString() +
+                ";SecondsAlwaysImport=" + SecondsAlwaysImport.ToString() +
                 ";comports=" + this.ComPortsText +
                 ";baudrates=" + this.BaudRatesText +
                 ";allowedids=" + this.AllowedIdsText;
@@ -77,7 +81,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public IList<int> BaudRates = new List<int> { 115200 };
         public IList<string> AllowedIds = null;
         public bool ImportOnlyNew = true;
-        public int HoursAdjustment = 0;
+        public int SecondsAlwaysImport = 0;
+        public float HoursAdjustment = 0;
         public IList<string> ComPorts = null;
         public string ComPortsText
         {
