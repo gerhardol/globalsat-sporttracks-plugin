@@ -90,29 +90,36 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public TimeSpan LapTime;
             public Int32 LapDistanceMeters;
             public Int16 LapCalories;
-            public Int32 MaximumSpeed; //Int16 for some devices
+            public double MaximumSpeed; //Int16 for some devices
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
+            public Int16 MinimumAltitude;
+            public Int16 MaximumAltitude;
+            public Int16 AverageCadence;
+            public Int16 MaximumCadence;
+            public Int16 AveragePower;
+            public Int16 MaximumPower;
+            //public bool Multisport;
             //    public Int16 StartPointIndex;
             //    public Int16 EndPointIndex;
         }
 
         public class TrackPoint
         {
-            public Int32 Latitude; // Degrees * 1000000
-            public Int32 Longitude; // Degrees * 1000000
+            public double Latitude; //4bit, Degrees * 1000000
+            public double Longitude; //4bit, Degrees * 1000000
             public Int16 Altitude; // Meters
-            public Int16 Speed; // Kilometers per hour * 100
+            public double Speed; //2bit, Kilometers per hour * 100
             public Byte HeartRate;
             public Int16 IntervalTime; // Seconds * 10
         }
 
         public class TrackPoint2
         {
-            public Int32 Latitude; // Degrees * 1000000
-            public Int32 Longitude; // Degrees * 1000000
+            public double Latitude; //4bit, Degrees * 1000000
+            public double Longitude; //4bit, Degrees * 1000000
             public Int16 Altitude; // Meters
-            public Int16 Speed; // Kilometers per hour * 100
+            public double Speed; //2bit, Kilometers per hour * 100
             public Byte HeartRate;
             public Int32 IntervalTime; // Seconds * 10
             public Int16 Power; // Power, unknown units
@@ -121,10 +128,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public class TrackPoint3
         {
-            public Int32 Latitude; // Degrees * 1000000
-            public Int32 Longitude; // Degrees * 1000000
+            public double Latitude; //4bit, Degrees * 1000000
+            public double Longitude; //4bit, Degrees * 1000000
             public Int32 Altitude; // Meters
-            public Int16 Speed; // Kilometers per hour * 100
+            public double Speed; //2bit, Kilometers per hour * 100
             public Byte HeartRate;
             public Int32 IntervalTime; // Seconds * 10
             public Int16 Power; // Power, unknown units
@@ -133,13 +140,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public class TrackPoint4
         {
-            public Int32 Latitude; // Degrees * 1000000
-            public Int32 Longitude; // Degrees * 1000000
+            public double Latitude; //4bit, Degrees * 1000000
+            public double Longitude; //4bit, Degrees * 1000000
             public Int16 Altitude; // Meters
-            public Int32 Speed; // Kilometers per hour * 100
+            public double Speed; //4bit, Kilometers per hour * 100
             public Byte HeartRate;
             public Int32 IntervalTime; // Seconds * 10
             public Int16 Power; // Power, unknown units
+            //public Int16 PowerCadence; // unknown units
             public Int16 Cadence; // Cadence, unknown units
         }
 

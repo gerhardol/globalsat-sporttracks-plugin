@@ -115,11 +115,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
 
                     // TODO: How are GPS points indicated in indoor activities?
-                    float latitude = (float)((double)point.Latitude / 1000000);
-                    float longitude = (float)((double)point.Longitude / 1000000);
-                    float elevation = point.Altitude;
-                    activity.GPSRoute.Add(pointTime, new GPSPoint(latitude, longitude, elevation));
-
+                    activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
+                    
                     if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude || point.Altitude != train.TrackPoints[0].Altitude) foundGPSPoint = true;
 
                     activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);

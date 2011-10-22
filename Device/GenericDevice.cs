@@ -33,7 +33,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
 
-        /* Autodetect device */
+        /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device()
         {
             string devId = null;
@@ -53,7 +53,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 //Copy settings from generic
                                 g.configInfo.HoursAdjustment = this.configInfo.HoursAdjustment;
                                 g.configInfo.ImportOnlyNew = this.configInfo.ImportOnlyNew;
-                                device = g;
                                 return g;
                             }
                         }
@@ -62,7 +61,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             return null;
         }
-
-        GlobalsatProtocol device = null;
     }
 }

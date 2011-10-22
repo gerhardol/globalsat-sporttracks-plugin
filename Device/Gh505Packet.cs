@@ -33,7 +33,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public class Train : Header
         {
             public Int16 TotalCalories;
-            public Int16 MaximumSpeed;
+            public double MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
         //    public Int16 StartPointIndex;
@@ -64,7 +64,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Train train = new Train();
             ReadHeader(train, 0);
             train.TotalCalories = ReadInt16(24);
-            train.MaximumSpeed = ReadInt16(26);
+            //train.MaximumSpeed = ReadInt16(26) / 3.6 / 100;
             train.MaximumHeartRate = this.PacketData[28];
             train.AverageHeartRate = this.PacketData[29];
             return train;
@@ -85,7 +85,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 4)) / 10);
                 lap.LapDistanceMeters = ReadInt32(offset + 8);
                 lap.LapCalories = ReadInt16(offset + 12);
-                lap.MaximumSpeed = ReadInt16(offset + 14);
+                lap.MaximumSpeed = ReadInt16(offset + 14) / 3.6 / 100;
                 lap.MaximumHeartRate = this.PacketData[offset + 16];
                 lap.AverageHeartRate = this.PacketData[offset + 17];
                 //lap.StartPointIndex = ReadInt16(18);
@@ -106,10 +106,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             while (offset < this.PacketLength)
             {
                 TrackPoint2 point = new TrackPoint2();
-                point.Latitude = ReadInt32(offset);
-                point.Longitude = ReadInt32(offset + 4);
+                point.Latitude = (double)ReadInt32(offset) / 1000000;
+                point.Longitude = (double)ReadInt32(offset + 4) / 1000000;
                 point.Altitude = ReadInt16(offset + 8);
-                point.Speed = ReadInt16(offset + 10);
+                point.Speed = ReadInt16(offset + 10) / 3.6 / 100;
                 point.HeartRate = this.PacketData[offset + 12];
                 point.IntervalTime = ReadInt32(offset + 16);
                 point.Cadence = ReadInt16(offset + 20);
@@ -143,10 +143,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 int iconNr = (int)PacketData[index + 7];
                 short altitude = ReadInt16(index + 8);
                 // 10-11 ?
-                int latitudeInt = ReadInt32(index + 12);
-                int longitudeInt = ReadInt32(index + 16);
-                double latitude = (double)latitudeInt / 1000000.0;
-                double longitude = (double)longitudeInt / 1000000.0;
+                double latitude = (double)ReadInt32(index + 12) / 1000000.0;
+                double longitude = (double)ReadInt32(index + 16) / 1000000.0;
 
                 GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
                 waypoints.Add(waypoint);

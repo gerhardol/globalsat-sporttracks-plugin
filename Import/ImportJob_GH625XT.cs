@@ -61,7 +61,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                     {
                         DateTime findTime = activity.StartTime;
-                        if (headersByStart.ContainsKey(findTime))
+                        if (headersByStart.ContainsKey(findTime) /*&& (DateTime.Now-findTime).TotalDays > 1*/)
                         {
                             headersByStart.Remove(findTime);
                         }
@@ -96,8 +96,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.TotalTimeEntered = train.TotalTime;
                 activity.TotalDistanceMetersEntered = train.TotalDistanceMeters;
                 activity.TotalCalories = train.TotalCalories;
+                activity.MaximumHeartRatePerMinuteEntered = train.MaximumHeartRate;
                 activity.AverageHeartRatePerMinuteEntered = train.AverageHeartRate;
-                activity.MaximumCadencePerMinuteEntered = train.MaximumHeartRate;
+                activity.MaximumCadencePerMinuteEntered = train.MaximumCadence;
+                activity.AverageCadencePerMinuteEntered = train.AverageCadence;
+                activity.MaximumPowerWattsEntered = train.MaximumPower;
+                activity.AveragePowerWattsEntered = train.AveragePower;
+                activity.TotalAscendMetersEntered = train.TotalAscend;
+                activity.TotalDescendMetersEntered = train.TotalDescend;
 
                 bool foundGPSPoint = false;
                 bool foundHrPoint = false;
@@ -112,14 +118,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 DateTime pointTime = activity.StartTime;                
                 foreach (GhPacketBase.TrackPoint4 point in train.TrackPoints)
                 {
+                    //Note: There may be points witin the same second, the second point will then overwrite the first
                     pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
 
                     // TODO: How are GPS points indicated in indoor activities?
-                    float latitude = (float)((double)point.Latitude / 1000000);
-                    float longitude = (float)((double)point.Longitude / 1000000);
-                    float elevation = point.Altitude;
-                    activity.GPSRoute.Add(pointTime, new GPSPoint(latitude, longitude, elevation));
-
+                    //It seems like all are the same
+                    activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
+                    
                     if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude || point.Altitude != train.TrackPoints[0].Altitude) foundGPSPoint = true;
 
                     activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
@@ -139,6 +144,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     lap.TotalDistanceMeters = lapPacket.LapDistanceMeters;
                     lap.TotalCalories = lapPacket.LapCalories;
                     lap.AverageHeartRatePerMinute = lapPacket.AverageHeartRate;
+                    lap.AverageCadencePerMinute = lapPacket.AverageCadence;
+                    lap.AveragePowerWatts = lapPacket.AveragePower;
+                    //TODO: Localise outputs?
+                    lap.Notes = string.Format("MaxSpeed{0:0.##}m/s MaxHr={1} MinAlt={2}m MaxAlt={3}m",
+                        lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude);
+                    //Not adding Power/Cadence - not available
+                    //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",
+                    //    lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude, lapPacket.MaximumCadence, lapPacket.MaximumPower);
                     lapTime = lapTime.Add(lapPacket.LapTime);
                 }
 
