@@ -134,9 +134,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.AverageHeartRate = this.PacketData[offset + 20];
         }
 
-        public override IList<GlobalsatWaypoint> ResponseWaypoints()
+        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
-            return new Gh625XTPacket().ResponseWaypoints(); //xxx
+            return new Gh625XTPacket().ResponseGetWaypoints(); //xxx
         }
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
         protected override int ScreenBpp { get { return 1; } }

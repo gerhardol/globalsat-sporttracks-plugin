@@ -14,13 +14,13 @@ using System.Drawing;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class GlobalsatWaypoint :IComparable
+    public class GlobalsatWaypoint :IComparable, GlobalsatDevicePlugin.IGlobalsatWaypoint
     {
         private string _waypointName;
         private int _iconNr;
-        public short Altitude;
-        public double Latitude;
-        public double Longitude;
+        private short _altitude;
+        private double _latitude;
+        private double _longitude;
 
         public GlobalsatWaypoint(string waypointName, int iconNr, short altitude, double latitude, double longitude)
         {
@@ -44,6 +44,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GlobalsatWaypoint waypoint = new GlobalsatWaypoint(this.WaypointName + "", this.IconNr, this.Altitude, this.Latitude, this.Longitude);
             return waypoint;
         }
+        public static GlobalsatWaypoint ClonePoint(GlobalsatDevicePlugin.IGlobalsatWaypoint t)
+        {
+            return new GlobalsatWaypoint(t.WaypointName + "", t.IconNr, t.Altitude, t.Latitude, t.Longitude);
+        }
+        public static IList<GlobalsatWaypoint> GetWaypoints(IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> list)
+        {
+            IList<GlobalsatWaypoint> result = new List<GlobalsatWaypoint>();
+            foreach (GlobalsatDevicePlugin.IGlobalsatWaypoint t in list)
+            {
+                result.Add(ClonePoint(t));
+            }
+            return result;
+        }
+        public static IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> GetIWaypoints(IList<GlobalsatWaypoint> list)
+        {
+            IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> result = new List<GlobalsatDevicePlugin.IGlobalsatWaypoint>();
+            foreach (GlobalsatWaypoint t in list)
+            {
+                result.Add(t);
+            }
+            return result;
+        }
 
         public string WaypointName
         {
@@ -59,6 +81,39 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (value < 0) value = 0;
                 if (value > 35) value = 35;
                 _iconNr = value;
+            }
+        }
+        public short Altitude
+        {
+            get
+            {
+                return this._altitude;
+            }
+            set
+            {
+                this._altitude = value;
+            }
+        }
+        public double Latitude
+        {
+            get
+            {
+                return this._latitude;
+            }
+            set
+            {
+                this._latitude = value;
+            }
+        }
+        public double Longitude
+        {
+            get
+            {
+                return this._longitude;
+            }
+            set
+            {
+                this._longitude = value;
             }
         }
 

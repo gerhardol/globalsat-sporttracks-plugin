@@ -45,7 +45,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Open();
             try
             {
-                List<GlobalsatPacket> packets = PacketFactory.SendTrack(gpsRoute);
+                IList<GlobalsatPacket> packets = PacketFactory.SendTrack(gpsRoute);
 
                 int i = 0;
                 foreach (GlobalsatPacket packet in packets)
@@ -220,13 +220,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual IList<GlobalsatWaypoint> GetWaypoints()
         {
-
             this.Open();
             try
             {
                 GlobalsatPacket packet = new GlobalsatPacket(GhPacketBase.CommandGetWaypoints);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                IList<GlobalsatWaypoint> waypoints = response.ResponseWaypoints();
+                IList<GlobalsatWaypoint> waypoints = response.ResponseGetWaypoints();
 
                 return waypoints;
             }
@@ -241,7 +240,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual int SendWaypoints(List<GlobalsatWaypoint> waypoints)
+        public virtual int SendWaypoints(IList<GlobalsatWaypoint> waypoints)
         {
             this.Open();
             try
@@ -262,7 +261,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual void DeleteWaypoints(IList<string> waypointNames)
+        public virtual void DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames)
         {
             this.Open();
             try
