@@ -72,6 +72,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
+            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
             GenericDevice device = new GenericDevice(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
             GlobalsatProtocol device2 = device.Device();
             if (device2 != null)
