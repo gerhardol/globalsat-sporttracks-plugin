@@ -73,9 +73,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
             GenericDevice device = new GenericDevice(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
-            if (device.Device() != null)
+            GlobalsatProtocol device2 = device.Device();
+            if (device2 != null)
             {
-                ImportJob job = device.Device().ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
+                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
                 if (job == null)
                 {
                     return false;

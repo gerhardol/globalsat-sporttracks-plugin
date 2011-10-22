@@ -142,10 +142,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             {
                                 foundHrPoint = true;
                             }
-                            float latitude = (float)((double)point.Latitude / 1000000);
-                            float longitude = (float)((double)point.Longitude / 1000000);
-                            float elevation = point.Altitude;
-                            activity.GPSRoute.Add(pointTime, new GPSPoint(latitude, longitude, elevation));
+                            activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
                         }
                         if (foundHrPoint && !activitiesWithHeartRate.Contains(activity))
                         {
