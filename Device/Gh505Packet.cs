@@ -129,7 +129,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.LapCount = ReadInt16(offset + 16);
         }
 
-        public int LocationLength { get { return 20; } }
+        protected override int LocationLength { get { return 20; } }
         public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
             int nrWaypoints = PacketLength / 20;
@@ -139,7 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 int index = i * 20;
 
-                string waypointName = ByteArr2String(PacketData, index, 6);
+                string waypointName = ByteArr2String(index, 6);
                 int iconNr = (int)PacketData[index + 7];
                 short altitude = ReadInt16(index + 8);
                 // 10-11 ?

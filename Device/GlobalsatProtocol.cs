@@ -35,7 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        public virtual void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker)
+        public virtual void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker, IJobMonitor jobMonitor)
         {
             if (worker.CancellationPending)
             {
@@ -125,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        public virtual void SendRoute(GlobalsatRoute route)
+        public virtual void SendRoute(GlobalsatRoute route, IJobMonitor jobMonitor)
         {
             this.Open();
             try
@@ -144,7 +144,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation()
+        public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation(IJobMonitor jobMonitor)
         {
             this.Open();
             try
@@ -166,7 +166,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual GlobalsatDeviceConfiguration GetDeviceConfigurationData()
+        public virtual GlobalsatDeviceConfiguration GetDeviceConfigurationData(IJobMonitor jobMonitor)
         {
             GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
 
@@ -197,7 +197,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig)
+        public virtual void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
 
             this.Open();
@@ -217,7 +217,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual IList<GlobalsatWaypoint> GetWaypoints()
+        public virtual IList<GlobalsatWaypoint> GetWaypoints(IJobMonitor jobMonitor)
         {
             this.Open();
             try
@@ -239,12 +239,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual int SendWaypoints(IList<GlobalsatWaypoint> waypoints)
+        public virtual int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
             this.Open();
             try
             {
-                GlobalsatPacket packet = PacketFactory.SendWaypoints(waypoints);
+                GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, waypoints);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                 // km500 no out of memory- waypoint overwritten
@@ -259,7 +259,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual void DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames)
+        public virtual void DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames, IJobMonitor jobMonitor)
         {
             this.Open();
             try
@@ -279,7 +279,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        public virtual void DeleteAllWaypoints()
+        public virtual void DeleteAllWaypoints(IJobMonitor jobMonitor)
         {
             this.Open();
             try
@@ -298,7 +298,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual Bitmap GetScreenshot()
+        public virtual Bitmap GetScreenshot(IJobMonitor jobMonitor)
         {
 
             this.Open();

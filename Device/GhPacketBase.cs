@@ -215,18 +215,29 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// <summary>
         /// Read a string starting at the offset.
         /// </summary>
-        public static string ByteArr2String(byte[] byteArr, int startIndex, int length)
+        public string ByteArr2String(int startIndex, int length)
         {
-            for (int i = startIndex; i < Math.Min(startIndex + length, byteArr.Length); i++)
+            for (int i = startIndex; i < Math.Min(startIndex + length, PacketData.Length); i++)
             {
-                if (byteArr[i] == 0x0)
+                if (PacketData[i] == 0x0)
                 {
                     length = i - startIndex;
                     break;
                 }
             }
-            string str = UTF8Encoding.UTF8.GetString(byteArr, startIndex, length);
+            string str = UTF8Encoding.UTF8.GetString(PacketData, startIndex, length);
             return str;
+        }
+
+        public void Write(int startIndex, int length, string s)
+        {
+            for (int j = 0; j < length; j++)
+            {
+                byte c = (byte)(j < s.Length ? s[j] : '\0');
+                this.PacketData[startIndex + j] = c;
+            }
+            //Ensure null termination
+            this.PacketData[startIndex + length] = 0;
         }
 
         /// <summary>
@@ -264,15 +275,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// </summary>
         protected void Write(int offset, Int16 i)
         {
+            byte[] b = BitConverter.GetBytes(i);
             if (endianFormat)
             {
-                byte[] b = BitConverter.GetBytes(i);
                 this.PacketData[offset + 0] = b[1];
                 this.PacketData[offset + 1] = b[0];
             }
             else
             {
-                byte[] b = BitConverter.GetBytes(i);
                 this.PacketData[offset + 0] = b[0];
                 this.PacketData[offset + 1] = b[1];
             }
@@ -281,18 +291,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// <summary>
         /// Write a four byte integer in little-endian format starting at the offset.
         /// </summary>
-        //protected static void Write(bigEndian, byte[] data, int offset, Int32 i)
-        //{
-        //    byte[] b = BitConverter.GetBytes(i);
-        //    data[offset + 0] = b[0];
-        //    data[offset + 1] = b[1];
-        //    data[offset + 2] = b[2];
-        //    data[offset + 3] = b[3];
-        //}
+        //No overload to make sure correct
+        protected void Write32(int offset, Int32 i)
+        {
+            byte[] b = BitConverter.GetBytes(i);
+            if (endianFormat)
+            {
+                this.PacketData[offset + 0] = b[3];
+                this.PacketData[offset + 1] = b[2];
+                this.PacketData[offset + 2] = b[1];
+                this.PacketData[offset + 3] = b[0];
+            }
+            else
+            {
+                this.PacketData[offset + 0] = b[0];
+                this.PacketData[offset + 1] = b[1];
+                this.PacketData[offset + 2] = b[2];
+                this.PacketData[offset + 3] = b[3];
+            }
+        }
 
         //bigEndian: true, littleEndian: false
         protected virtual bool endianFormat { get { return true; } }
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
+        protected virtual int LocationLength { get { return 18; } }
     }
 }
