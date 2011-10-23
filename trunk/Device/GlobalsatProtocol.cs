@@ -373,11 +373,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //        this.PcRouteCount = pcRouteCount;
         //    }
         //}
-
-        //xxx
-        public class GlobalsatDeviceConfiguration {
-            public string DeviceName;
-            public byte[] SystemConfigData;
-        }
     }
 }

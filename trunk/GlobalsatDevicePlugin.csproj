@@ -16,6 +16,7 @@
     <Compile Include="Device\Gh561Packet.cs" />
     <Compile Include="Device\GenericDevice.cs" />
     <Compile Include="Device\GlobalsatBitmap.cs" />
+    <Compile Include="Device\GlobalsatDeviceConfiguration.cs" />
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
     <Compile Include="Import\FitnessDevice_GH561.cs" />
