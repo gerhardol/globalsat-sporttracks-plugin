@@ -23,23 +23,24 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gb580Packet : GlobalsatPacket
+    class Gb580Packet : Gh505Packet
     {
+        //TODO: merge w Gh505 usage
         //public class TrackFileHeader : Header
         //{
         //    public Int16 TrackPointIndex;
         //}
 
-        public class Train : Header
+        public new class Train : Header
         {
             public Int16 IndexStartPt;
             public Int16 LapIndexEndPt;
             public Int16 TotalCalories;
-            public double MaximumSpeed;
+            //public double MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-        //    public Int16 StartPointIndex;
-        //    public Int16 EndPointIndex;
+            //public Int16 StartPointIndex;
+            //public Int16 EndPointIndex;
             public IList<TrackPoint3> TrackPoints = new List<TrackPoint3>();
             public IList<Lap> Laps = new List<Lap>();
         }
@@ -60,20 +61,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return trains;
         }
 
-        public Train UnpackTrainHeader()
+        public new Train UnpackTrainHeader()
         {
             if (this.PacketLength < 52) return null;
 
             Train train = new Train();
             ReadHeader(train, 0);
             train.TotalCalories = ReadInt16(24);
-            train.MaximumSpeed = ReadInt16(28);
+            //train.MaximumSpeed = ReadInt16(28);
             train.MaximumHeartRate = this.PacketData[32];
             train.AverageHeartRate = this.PacketData[33];
             return train;
         }
 
-        public IList<Lap> UnpackLaps()
+        public new IList<Lap> UnpackLaps()
         {
             if (this.PacketLength < 24) return new List<Lap>();
 
@@ -99,7 +100,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return laps;
         }
 
-        public IList<TrackPoint3> UnpackTrackPoints()
+        public new IList<TrackPoint3> UnpackTrackPoints()
         {
             if (this.PacketLength < 24) return new List<TrackPoint3>();
 
@@ -132,10 +133,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.LapCount = ReadInt16(offset + 16);
         }
 
-        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
-        {
-            return new Gh505Packet().ResponseGetWaypoints(); //xxx
-        }
+        //public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
+        //{
+        //    return new Gh505Packet().ResponseGetWaypoints();
+        //}
 
         protected override bool endianFormat { get { return false; } } //little endian
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }

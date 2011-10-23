@@ -144,7 +144,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual GlobalsatSystemInformation GetSystemInformation()
+        public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation()
         {
             this.Open();
             try
@@ -152,7 +152,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket packet = PacketFactory.GetSystemInformation();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatSystemInformation systemInfo = response.ResponseSystemInformation();
+                GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
                 return systemInfo;
             }
             catch
@@ -176,11 +176,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket packet = PacketFactory.GetSystemInformation();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatSystemInformation systemInfo = response.ResponseSystemInformation();
+                GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
                 devConfig.DeviceName = systemInfo.DeviceName;
                 //devConfig.SystemInfoData = response.PacketData;
 
-                packet = PacketFactory.GetSystemConfiguration2();
+                packet = PacketFactory.GetSystemConfiguration();
                 response = (GlobalsatPacket)this.SendPacket(packet);
 
                 devConfig.SystemConfigData = response.PacketData;
@@ -205,7 +205,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 GlobalsatPacket packet = PacketFactory.SetSystemConfiguration(devConfig.SystemConfigData);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-
             }
             catch
             {
@@ -249,7 +248,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                 // km500 no out of memory- waypoint overwritten
-
                 int nrSentWaypoints = response.GetSentWaypoints();
 
                 return nrSentWaypoints;
@@ -321,61 +319,62 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public class GlobalsatSystemInformation
-        {
+        //public class GlobalsatSystemInformation
+        //{
 
-            public string UserName;
-            public bool IsFemale;
-            public int Age;
-            public int WeightPounds;
-            public int WeightKg;
-            public int HeightInches;
-            public int HeightCm;
-            public DateTime BirthDate;
+        //    public string UserName;
+        //    public bool IsFemale;
+        //    public int Age;
+        //    public int WeightPounds;
+        //    public int WeightKg;
+        //    public int HeightInches;
+        //    public int HeightCm;
+        //    public DateTime BirthDate;
 
-            public string DeviceName;
-            public double Version;
-            public string Firmware;
-            public int WaypointCount;
-            public int TrackpointCount;
-            public int ManualRouteCount;
-            public int PcRouteCount;
-
-
-
-            public GlobalsatSystemInformation(string deviceName, double version, string firmware,
-                string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
-                int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
-            {
-                this.UserName = userName;
-                this.IsFemale = isFemale;
-                this.Age = age;
-                this.WeightPounds = weightPounds;
-                this.WeightKg = weightKg;
-                this.HeightInches = heightInches;
-                this.HeightCm = heightCm;
-                this.BirthDate = birthDate;
-                this.DeviceName = deviceName;
-                this.Version = version;
-                this.Firmware = firmware;
-                this.WaypointCount = waypointCount;
-                this.TrackpointCount = trackpointCount;
-                this.ManualRouteCount = manualRouteCount;
-                this.PcRouteCount = pcRouteCount;
-            }
+        //    public string DeviceName;
+        //    public double Version;
+        //    public string Firmware;
+        //    public int WaypointCount;
+        //    public int TrackpointCount;
+        //    public int ManualRouteCount;
+        //    public int PcRouteCount;
 
 
 
-            public GlobalsatSystemInformation(string deviceName, string firmware,
-                int waypointCount, int pcRouteCount)
-            {
-                this.DeviceName = deviceName;
-                this.Firmware = firmware;
-                this.WaypointCount = waypointCount;
-                this.PcRouteCount = pcRouteCount;
-            }
-        }
+        //    public GlobalsatSystemInformation(string deviceName, double version, string firmware,
+        //        string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
+        //        int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
+        //    {
+        //        this.UserName = userName;
+        //        this.IsFemale = isFemale;
+        //        this.Age = age;
+        //        this.WeightPounds = weightPounds;
+        //        this.WeightKg = weightKg;
+        //        this.HeightInches = heightInches;
+        //        this.HeightCm = heightCm;
+        //        this.BirthDate = birthDate;
+        //        this.DeviceName = deviceName;
+        //        this.Version = version;
+        //        this.Firmware = firmware;
+        //        this.WaypointCount = waypointCount;
+        //        this.TrackpointCount = trackpointCount;
+        //        this.ManualRouteCount = manualRouteCount;
+        //        this.PcRouteCount = pcRouteCount;
+        //    }
 
+
+
+        //    public GlobalsatSystemInformation(string deviceName, string firmware,
+        //        int waypointCount, int pcRouteCount)
+        //    {
+        //        this.DeviceName = deviceName;
+        //        this.Firmware = firmware;
+        //        this.WaypointCount = waypointCount;
+        //        this.PcRouteCount = pcRouteCount;
+        //    }
+        //}
+
+        //xxx
         public class GlobalsatDeviceConfiguration {
             public string DeviceName;
             public byte[] SystemConfigData;

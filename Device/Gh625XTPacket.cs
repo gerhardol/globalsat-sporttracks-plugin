@@ -176,6 +176,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return points;
         }
 
+        public override GlobalsatSystemInformation ResponseGetSystemInformation()
+        {
+            return new Gh625Packet().ResponseGetSystemInformation();
+        }
+        
         public int LocationLength { get { return 18; } }
 
         public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
