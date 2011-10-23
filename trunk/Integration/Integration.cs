@@ -36,91 +36,75 @@ namespace GlobalsatDevicePlugin
         bool Export(Stream gpxDataStream, IJobMonitor jobMonitor);
         bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor);
     }
-    public class WaypointImportExport : IWaypointImportExport
-    {
-        public static WaypointImportExport Instance
-        {
-            get
-            {
-                //The object is not reused right now, allow the user to reconnect
-                //The device itself is fully dynamic in each call
-                return new WaypointImportExport();
-            }
-        }
+    //public class WaypointImportExport : IWaypointImportExport
+    //{
+    //    public static WaypointImportExport Instance
+    //    {
+    //        get
+    //        {
+    //            //The object is not reused right now, allow the user to reconnect
+    //            //The device itself is fully dynamic in each call
+    //            return new WaypointImportExport();
+    //        }
+    //    }
 
-        public Stream Import(IJobMonitor jobMonitor)
-        {
-            throw new NotImplementedException();
-        }
+    //    public Stream Import(IJobMonitor jobMonitor)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public bool Export(Stream gpxDataStream, IJobMonitor jobMonitor)
-        {
-            throw new NotImplementedException();
-        }
+    //    public bool Export(Stream gpxDataStream, IJobMonitor jobMonitor)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
 
-        public bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor)
-        {
-            throw new NotImplementedException();
-        }
-    }
-    public interface IGlobalsatWaypoint
+    //    public bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor)
+    //    {
+    //        throw new NotImplementedException();
+    //    }
+    //}
+    //public interface IGlobalsatWaypoint
+    //{
+    //    short Altitude { get; set; }
+    //    double Latitude { get; set; }
+    //    double Longitude { get; set; }
+    //    string WaypointName { get; set; }
+    //    int IconNr { get; set; }
+    //}
+    public class GlobalsatWaypointsImportExport
     {
-        short Altitude { get; set; }
-        double Latitude { get; set; }
-        double Longitude { get; set; }
-        string WaypointName { get; set; }
-        int IconNr { get; set; }
-    }
-    public interface IGlobalsatWaypointsImportExport
-    {
-        IList<IGlobalsatWaypoint> GetWaypoints();
-        int SendWaypoints(IList<IGlobalsatWaypoint> waypoints);
-        void DeleteWaypoints(IList<IGlobalsatWaypoint> waypoints);
-        void DeleteAllWaypoints();
-    }
-    public class GlobalsatWaypointsImportExport : IGlobalsatWaypointsImportExport
-    {
-        public static GlobalsatWaypointsImportExport Instance
-        {
-            get
-            {
-                //The object is not reused right now, allow the user to reconnect
-                //The device itself is fully dynamic in each call
-                return new GlobalsatWaypointsImportExport();
-            }
-        }
-
-        public IList<IGlobalsatWaypoint> GetWaypoints()
+        public static Stream Import(IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
-            GlobalsatProtocol device2 = device.Device();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return null; }
-            IList<IGlobalsatWaypoint> result = GlobalsatWaypoint.GetIWaypoints(device2.GetWaypoints());
+            Stream result = KeymazePlugin.IO.ExportWaypoints.ExportGpxWaypointsStream(device2.GetWaypoints(jobMonitor));
             return result;
         }
 
-        public int SendWaypoints(IList<IGlobalsatWaypoint> waypoints)
+        public static int Export(Stream waypoints, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
-            GlobalsatProtocol device2 = device.Device();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            return device2.SendWaypoints(GlobalsatWaypoint.GetWaypoints(waypoints));
+            return device2.SendWaypoints(KeymazePlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
-        public void DeleteWaypoints(IList<IGlobalsatWaypoint> waypoints)
+        public static void Delete(Stream waypoints, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
-            GlobalsatProtocol device2 = device.Device();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return; }
-            device2.DeleteWaypoints(GlobalsatWaypoint.GetWaypoints(waypoints));
+            device2.DeleteWaypoints(KeymazePlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
+            jobMonitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
         }
 
-        public void DeleteAllWaypoints()
+        public static void DeleteAll(IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
-            GlobalsatProtocol device2 = device.Device();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return; }
-            device2.DeleteAllWaypoints();
+            device2.DeleteAllWaypoints(jobMonitor);
         }
     }
 }

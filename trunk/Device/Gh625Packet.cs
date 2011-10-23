@@ -140,16 +140,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
         public override GlobalsatSystemInformation ResponseGetSystemInformation()
         {
-            string deviceName = ByteArr2String(PacketData, 0, 20 + 1);
+            string deviceName = ByteArr2String(0, 20 + 1);
 
             int versionInt = ReadInt16(21);
             double version = (double)versionInt / 100.0;
 
             // 23-24: version hex ? - update code/flag
 
-            string firmware = ByteArr2String(PacketData, 25, 16 + 1);
+            string firmware = ByteArr2String(25, 16 + 1);
 
-            string userName = ByteArr2String(PacketData, 42, 10 + 1);
+            string userName = ByteArr2String(42, 10 + 1);
 
             bool isFemale = PacketData[53] != 0x00;
             int age = PacketData[54];
@@ -186,7 +186,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
         {
-            string userName = ByteArr2String(PacketData, 0, 10 + 1);
+            string userName = ByteArr2String(0, 10 + 1);
 
             bool isFemale = PacketData[11] != 0x00;
             int age = (int)PacketData[12];

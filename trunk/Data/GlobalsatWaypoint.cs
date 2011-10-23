@@ -7,6 +7,7 @@
  */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Text;
 using System.Drawing;
@@ -14,7 +15,7 @@ using System.Drawing;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class GlobalsatWaypoint :IComparable, GlobalsatDevicePlugin.IGlobalsatWaypoint
+    public class GlobalsatWaypoint :IComparable
     {
         private string _waypointName;
         private int _iconNr;
@@ -43,28 +44,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             GlobalsatWaypoint waypoint = new GlobalsatWaypoint(this.WaypointName + "", this.IconNr, this.Altitude, this.Latitude, this.Longitude);
             return waypoint;
-        }
-        public static GlobalsatWaypoint ClonePoint(GlobalsatDevicePlugin.IGlobalsatWaypoint t)
-        {
-            return new GlobalsatWaypoint(t.WaypointName + "", t.IconNr, t.Altitude, t.Latitude, t.Longitude);
-        }
-        public static IList<GlobalsatWaypoint> GetWaypoints(IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> list)
-        {
-            IList<GlobalsatWaypoint> result = new List<GlobalsatWaypoint>();
-            foreach (GlobalsatDevicePlugin.IGlobalsatWaypoint t in list)
-            {
-                result.Add(ClonePoint(t));
-            }
-            return result;
-        }
-        public static IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> GetIWaypoints(IList<GlobalsatWaypoint> list)
-        {
-            IList<GlobalsatDevicePlugin.IGlobalsatWaypoint> result = new List<GlobalsatDevicePlugin.IGlobalsatWaypoint>();
-            foreach (GlobalsatWaypoint t in list)
-            {
-                result.Add(t);
-            }
-            return result;
         }
 
         public string WaypointName

@@ -181,30 +181,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return new Gh625Packet().ResponseGetSystemInformation();
         }
         
-        public int LocationLength { get { return 18; } }
-
-        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
-        {
-            int nrWaypoints = PacketLength / LocationLength;
-            IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
-
-            for (int i = 0; i < nrWaypoints; i++)
-            {
-                int index = i * LocationLength;
-
-                string waypointName = ByteArr2String(PacketData, index, 6);
-                int iconNr = (int)PacketData[index + 7];
-                short altitude = ReadInt16(index + 8);
-                int latitudeInt = ReadInt32(index + 10);
-                int longitudeInt = ReadInt32(index + 14);
-                double latitude = (double)latitudeInt / 1000000.0;
-                double longitude = (double)longitudeInt / 1000000.0;
-
-                GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
-                waypoints.Add(waypoint);
-            }
-
-            return waypoints;
-        }
+        protected override int LocationLength { get { return 18; } }
     }
 }

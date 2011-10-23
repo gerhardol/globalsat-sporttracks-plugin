@@ -34,8 +34,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
 
         /* Autodetect device, it is up to the caller to cache the device */
-        public GlobalsatProtocol Device()
+        public GlobalsatProtocol Device(IJobMonitor monitor)
         {
+            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
             string devId = null;
             devId = base.Open();
             if (!string.IsNullOrEmpty(devId))
@@ -59,6 +60,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
             }
+            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             return null;
         }
     }

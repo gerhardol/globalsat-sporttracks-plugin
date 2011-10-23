@@ -118,8 +118,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatSystemInformation ResponseGetSystemInformation()
         {
-            string deviceName = ByteArr2String(PacketData, 0, 20 + 1);
-            string firmware = ByteArr2String(PacketData, 21, 16 + 1);
+            string deviceName = ByteArr2String(0, 20 + 1);
+            string firmware = ByteArr2String(21, 16 + 1);
             int waypointCount = (int)PacketData[38];
             int pcRouteCount = (int)PacketData[39];
 
@@ -162,13 +162,76 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return new GlobalsatPacket(CommandGetScreenshot);
         }
 
-        //public virtual GlobalsatPacket GetDeviceIdentification() { throw new Exception(InvalidOperation); }
-        //public abstract GlobalsatPacket GetSystemInformation();
-        //public abstract GlobalsatPacket GetSystemConfiguration();
-
         public virtual IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
-            return new List<GlobalsatWaypoint>();
+            int nrWaypoints = PacketLength / LocationLength;
+            IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
+
+            for (int i = 0; i < nrWaypoints; i++)
+            {
+                int index = i * LocationLength;
+
+                string waypointName = ByteArr2String(index, 6);
+                int iconNr = (int)PacketData[index + 7];
+                short altitude = ReadInt16(index + 8);
+                int latitudeInt = ReadInt32(index + 10);
+                int longitudeInt = ReadInt32(index + 14);
+                double latitude = (double)latitudeInt / 1000000.0;
+                double longitude = (double)longitudeInt / 1000000.0;
+
+                GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
+                waypoints.Add(waypoint);
+            }
+
+            return waypoints;
+        }
+
+        //public virtual IList<GlobalsatWaypoint> ResponseGetWaypoints()
+        //{
+        //    return new List<GlobalsatWaypoint>();
+        //}
+
+        public virtual GlobalsatPacket SendWaypoints(int MaxNrWaypoints, IList<GlobalsatWaypoint> waypoints)
+        {
+            int nrWaypointsLength = 2;
+            int waypointNameLength = 6;
+
+            int nrWaypoints = Math.Min(MaxNrWaypoints, waypoints.Count);
+
+            Int16 totalLength = (Int16)(nrWaypointsLength + nrWaypoints * (LocationLength+2));
+            GlobalsatPacket packet = new GlobalsatPacket(CommandSendWaypoint, totalLength);
+
+            int offset = 0;
+
+            packet.Write(offset, (short)nrWaypoints);
+            offset += 2;
+
+            //offset += 2; //pad -some only?
+
+            int waypOffset = offset;
+            for (int i = 0; i < nrWaypoints; i++)
+            {
+                GlobalsatWaypoint waypoint = waypoints[i];
+                offset = waypOffset + i * (LocationLength + 2);
+
+                Write(offset, waypointNameLength+1, waypoint.WaypointName);
+                offset += waypointNameLength+1;
+
+                packet.PacketData[offset] = (byte)waypoint.IconNr;
+                offset++;
+
+                Write(offset, waypoint.Altitude);
+                offset += 2;
+
+                offset += 2; //pad?
+
+                int latitude = (int)Math.Round(waypoint.Latitude * 1000000);
+                int longitude = (int)Math.Round(waypoint.Longitude * 1000000);
+
+                Write32(offset, latitude);
+                Write32(offset + 4, longitude);
+            }
+            return packet;
         }
 
         public virtual int GetSentWaypoints()
@@ -205,21 +268,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 string waypointName = waypoints[i].WaypointName;
 
-                for (int j = 0; j < waypointNameLength; j++)
-                {
-                    byte c = (byte)(j < waypointName.Length ? waypointName[j] : '\0');
-                    packet.PacketData[offset + j] = c;
-                }
-                offset += waypointNameLength;
-                packet.PacketData[offset] = 0; // adds ending \0
-                offset++;
+                Write(offset, waypointNameLength+1, waypointName);
+                offset += waypointNameLength+1;
             }
 
             return packet;
         }
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route) { throw new Exception(InvalidOperation); }
-        public virtual GlobalsatPacket SendWaypoints(IList<GlobalsatWaypoint> waypoints) { throw new Exception(InvalidOperation); }
         public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual GlobalsatPacket SetSystemConfiguration(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual IList<GlobalsatPacket> SendTrack(IGPSRoute gpsRoute) { throw new Exception(InvalidOperation); }

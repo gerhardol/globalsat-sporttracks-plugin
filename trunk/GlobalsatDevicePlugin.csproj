@@ -23,6 +23,8 @@
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
     <Compile Include="Import\ImportJob_Globalsat.cs" />
     <Compile Include="Integration\Integration.cs" />
+    <Compile Include="IO\ExportWaypoints.cs" />
+    <Compile Include="IO\ImportWaypoints.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Import\FitnessDevice_GB580.cs" />
     <Compile Include="Import\FitnessDevice_GH505.cs" />
@@ -54,6 +56,9 @@
     <Compile Include="UI\DeviceConfigurationDlg.Designer.cs">
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="Xml\Gpx11\gpx.cs">
+      <DependentUpon>gpx.xsd</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="UI\DeviceConfigurationDlg.resx">
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -82,6 +87,9 @@
     <None Include="Resources\Image_48_GH625.png" />
     <None Include="Resources\Image_48_GH625XT.png" />
     <None Include="Resources\Image_48_GSSPORT.png" />
+    <None Include="Xml\Gpx11\gpx.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project=".\Common\Common-Files.csproj" />
 </Project>
