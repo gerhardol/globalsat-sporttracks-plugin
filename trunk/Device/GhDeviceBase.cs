@@ -80,7 +80,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected string ValidGlobalsatPort(SerialPort port)
         {
-            GlobalsatPacket packet = new GlobalsatPacket(GlobalsatPacket.CommandWhoAmI);
+            GlobalsatPacket packet = PacketFactory.GetWhoAmI();
             GhPacketBase response = SendPacket(packet);
             string res = "";
             if (response.CommandId == packet.CommandId && response.PacketLength > 1)

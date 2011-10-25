@@ -132,5 +132,33 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trains;
         }
+
+        //Only one waypoint at a time
+        public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
+        {
+            this.Open();
+            try
+            {
+                int nrSentWaypoints = 0;
+                foreach (GlobalsatWaypoint g in waypoints)
+                {
+                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint>{g});
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+
+                    // km500 no out of memory- waypoint overwritten
+                    nrSentWaypoints += response.GetSentWaypoints();
+                }
+                return nrSentWaypoints;
+            }
+            catch
+            {
+                //throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
+                throw;
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
     }
 }

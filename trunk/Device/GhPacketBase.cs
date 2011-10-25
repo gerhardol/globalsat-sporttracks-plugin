@@ -34,14 +34,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Not stored now
         //public byte Checksum;
 
+        public GhPacketBase()
+        {
+        }
         public GhPacketBase(byte CommandId, Int16 PacketLength)
         {
             this.CommandId = CommandId;
             this.PacketLength = PacketLength;
             this.PacketData = new byte[PacketLength];
         }
-        public GhPacketBase()
+        public void InitPacket(byte CommandId, Int16 PacketLength)
         {
+            this.CommandId = CommandId;
+            this.PacketLength = PacketLength;
+            this.PacketData = new byte[PacketLength];
         }
 
         //The Gloabalsat specs does not explicitly write that the format is same for all
@@ -237,7 +243,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.PacketData[startIndex + j] = c;
             }
             //Ensure null termination
-            this.PacketData[startIndex + length] = 0;
+            this.PacketData[startIndex + length - 1] = 0;
         }
 
         /// <summary>
@@ -315,6 +321,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual bool endianFormat { get { return true; } }
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
-        protected virtual int LocationLength { get { return 18; } }
     }
 }

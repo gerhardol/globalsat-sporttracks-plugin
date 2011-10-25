@@ -140,5 +140,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected override bool endianFormat { get { return false; } } //little endian
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
+
+        protected override int GetWptOffset { get { return 2; } }
+        protected override int SendWptOffset { get { return 2; } }
     }
 }

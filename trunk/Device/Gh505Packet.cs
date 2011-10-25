@@ -129,31 +129,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.LapCount = ReadInt16(offset + 16);
         }
 
-        protected override int LocationLength { get { return 20; } }
-        public override IList<GlobalsatWaypoint> ResponseGetWaypoints()
-        {
-            int nrWaypoints = PacketLength / 20;
-            IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
-
-            for (int i = 0; i < nrWaypoints; i++)
-            {
-                int index = i * 20;
-
-                string waypointName = ByteArr2String(index, 6);
-                int iconNr = (int)PacketData[index + 7];
-                short altitude = ReadInt16(index + 8);
-                // 10-11 ?
-                double latitude = (double)ReadInt32(index + 12) / 1000000.0;
-                double longitude = (double)ReadInt32(index + 16) / 1000000.0;
-
-                GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
-                waypoints.Add(waypoint);
-            }
-
-            return waypoints;
-        }
-
         protected override bool endianFormat { get { return false; } } //little endian
         protected override int ScreenBpp { get { return 1; } }
+
+        protected override int GetWptOffset { get { return 2; } }
+        protected override int SendWptOffset { get { return 2; } }
     }
 }
