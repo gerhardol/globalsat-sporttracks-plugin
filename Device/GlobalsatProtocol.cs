@@ -222,7 +222,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Open();
             try
             {
-                GlobalsatPacket packet = new GlobalsatPacket(GhPacketBase.CommandGetWaypoints);
+                GlobalsatPacket packet = PacketFactory.GetWaypoints();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                 IList<GlobalsatWaypoint> waypoints = response.ResponseGetWaypoints();
 
@@ -256,6 +256,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 //throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
                 throw;
+            }
+            finally
+            {
+                this.Close();
             }
         }
 

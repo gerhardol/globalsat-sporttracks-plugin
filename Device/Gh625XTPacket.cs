@@ -180,7 +180,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return new Gh625Packet().ResponseGetSystemInformation();
         }
-        
-        protected override int LocationLength { get { return 18; } }
     }
 }
