@@ -36,41 +36,7 @@ namespace GlobalsatDevicePlugin
         bool Export(Stream gpxDataStream, IJobMonitor jobMonitor);
         bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor);
     }
-    //public class WaypointImportExport : IWaypointImportExport
-    //{
-    //    public static WaypointImportExport Instance
-    //    {
-    //        get
-    //        {
-    //            //The object is not reused right now, allow the user to reconnect
-    //            //The device itself is fully dynamic in each call
-    //            return new WaypointImportExport();
-    //        }
-    //    }
 
-    //    public Stream Import(IJobMonitor jobMonitor)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public bool Export(Stream gpxDataStream, IJobMonitor jobMonitor)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-
-    //    public bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor)
-    //    {
-    //        throw new NotImplementedException();
-    //    }
-    //}
-    //public interface IGlobalsatWaypoint
-    //{
-    //    short Altitude { get; set; }
-    //    double Latitude { get; set; }
-    //    double Longitude { get; set; }
-    //    string WaypointName { get; set; }
-    //    int IconNr { get; set; }
-    //}
     public class GlobalsatWaypointsImportExport
     {
         public static Stream Import(IJobMonitor jobMonitor)

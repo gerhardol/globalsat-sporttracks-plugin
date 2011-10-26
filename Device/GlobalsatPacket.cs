@@ -283,7 +283,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual GlobalsatPacket SetSystemConfiguration(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual IList<GlobalsatPacket> SendTrack(IGPSRoute gpsRoute) { throw new Exception(InvalidOperation); }
 
-        public virtual System.Drawing.Bitmap ResponseScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.PacketData); }
+        public virtual System.Drawing.Bitmap ResponseScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.ScreenRowCol, this.PacketData); }
 
     //Packetsizes
         protected virtual int LocationLength { get { return 18; } }

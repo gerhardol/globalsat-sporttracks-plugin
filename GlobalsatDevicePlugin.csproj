@@ -10,6 +10,7 @@
   </PropertyGroup>
   <Import Project=".\Common\Common-References.csproj" />
   <ItemGroup>
+    <Compile Include="Data\DeviceConfigurationInfo.cs" />
     <Compile Include="Data\GlobalsatRoute.cs" />
     <Compile Include="Data\GlobalsatWaypoint.cs" />
     <Compile Include="Device\Gh561Device.cs" />
@@ -19,6 +20,8 @@
     <Compile Include="Device\GlobalsatDeviceConfiguration.cs" />
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
+    <Compile Include="Export\ExportActivityToDeviceAction.cs" />
+    <Compile Include="Export\ExtendExportActions.cs" />
     <Compile Include="Import\FitnessDevice_GH561.cs" />
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
     <Compile Include="Import\ImportJob_Globalsat.cs" />
@@ -49,16 +52,53 @@
     <Compile Include="Device\Gh625XTDevice.cs" />
     <Compile Include="Device\GhDeviceBase.cs" />
     <Compile Include="Device\GhPacketBase.cs" />
-    <Compile Include="UI\DeviceConfigurationInfo.cs" />
+    <Compile Include="Settings\DeviceConfigurationSettingsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\DeviceConfigurationSettingsControl.Designer.cs">
+      <DependentUpon>DeviceConfigurationSettingsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\ExtendSettingsPages.cs" />
+    <Compile Include="Settings\ScreenCaptureControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\ScreenCaptureControl.Designer.cs">
+      <DependentUpon>ScreenCaptureControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\SettingsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Settings\SettingsControl.Designer.cs">
+      <DependentUpon>SettingsControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\SettingsPage.cs" />
     <Compile Include="UI\DeviceConfigurationDlg.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\DeviceConfigurationDlg.Designer.cs">
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\ProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\ProgressForm.Designer.cs">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Xml\Gpx11\gpx.cs">
       <DependentUpon>gpx.xsd</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Settings\DeviceConfigurationSettingsControl.resx">
+      <DependentUpon>DeviceConfigurationSettingsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\ScreenCaptureControl.resx">
+      <DependentUpon>ScreenCaptureControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Settings\SettingsControl.resx">
+      <DependentUpon>SettingsControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="UI\DeviceConfigurationDlg.resx">
       <DependentUpon>DeviceConfigurationDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -79,6 +119,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\ProgressForm.resx">
+      <DependentUpon>ProgressForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Image_48_GH505.png" />
@@ -87,6 +131,7 @@
     <None Include="Resources\Image_48_GH625.png" />
     <None Include="Resources\Image_48_GH625XT.png" />
     <None Include="Resources\Image_48_GSSPORT.png" />
+    <None Include="Resources\Image_16_Keymaze.png" />
     <None Include="Xml\Gpx11\gpx.xsd">
       <SubType>Designer</SubType>
     </None>

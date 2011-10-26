@@ -30,7 +30,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    return new Gh505Packet().ResponseGetWaypoints();
         //}
         protected override bool endianFormat { get { return false; } } //little endian
-        protected override int ScreenBpp { get { return 1; } }
 
         protected override int GetWptOffset { get { return 2; } }
         protected override int SendWptOffset { get { return 2; } }

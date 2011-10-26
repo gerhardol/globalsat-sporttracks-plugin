@@ -319,7 +319,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //bigEndian: true, littleEndian: false
         protected virtual bool endianFormat { get { return true; } }
+
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
+        protected virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
     }
 }

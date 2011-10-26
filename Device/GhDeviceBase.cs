@@ -140,7 +140,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
             received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
-            if (received.PacketLength > configInfo.MaxPacketPayload)
+            if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
+                packet.CommandId == GhPacketBase.CommandGetScreenshot && received.PacketLength > 0x1000)
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
