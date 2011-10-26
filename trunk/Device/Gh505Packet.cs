@@ -130,7 +130,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         protected override bool endianFormat { get { return false; } } //little endian
+
         protected override int ScreenBpp { get { return 1; } }
+        protected override bool ScreenRowCol { get { return false; } }
 
         protected override int GetWptOffset { get { return 2; } }
         protected override int SendWptOffset { get { return 2; } }

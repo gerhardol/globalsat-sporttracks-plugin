@@ -15,7 +15,16 @@ using System.Drawing;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class GlobalsatWaypoint :IComparable
+    //Sample implementation, not used right now
+    public class JobMonitor : ZoneFiveSoftware.Common.Visuals.IJobMonitor
+    {
+        public bool Cancelled { get { return false; } }
+        public string ErrorText { set { } }
+        public float PercentComplete { set { } }
+        public string StatusText { set { } }
+    }
+
+    public class GlobalsatWaypoint : IComparable
     {
         private string _waypointName;
         private int _iconNr;

@@ -35,8 +35,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        public virtual void SendTrack(IGPSRoute gpsRoute, BackgroundWorker worker, IJobMonitor jobMonitor)
+        public virtual void SendTrack(IActivity activity, BackgroundWorker worker, IJobMonitor jobMonitor)
         {
+            IGPSRoute gpsRoute = activity.GPSRoute;
             if (worker.CancellationPending)
             {
                 return;
@@ -55,7 +56,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     do
                     {
-
                         try
                         {
                             response = (GlobalsatPacket)this.SendPacket(packet);
@@ -69,7 +69,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 throw ex1;
                             }
                         }
-
                     }
                     while (nrAttempts < 3);
 

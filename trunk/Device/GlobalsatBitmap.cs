@@ -19,39 +19,52 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatBitmap
     {
-        public static Bitmap GetBitmap(int bpp, System.Drawing.Size size, byte[] binData)
+        public static Bitmap GetBitmap(int bpp, System.Drawing.Size size, bool screenRowCol, byte[] binData)
         {
             if (bpp == 1)
             {
-                return GetBitmapBpp0(size.Width, size.Height, binData);
+                return GetBitmapBpp0(size.Width, size.Height, screenRowCol, binData);
             }
             else{
-                return GetBitmapBpp2(size.Width, size.Height, binData);
+                return GetBitmapBpp2(size.Width, size.Height, screenRowCol, binData);
             }
         }
 
-        protected static Bitmap GetBitmapBpp0(int width, int height, byte[] binData)
+        protected static Bitmap GetBitmapBpp0(int width, int height, bool screenRowCol, byte[] binData)
         {
             int i = 0;
             bool[,] matrix = new bool[width, height];
 
             // each row is a byte
             int nrRows = (int)Math.Ceiling((double)height / 8.0);
-            for (int row = 0; row < nrRows; row++)
+            if (screenRowCol)
+            {
+                for (int row = 0; row < nrRows; row++)
+                {
+                    for (int col = 0; col < width; col++)
+                    {
+                        SetBytePixels(matrix, row, col, binData[i]);
+                        i++;
+                    }
+                }
+            }
+            else
             {
                 for (int col = 0; col < width; col++)
                 {
-                    SetBytePixels(matrix, row, col, binData[i]);
-                    i++;
+                    for (int row = 0; row < nrRows; row++)
+                    {
+                        SetBytePixels(matrix, row, col, binData[i]);
+                        i++;
+                    }
                 }
             }
-
             Bitmap bmp = Matrix2Bitmap(matrix);
 
             return bmp;
         }
 
-        protected static Bitmap GetBitmapBpp2(int width, int height, byte[] binData)
+        protected static Bitmap GetBitmapBpp2(int width, int height, bool screenRowCol, byte[] binData)
         {
             int bpp = 2;
 
