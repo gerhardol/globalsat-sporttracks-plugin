@@ -31,7 +31,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelName = new System.Windows.Forms.Label();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.label1 = new System.Windows.Forms.Label();
-            //this.labelGlobalsatDevice = new System.Windows.Forms.Label();
             this.labelLicense = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -54,6 +53,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.linkLabel1.TabIndex = 14;
             this.linkLabel1.TabStop = true;
             this.linkLabel1.Text = "Phil";
+            this.linkLabel1.Visible = false;
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
             // label1
@@ -65,16 +65,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.label1.Size = new System.Drawing.Size(62, 13);
             this.label1.TabIndex = 13;
             this.label1.Text = "Created By:";
-            // 
-            // labelGlobalsatDevice
-            // 
-            //this.labelGlobalsatDevice.AutoSize = true;
-            //this.labelGlobalsatDevice.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            //this.labelGlobalsatDevice.Location = new System.Drawing.Point(39, 66);
-            //this.labelGlobalsatDevice.Name = "labelGlobalsatDevice";
-            //this.labelGlobalsatDevice.Size = new System.Drawing.Size(62, 13);
-            //this.labelGlobalsatDevice.TabIndex = 16;
-            //this.labelGlobalsatDevice.Text = "labelGlobalsatDevice";
+            this.label1.Visible = false;
             // 
             // labelLicense
             // 
@@ -82,7 +73,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelLicense.Location = new System.Drawing.Point(39, 89);
             this.labelLicense.Name = "labelLicense";
-            this.labelLicense.Size = new System.Drawing.Size(62, 13);
+            this.labelLicense.Size = new System.Drawing.Size(40, 13);
             this.labelLicense.TabIndex = 17;
             this.labelLicense.Text = "license";
             // 
@@ -91,7 +82,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.labelLicense);
-            //this.Controls.Add(this.labelGlobalsatDevice);
             this.Controls.Add(this.labelName);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.label1);
