@@ -43,7 +43,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             //monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, CommonResources.Text.LabelActivity);
 
-            GlobalsatPacket getHeadersPacket = new Gh625XTPacket().GetTrackFileHeaders();
+            GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
             Gh625XTPacket response = (Gh625XTPacket)SendPacket(getHeadersPacket);
             return response.UnpackTrackHeaders();
         }
@@ -70,8 +70,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gh625XTPacket.Train> trains = new List<Gh625XTPacket.Train>();
-            GlobalsatPacket getFilesPacket = new Gh625XTPacket().GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = new Gh625XTPacket().GetNextSection();
+            GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
             Gh625XTPacket response = (Gh625XTPacket)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;

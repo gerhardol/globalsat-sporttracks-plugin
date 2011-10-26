@@ -45,7 +45,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             Int16[] tracks = new Int16[2];
 
-            GlobalsatPacket getHeadersPacket = new Gh615Packet().GetTrackFileHeaders();
+            GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
             Gh615Packet response = (Gh615Packet)SendPacket(getHeadersPacket);
             return response.UnpackTrackHeaders();
         }
@@ -64,8 +64,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gh615Packet.TrackFileSection> trackSections = new List<Gh615Packet.TrackFileSection>();
-            GlobalsatPacket getFilesPacket = new Gh615Packet().GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = new Gh615Packet().GetNextSection();
+            GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
             Gh615Packet data = (Gh615Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
