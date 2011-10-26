@@ -17,8 +17,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatPacket : GhPacketBase
     {
-        //public GlobalsatPacket() { }
-
         private static string InvalidOperation = "Invalid Operation";
 
         public class GlobalsatSystemInformation

@@ -34,15 +34,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Not stored now
         //public byte Checksum;
 
-        public GhPacketBase()
-        {
-        }
-        public GhPacketBase(byte CommandId, Int16 PacketLength)
-        {
-            this.CommandId = CommandId;
-            this.PacketLength = PacketLength;
-            this.PacketData = new byte[PacketLength];
-        }
         public void InitPacket(byte CommandId, Int16 PacketLength)
         {
             this.CommandId = CommandId;
