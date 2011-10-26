@@ -133,6 +133,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatSystemConfiguration ResponseGetSystemConfiguration() { throw new Exception(InvalidOperation); }
 
+        //public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
+        public virtual GlobalsatPacket SetSystemConfiguration(byte[] data)
+        {
+            InitPacket(CommandSetSystemConfiguration, (Int16)data.Length);
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                this.PacketData[i] = data[i];
+            }
+
+            return this;
+        }
+
         public GlobalsatPacket GetNextSection()
         {
             InitPacket(CommandGetNextSection, 0);
@@ -277,8 +290,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route) { throw new Exception(InvalidOperation); }
-        public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
-        public virtual GlobalsatPacket SetSystemConfiguration(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual IList<GlobalsatPacket> SendTrack(IGPSRoute gpsRoute) { throw new Exception(InvalidOperation); }
 
         public virtual System.Drawing.Bitmap ResponseScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.ScreenRowCol, this.PacketData); }
