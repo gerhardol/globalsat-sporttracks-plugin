@@ -33,7 +33,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             InitializeComponent();
 
-
             buttonImportDeviceConfig.LeftImage = CommonResources.Images.Import16;
             buttonExportDeviceConfig.LeftImage = CommonResources.Images.Export16;
 
@@ -41,25 +40,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             buttonExportDeviceConfig.Text = Properties.Resources.UI_Settings_ExportConfigButton_Text;
 
             groupBoxDeviceConfig.Text = Properties.Resources.UI_Settings_DeviceConfiguration_Title;
-
-
         }
 
         #region Public methods
 
         public void ShowPage()
         {
-
         }
 
 
 
         public void ThemeChanged(ITheme visualTheme)
         {
-
             groupBoxDeviceConfig.ForeColor = visualTheme.ControlText;
             this.BackColor = visualTheme.Control;
-
         }
 
         public void UICultureChanged(CultureInfo culture)
@@ -91,7 +85,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 try
                 {
-                    IJobMonitor jobMonitor = new GlobalsatDevicePlugin.JobMonitor();
+                    IJobMonitor jobMonitor = new JobMonitor();
                     GenericDevice device = new GenericDevice();
                     GlobalsatProtocol device2 = device.Device(jobMonitor);
                     if (device2 != null)
@@ -114,19 +108,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
-
             }
-
         }
 
         private void buttonExportDeviceConfig_Click(object sender, EventArgs e)
         {
-
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                   IJobMonitor jobMonitor = new GlobalsatDevicePlugin.JobMonitor();
+                   IJobMonitor jobMonitor = new JobMonitor();
                     GenericDevice device = new GenericDevice();
                     GlobalsatProtocol device2 = device.Device(jobMonitor);
                     if (device2 != null)
@@ -145,8 +136,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
         }
-
-
-
     }
 }

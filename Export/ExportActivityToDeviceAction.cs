@@ -216,7 +216,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            IJobMonitor jobMonitor = new GlobalsatDevicePlugin.JobMonitor();
+            IJobMonitor jobMonitor = new JobMonitor();
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 != null)
