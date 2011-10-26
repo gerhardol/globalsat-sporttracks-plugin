@@ -143,27 +143,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation(IJobMonitor jobMonitor)
-        {
-            this.Open();
-            try
-            {
-                GlobalsatPacket packet = PacketFactory.GetSystemInformation();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+        //public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation(IJobMonitor jobMonitor)
+        //{
+        //    this.Open();
+        //    try
+        //    {
+        //        GlobalsatPacket packet = PacketFactory.GetSystemInformation();
+        //        GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
-                return systemInfo;
-            }
-            catch
-            {
-                throw;
-                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
-            }
-            finally
-            {
-                this.Close();
-            }
-        }
+        //        GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
+        //        return systemInfo;
+        //    }
+        //    catch
+        //    {
+        //        throw;
+        //        //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+        //    }
+        //    finally
+        //    {
+        //        this.Close();
+        //    }
+        //}
 
         public virtual GlobalsatDeviceConfiguration GetDeviceConfigurationData(IJobMonitor jobMonitor)
         {
@@ -204,6 +204,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 GlobalsatPacket packet = PacketFactory.SetSystemConfiguration(devConfig.SystemConfigData);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                //No info in the response
             }
             catch
             {
