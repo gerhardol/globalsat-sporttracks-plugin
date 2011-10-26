@@ -43,7 +43,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
-            GlobalsatPacket getHeadersPacket = new Gb580Packet().GetTrackFileHeaders();
+            GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
             Gb580Packet response = (Gb580Packet)SendPacket(getHeadersPacket);
             return response.UnpackTrainHeaders();
         }
@@ -69,8 +69,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             float pointsRead = 0;
 
             IList<Gb580Packet.Train> trains = new List<Gb580Packet.Train>();
-            GlobalsatPacket getFilesPacket = new Gb580Packet().GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = new  Gb580Packet().GetNextSection();
+            GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
             Gb580Packet response = (Gb580Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
