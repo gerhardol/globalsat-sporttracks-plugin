@@ -32,6 +32,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
+        public override GlobalsatPacket PacketFactory { get { return GlobalsatProtocol.PacketFactoryBase; } }
 
         /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device(IJobMonitor monitor)

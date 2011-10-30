@@ -21,6 +21,7 @@ using Utils;
 using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 using ZoneFiveSoftware.Common.Data.Measurement;
+using ZoneFiveSoftware.Common.Data.GPS;
 
 
 namespace KeymazePlugin.IO
@@ -360,4 +361,81 @@ namespace KeymazePlugin.IO
             return waypoints;
         }
     }
-}
+
+    class ImportRoutes
+    {
+        public static IList<GlobalsatRoute> ImportStreamGpxRoutes(Stream file)
+        {
+            XmlTextReader xmlReader = null;
+            gpxType gpxFile = null;
+            file.Position = 0;
+            try
+            {
+                xmlReader = new XmlTextReader(file);
+                XmlSerializer serializer = new XmlSerializer(typeof(gpxType));
+                gpxFile = (gpxType)serializer.Deserialize(xmlReader);
+            }
+            finally
+            {
+                if (xmlReader != null)
+                {
+                    xmlReader.Close();
+                }
+            }
+
+            IList<GlobalsatRoute> routes = new List<GlobalsatRoute>();
+
+            if (gpxFile != null && gpxFile.rte != null && gpxFile.rte.Length > 0)
+            {
+                foreach (rteType rte in gpxFile.rte)
+                {
+                    if (rte.rtept.Length > 0)
+                    {
+                        IList<GlobalsatWaypoint> wpts = new List<GlobalsatWaypoint>();
+                        foreach (wptType wpt in rte.rtept)
+                        {
+                            //Icon not decoded from symbol
+                            wpts.Add(new GlobalsatWaypoint(wpt.name, 0, (short)wpt.ele, (double)wpt.lat, (double)wpt.lon));
+                        }
+                        routes.Add(new GlobalsatRoute(rte.name, wpts));
+                    }
+                }
+            }
+            else if (gpxFile != null && gpxFile.trk != null && gpxFile.trk.Length > 0)
+            {
+                foreach (trkType trk in gpxFile.trk)
+                {
+                    if (trk.trkseg != null && trk.trkseg.Length > 0)
+                    {
+                        IList<GlobalsatWaypoint> wpts = new List<GlobalsatWaypoint>();
+                        string trackName = trk.name;
+                        wptType[] trackPoints = trk.trkseg[0].trkpt;
+
+                        string numberFormat = "";
+                        for (int x = 1; x <= trackPoints.Length; x *= 10)
+                        {
+                            numberFormat += "0";
+                        }
+                        int subLenght = 6 - Math.Min(6, numberFormat.Length);
+                        subLenght = Math.Min(trackName.Length, subLenght);
+
+                        int pointNr = 0;
+                        foreach (wptType trkPoint in trackPoints)
+                        {
+                            pointNr++;
+
+                            string name = trackName.Substring(0, subLenght);
+                            name += string.Format("{0:" + numberFormat + "}", pointNr);
+                            GlobalsatWaypoint waypoint = new GlobalsatWaypoint(name, 0, (short)trkPoint.ele, (double)trkPoint.lat, (double)trkPoint.lon);
+
+                            wpts.Add(waypoint);
+                        }
+                        routes.Add(new GlobalsatRoute(trackName, wpts));
+                    }
+                }
+            }
+
+            return routes;
+        }
+    }
+    }

@@ -21,13 +21,15 @@ using ZoneFiveSoftware.Common.Data.GPS;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class GlobalsatProtocol : GhDeviceBase
+    public abstract class GlobalsatProtocol : GhDeviceBase
     {
         public GlobalsatProtocol(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GlobalsatProtocol(FitnessDevice_Globalsat fitDev) : base(fitDev) { }
 
         //The device creating the packet, used by Send()
-        public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
+        //Must be implemented in each device, a base version for generic cases where all protocols are the same
+        //public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
+        public static GlobalsatPacket PacketFactoryBase { get { return new GlobalsatPacket(); } }
 
         //Import kept in separate structure
         public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
@@ -35,81 +37,85 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return null;
         }
 
-        public virtual void SendTrack(IActivity activity, BackgroundWorker worker, IJobMonitor jobMonitor)
+        public virtual int SendTrack(IList<IActivity> activities, BackgroundWorker worker, IJobMonitor jobMonitor)
         {
-            IGPSRoute gpsRoute = activity.GPSRoute;
+            int result = 0;
             if (worker.CancellationPending)
             {
-                return;
+                return result;
             }
 
             this.Open();
             try
             {
-                IList<GlobalsatPacket> packets = PacketFactory.SendTrack(gpsRoute);
-
-                int i = 0;
-                foreach (GlobalsatPacket packet in packets)
+                foreach (IActivity activity in activities)
                 {
-                    GlobalsatPacket response = null;
-                    int nrAttempts = 0;
+                    IList<GlobalsatPacket> packets = SendTrack(activity);
 
-                    do
+                    int i = 0;
+                    foreach (GlobalsatPacket packet in packets)
                     {
-                        try
+                        GlobalsatPacket response = null;
+                        int nrAttempts = 0;
+
+                        do
                         {
-                            response = (GlobalsatPacket)this.SendPacket(packet);
-                            break;
-                        }
-                        catch (Exception ex1)
-                        {
-                            nrAttempts++;
-                            if (nrAttempts >= 3)
+                            try
                             {
-                                throw ex1;
+                                response = (GlobalsatPacket)this.SendPacket(packet);
+                                break;
+                            }
+                            catch (Exception ex1)
+                            {
+                                nrAttempts++;
+                                if (nrAttempts >= 3)
+                                {
+                                    throw ex1;
+                                }
                             }
                         }
+                        while (nrAttempts < 3);
+
+                        if (response != null)
+                        {
+                            if (response.CommandId == GhPacketBase.ResponseInsuficientMemory)
+                            {
+                                //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
+                            }
+                            else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                            {
+                                // TODO resend
+                                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                            }
+                            else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
+                            {
+                                return result;
+                            }
+                            else
+                            {
+                                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                            }
+                            //TODO:
+                            throw new Exception("Send track error" + response.CommandId);
+                        }
+
+                        this.Port.Close();
+                        this.Port.Open();
+
+                        i++;
+                        double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
+
+                        worker.ReportProgress((int)progress);
+
+                        if (worker.CancellationPending)
+                        {
+                            return result;
+                        }
                     }
-                    while (nrAttempts < 3);
-
-                    if (response != null)
-                    {
-                        if (response.CommandId == GhPacketBase.ResponseInsuficientMemory)
-                        {
-                            //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
-                        }
-                        else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
-                        {
-                            // TODO resend
-                            //throw new Exception(Properties.Resources.Device_SendTrack_Error);
-                        }
-                        else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            //throw new Exception(Properties.Resources.Device_SendTrack_Error);
-                        }
-                        //TODO:
-                        throw new Exception("Send track error" + response.CommandId);
-                    }
-
-                    this.Port.Close();
-                    this.Port.Open();
-
-                    i++;
-                    double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
-
-                    worker.ReportProgress((int)progress);
-
-                    if (worker.CancellationPending)
-                    {
-                        return;
-                    }
+                    // should not reach here if finish ack was received
+                    //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                    result++;
                 }
-                // should not reach here if finish ack was received
-                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
             }
             catch (Exception ex)
             {
@@ -121,16 +127,63 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.Close();
             }
+            return result;
         }
 
-
-        public virtual void SendRoute(GlobalsatRoute route, IJobMonitor jobMonitor)
+        public virtual IList<GlobalsatPacket> SendTrack(IActivity activity)
         {
+            IList<GlobalsatPacket> sendTrackPackets = new List<GlobalsatPacket>();
+
+            IGPSRoute gpsRoute = activity.GPSRoute;
+            GhPacketBase.TrackFileBase trackFileStart = new GhPacketBase.TrackFileBase();
+            trackFileStart.TotalDistanceMeters = (int)gpsRoute.TotalDistanceMeters;
+            trackFileStart.StartTime = DateTime.Now; // trackPoints.StartTime;
+            trackFileStart.TrackPointCount = (short)gpsRoute.Count;
+            trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
+
+            GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
+            sendTrackPackets.Add(startPacket);
+
+            int nrPointsPerSection = startPacket.TrackPointsPerSection;
+
+            for (int i = 0; i < gpsRoute.Count; i += nrPointsPerSection)
+            {
+                int startPoint = i;
+                int endPoint = (int)Math.Min(i + nrPointsPerSection - 1, gpsRoute.Count - 1);
+
+                List<GhPacketBase.TrackPointSend> trackpoints = new List<GhPacketBase.TrackPointSend>();
+                for (int j = startPoint; j <= endPoint; j++)
+                {
+                    IGPSPoint point = gpsRoute[j].Value;
+                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees);
+                    trackpoint.Altitude = (short)point.ElevationMeters;
+                    trackpoints.Add(trackpoint);
+                }
+
+                GhPacketBase.TrackFileSectionSend trackFileSection = new GhPacketBase.TrackFileSectionSend(trackFileStart);
+                trackFileSection.StartPointIndex = (short)startPoint;
+                trackFileSection.EndPointIndex = (short)endPoint;
+                trackFileSection.TrackPoints = trackpoints;
+
+                GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileSection);
+                sendTrackPackets.Add(pointsPacket);
+            }
+
+            return sendTrackPackets;
+        }
+
+        public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            int res = 0;
             this.Open();
             try
             {
-                GlobalsatPacket packet = PacketFactory.SendRoute(route);
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                foreach (GlobalsatRoute route in routes)
+                {
+                    GlobalsatPacket packet = PacketFactory.SendRoute(route);
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    res++;
+                }
             }
             catch
             {
@@ -141,6 +194,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.Close();
             }
+            return res;
         }
 
         //public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation(IJobMonitor jobMonitor)

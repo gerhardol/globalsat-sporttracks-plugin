@@ -221,7 +221,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 != null)
             {
-                device2.SendTrack(_activity, worker, jobMonitor);
+                device2.SendTrack(new List<IActivity>{_activity}, worker, jobMonitor);
             }
             if (worker.CancellationPending)
             {

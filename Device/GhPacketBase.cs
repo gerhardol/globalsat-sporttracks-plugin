@@ -101,7 +101,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //    public Int16 EndPointIndex;
         }
 
-        public class TrackPoint
+        public class TrackPoint1
         {
             public double Latitude; //4bit, Degrees * 1000000
             public double Longitude; //4bit, Degrees * 1000000
@@ -146,6 +146,67 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 Power; // Power, unknown units
             //public Int16 PowerCadence; // unknown units
             public Int16 Cadence; // Cadence, unknown units
+        }
+
+        //Sending tracks
+        public class TrackFileBase
+        {
+            public DateTime StartTime;
+            public TimeSpan TotalTime;
+            public Int32 TotalDistanceMeters;
+            public Int16 TotalCalories;
+            public Int16 MaximumSpeed;
+            public byte MaximumHeartRate;
+            public byte AverageHeartRate;
+            public Int16 TrackPointCount;
+            public Int16 TotalAscent;
+            public Int16 TotalDescent;
+
+            public TrackFileBase()
+            {
+            }
+        }
+
+        public class TrackFileHeaderSend : TrackFileBase
+        {
+            public Int16 TrackPointIndex;
+        }
+
+        public class TrackFileSectionSend : TrackFileBase
+        {
+            public TrackFileSectionSend(TrackFileBase trackFile)
+            {
+                this.StartTime = trackFile.StartTime;
+                this.TotalTime = trackFile.TotalTime;
+                this.TotalDistanceMeters = trackFile.TotalDistanceMeters;
+                this.TotalCalories = trackFile.TotalCalories;
+                this.MaximumSpeed = trackFile.MaximumSpeed;
+                this.MaximumHeartRate = trackFile.MaximumHeartRate;
+                this.AverageHeartRate = trackFile.AverageHeartRate;
+                this.TrackPointCount = trackFile.TrackPointCount;
+                this.TotalAscent = trackFile.TotalAscent;
+                this.TotalDescent = trackFile.TotalDescent;
+            }
+
+            public Int16 StartPointIndex;
+            public Int16 EndPointIndex;
+            public IList<TrackPointSend> TrackPoints = new List<TrackPointSend>();
+        }
+
+        public class TrackPointSend
+        {
+            public Int32 Latitude; // Degrees * 1000000
+            public Int32 Longitude; // Degrees * 1000000
+            public Int16 Altitude; // Meters
+            public Int16 Speed; // Kilometers per hour * 100
+            public Byte HeartRate;
+            public Int16 IntervalTime; // Seconds * 10
+
+            public TrackPointSend(double latitude, double longitude)
+            {
+                this.Latitude = (int)(1000000 * latitude);
+                this.Longitude = (int)(1000000 * longitude);
+            }
         }
 
         public byte[] ConstructPayload()

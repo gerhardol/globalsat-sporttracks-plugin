@@ -18,6 +18,8 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.ComponentModel;
+
 using ZoneFiveSoftware.Common.Data;
 using ZoneFiveSoftware.Common.Data.Fitness;
 using ZoneFiveSoftware.Common.Data.GPS;
@@ -37,9 +39,9 @@ namespace GlobalsatDevicePlugin
         bool Delete(Stream gpxDataStream, IJobMonitor jobMonitor);
     }
 
-    public class GlobalsatWaypointsImportExport
+    public class GlobalsatDeviceImportExport
     {
-        public static Stream Import(IJobMonitor jobMonitor)
+        public static Stream ImportWpt(IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
@@ -48,7 +50,7 @@ namespace GlobalsatDevicePlugin
             return result;
         }
 
-        public static int Export(Stream waypoints, IJobMonitor jobMonitor)
+        public static int ExportWpt(Stream waypoints, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
@@ -56,7 +58,7 @@ namespace GlobalsatDevicePlugin
             return device2.SendWaypoints(KeymazePlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
-        public static void Delete(Stream waypoints, IJobMonitor jobMonitor)
+        public static void DeleteWpt(Stream waypoints, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
@@ -65,12 +67,44 @@ namespace GlobalsatDevicePlugin
             jobMonitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
         }
 
-        public static void DeleteAll(IJobMonitor jobMonitor)
+        public static void DeleteAllWpt(IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return; }
             device2.DeleteAllWaypoints(jobMonitor);
+        }
+
+        public static Stream ImportRte(IJobMonitor jobMonitor)
+        {
+            throw new Exception();
+            //GenericDevice device = new GenericDevice();
+            //GlobalsatProtocol device2 = device.Device(jobMonitor);
+            //if (device2 == null) { return null; }
+            //Stream result = KeymazePlugin.IO.ExportRoutes.ExportGpxRoutesStream(device2.GetRoutes(jobMonitor));
+            //return result;
+        }
+
+        public static int ExportRte(Stream routes, IJobMonitor jobMonitor)
+        {
+            GenericDevice device = new GenericDevice();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
+            if (device2 == null) { return 0; }
+            return device2.SendRoute(KeymazePlugin.IO.ImportRoutes.ImportStreamGpxRoutes(routes), jobMonitor);
+        }
+
+        public static void DeleteRte(Stream waypoints, IJobMonitor jobMonitor)
+        {
+            throw new Exception();
+        }
+
+        public static int ExportActivity(IList<IActivity> activities, IJobMonitor jobMonitor)
+        {
+            GenericDevice device = new GenericDevice();
+            GlobalsatProtocol device2 = device.Device(jobMonitor);
+            if (device2 == null) { return 0; }
+            BackgroundWorker worker = new BackgroundWorker();
+            return device2.SendTrack(activities, worker, jobMonitor);
         }
     }
 }
