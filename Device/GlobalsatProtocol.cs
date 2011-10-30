@@ -176,10 +176,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //        GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemConfiguration();
         //        return systemInfo;
         //    }
-        //    catch
+        //    catch(Exception e)
         //    {
-        //        throw;
-        //        //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+        //        throw new Exception(Properties.Resources.Device_GetInfo_Error+e);
         //    }
         //    finally
         //    {
@@ -207,9 +206,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 devConfig.SystemConfigData = response.PacketData;
                 return devConfig;
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error);
+                throw new Exception(Properties.Resources.Device_GetInfo_Error+e);
             }
             finally
             {
@@ -227,9 +226,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                 //No info in the response
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error);
+                throw new Exception(Properties.Resources.Device_GetInfo_Error+e);
             }
             finally
             {
@@ -248,9 +247,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 return waypoints;
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_GetWaypoints_Error);
+                throw new Exception(Properties.Resources.Device_GetWaypoints_Error+e);
             }
             finally
             {
@@ -271,9 +270,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 return nrSentWaypoints;
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
+                throw new Exception(Properties.Resources.Device_SendWaypoints_Error+e);
             }
             finally
             {
@@ -289,9 +288,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.configInfo.MaxNrWaypoints, waypointNames);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
+                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error+e);
             }
             finally
             {
@@ -308,9 +307,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket packet = PacketFactory.DeleteAllWaypoints();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
+                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error+e);
             }
             finally
             {
@@ -331,9 +330,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     res++;
                 }
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_SendRoute_Error);
+                throw new Exception(Properties.Resources.Device_SendRoute_Error+e);
             }
             finally
             {
@@ -352,9 +351,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                 return response.ResponseGetScreenshot();
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error); 
+                throw new Exception(Properties.Resources.Device_GetInfo_Error+e); 
             }
             finally
             {
