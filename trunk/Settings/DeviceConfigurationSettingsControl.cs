@@ -113,27 +113,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void buttonExportDeviceConfig_Click(object sender, EventArgs e)
         {
-            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            try
             {
-                try
+                IJobMonitor jobMonitor = new JobMonitor();
+                GenericDevice device = new GenericDevice();
+                GlobalsatProtocol device2 = device.Device(jobMonitor);
+                if (device2 != null)
                 {
-                   IJobMonitor jobMonitor = new JobMonitor();
-                    GenericDevice device = new GenericDevice();
-                    GlobalsatProtocol device2 = device.Device(jobMonitor);
-                    if (device2 != null)
+                    GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+                    saveFileDialog1.FileName = currentDeviceConfig.DeviceName;
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                     {
-                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
-
                         currentDeviceConfig.Save(saveFileDialog1.FileName);
 
                         //MessageDialog.Show(CommonResources.Text.MessageExportComplete, Properties.Resources.UI_Settings_ExportConfigButton_Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
-                catch (Exception ex)
-                {
-                    MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ExportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ExportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
         }
     }

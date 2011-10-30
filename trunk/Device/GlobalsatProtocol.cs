@@ -50,7 +50,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 foreach (IActivity activity in activities)
                 {
-                    IList<GlobalsatPacket> packets = SendTrack(activity);
+                    IList<GlobalsatPacket> packets = SendTrackPackets(activity);
 
                     int i = 0;
                     foreach (GlobalsatPacket packet in packets)
@@ -123,7 +123,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return result;
         }
 
-        public virtual IList<GlobalsatPacket> SendTrack(IActivity activity)
+        public virtual IList<GlobalsatPacket> SendTrackPackets(IActivity activity)
         {
             IList<GlobalsatPacket> sendTrackPackets = new List<GlobalsatPacket>();
 
@@ -350,12 +350,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 GlobalsatPacket packet = PacketFactory.GetScreenshot();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                return response.ResponseScreenshot();
+                return response.ResponseGetScreenshot();
             }
             catch
             {
-                throw;
-                throw new Exception(""); // TODO create message  Properties.Resources.Device_GetInfo_Error);
+                throw new Exception(Properties.Resources.Device_GetInfo_Error); 
             }
             finally
             {

@@ -34,7 +34,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public Gh561Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public Gh561Device() : base(new FitnessDevice_GH561()) { }
         //Unknown protocol
-        public override IList<GlobalsatPacket> SendTrack(IActivity activity) { throw new Exception(); }
+        public override IList<GlobalsatPacket> SendTrackPackets(IActivity activity) { throw new Exception(); }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(); } }
     }

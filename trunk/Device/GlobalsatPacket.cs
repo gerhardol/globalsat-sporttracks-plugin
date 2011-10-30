@@ -423,7 +423,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public virtual System.Drawing.Bitmap ResponseScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.ScreenRowCol, this.PacketData); }
+        public virtual System.Drawing.Bitmap ResponseGetScreenshot() { return GlobalsatBitmap.GetBitmap(this.ScreenBpp, this.ScreenSize, this.ScreenRowCol, this.PacketData); }
 
     //Packetsizes
         protected virtual int LocationLength { get { return 18; } }
