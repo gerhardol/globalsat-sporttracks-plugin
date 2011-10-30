@@ -70,7 +70,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IList<Gh505Packet.Train> trains = new List<Gh505Packet.Train>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
             Gh505Packet response = (Gh505Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;

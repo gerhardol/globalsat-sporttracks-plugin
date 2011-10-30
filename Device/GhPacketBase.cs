@@ -59,7 +59,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public const byte CommandGetTrackFileHeaders = 0x78;
         public const byte CommandGetTrackFileSections = 0x80;
-        public const byte CommandGetNextSection = 0x81;
+        public const byte CommandGetNextTrackSection = 0x81;
         //public const byte CommandReGetLastSection = 0x82;
         public const byte CommandId_FINISH = 0x8A;
         public const byte CommandSendTrackStart = 0x90;

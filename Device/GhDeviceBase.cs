@@ -157,7 +157,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch(Exception e)
             {
-            //TODO: DEBUG timeout often occurs for GH-505
                 throw e;
             }
             port.Close();
@@ -168,13 +167,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (received.CommandId != packet.CommandId &&
                 !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
                 received.CommandId == GhPacketBase.CommandId_FINISH) &&
-                (packet.CommandId == GhPacketBase.CommandGetNextSection ||
+                (packet.CommandId == GhPacketBase.CommandGetNextTrackSection ||
                  packet.CommandId == GhPacketBase.CommandGetTrackFileSections)))
             {
                 if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
                 {
-                    //TODO
-                    //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
+                    throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
                 }
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }

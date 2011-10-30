@@ -71,7 +71,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IList<Gh625XTPacket.Train> trains = new List<Gh625XTPacket.Train>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
             Gh625XTPacket response = (Gh625XTPacket)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
@@ -142,18 +142,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 int nrSentWaypoints = 0;
                 foreach (GlobalsatWaypoint g in waypoints)
                 {
-                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint>{g});
+                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                     // km500 no out of memory- waypoint overwritten
-                    nrSentWaypoints += response.GetSentWaypoints();
+                    nrSentWaypoints += response.ResponseSendWaypoints();
                 }
                 return nrSentWaypoints;
             }
             catch
             {
-                //throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
-                throw;
+                throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
             }
             finally
             {

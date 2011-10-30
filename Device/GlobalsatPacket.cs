@@ -19,7 +19,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         private static string InvalidOperation = "Invalid Operation";
 
-        public class GlobalsatSystemInformation
+        public class GlobalsatSystemConfiguration
         {
             public string UserName;
             public bool IsFemale;
@@ -39,7 +39,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public int PcRouteCount;
             public int CourseeCount;
 
-            public GlobalsatSystemInformation(string deviceName, double version, string firmware,
+            public GlobalsatSystemConfiguration(string deviceName, double version, string firmware,
                 string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
                 int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount, int courseCount)
             {
@@ -61,7 +61,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.CourseeCount = courseCount;
             }
 
-            public GlobalsatSystemInformation(string deviceName, string firmware,
+            public GlobalsatSystemConfiguration(string deviceName, string firmware,
                 int waypointCount, int pcRouteCount)
             {
                 this.DeviceName = deviceName;
@@ -71,7 +71,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public class GlobalsatSystemConfiguration
+        public class GlobalsatSystemConfiguration2
         {
             public string UserName;
             public bool IsFemale;
@@ -82,11 +82,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public int HeightCm;
             public DateTime BirthDate;
 
-            public GlobalsatSystemConfiguration()
+            public GlobalsatSystemConfiguration2()
             {
             }
 
-            public GlobalsatSystemConfiguration(string deviceName, double version, string firmware,
+            public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
                 string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
                 int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
             {
@@ -107,34 +107,34 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public GlobalsatPacket GetSystemInformation()
+        public GlobalsatPacket GetSystemConfiguration()
         {
             InitPacket(CommandGetSystemInformation, 0);
             return this;
         }
 
-        public virtual GlobalsatSystemInformation ResponseGetSystemInformation()
+        public virtual GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
         {
             string deviceName = ByteArr2String(0, 20 + 1);
             string firmware = ByteArr2String(21, 16 + 1);
             int waypointCount = (int)PacketData[38];
             int pcRouteCount = (int)PacketData[39];
 
-            GlobalsatSystemInformation systemInfo = new GlobalsatSystemInformation(deviceName, firmware, waypointCount, pcRouteCount);
+            GlobalsatSystemConfiguration systemInfo = new GlobalsatSystemConfiguration(deviceName, firmware, waypointCount, pcRouteCount);
 
             return systemInfo;
         }
 
-        public GlobalsatPacket GetSystemConfiguration()
+        public GlobalsatPacket GetSystemConfiguration2()
         {
             InitPacket(CommandGetSystemConfiguration, 0);
             return this;
         }
 
-        public virtual GlobalsatSystemConfiguration ResponseGetSystemConfiguration() { throw new Exception(InvalidOperation); }
+        public virtual GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2() { throw new Exception(InvalidOperation); }
 
         //public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
-        public virtual GlobalsatPacket SetSystemConfiguration(byte[] data)
+        public virtual GlobalsatPacket SetSystemConfiguration2(byte[] data)
         {
             InitPacket(CommandSetSystemConfiguration, (Int16)data.Length);
 
@@ -146,9 +146,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public GlobalsatPacket GetNextSection()
+        public GlobalsatPacket GetNextTrackSection()
         {
-            InitPacket(CommandGetNextSection, 0);
+            InitPacket(CommandGetNextTrackSection, 0);
             return this;
         }
 
@@ -167,12 +167,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.Write(offset, index);
                 offset += 2;
             }
-            return this;
-        }
-
-        public GlobalsatPacket GetScreenshot()
-        {
-            InitPacket(CommandGetScreenshot, 0);
             return this;
         }
 
@@ -249,7 +243,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public virtual int GetSentWaypoints()
+        public virtual int ResponseSendWaypoints()
         {
             //TODO: Size check
             int nrSentWaypoints = this.ReadInt16(0);
@@ -371,7 +365,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-
         public virtual GlobalsatPacket SendTrackSection(TrackFileSectionSend trackFile)
         {
             int trackPointCount = trackFile.EndPointIndex - trackFile.StartPointIndex + 1;
@@ -419,6 +412,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
             }
 
+            return this;
+        }
+
+        public GlobalsatPacket GetScreenshot()
+        {
+            InitPacket(CommandGetScreenshot, 0);
             return this;
         }
 

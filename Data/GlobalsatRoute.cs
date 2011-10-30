@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ZoneFiveSoftware.Common.Data.Fitness;
+using ZoneFiveSoftware.Common.Data.GPS;
+
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatRoute
@@ -29,6 +32,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             this.Name = name;
             this.wpts = wpts;
+        }
+
+        public GlobalsatRoute(string name, IGPSRoute route)
+        {
+            this.Name = name;
+            this.wpts = new List<GlobalsatWaypoint>();
+            foreach (ZoneFiveSoftware.Common.Data.ITimeValueEntry<IGPSPoint> g in route)
+            {
+                this.wpts.Add(new GlobalsatWaypoint("", 0, (short)g.Value.ElevationMeters, g.Value.LatitudeDegrees, g.Value.LongitudeDegrees));
+            }
         }
     }
 }
