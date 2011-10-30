@@ -65,7 +65,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IList<Gh625Packet.TrackFileSection> trackSections = new List<Gh625Packet.TrackFileSection>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = PacketFactory.GetNextSection();
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
             Gh625Packet response = (Gh625Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;

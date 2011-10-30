@@ -90,11 +90,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     GlobalsatProtocol device2 = device.Device(jobMonitor);
                     if (device2 != null)
                     {
-                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetDeviceConfigurationData(jobMonitor);
+                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
 
                         if (importedDeviceConfig != null && importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
                         {
-                            device2.SetDeviceConfigurationData(importedDeviceConfig, jobMonitor);
+                            device2.SetSystemConfiguration2(importedDeviceConfig, jobMonitor);
                         }
                         else
                         {
@@ -122,7 +122,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     GlobalsatProtocol device2 = device.Device(jobMonitor);
                     if (device2 != null)
                     {
-                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetDeviceConfigurationData(jobMonitor);
+                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
 
                         currentDeviceConfig.Save(saveFileDialog1.FileName);
 

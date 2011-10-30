@@ -134,7 +134,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             header.AverageHeartRate = this.PacketData[offset + 20];
         }
 
-        public override GlobalsatSystemInformation ResponseGetSystemInformation()
+        public override GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
         {
             string deviceName = ByteArr2String(0, 20 + 1);
 
@@ -174,13 +174,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch { }
 
-            GlobalsatSystemInformation systemInfo = new GlobalsatSystemInformation(deviceName, version, firmware, userName, isFemale, age, weightPounds, weightKg, heightInches, heightCm, birthDate,
+            GlobalsatSystemConfiguration systemInfo = new GlobalsatSystemConfiguration(deviceName, version, firmware, userName, isFemale, age, weightPounds, weightKg, heightInches, heightCm, birthDate,
                 waypointCount, trainCount, manualRouteCount, pcRouteCount, courseCount);
 
             return systemInfo;
         }
 
-        public override GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
+        public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
         {
             string userName = ByteArr2String(0, 10 + 1);
 
@@ -250,7 +250,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int switchDistanceIndex = (int)PacketData[124];
             bool switchCorrectionOn = PacketData[125] != 0x00;
 
-            GlobalsatSystemConfiguration systemInfo = new GlobalsatSystemConfiguration();
+            GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
 
             return systemInfo;
         }

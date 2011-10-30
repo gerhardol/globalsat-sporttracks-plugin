@@ -176,9 +176,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return points;
         }
 
-        public override GlobalsatSystemInformation ResponseGetSystemInformation()
+        public override GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
         {
-            return new Gh625Packet().ResponseGetSystemInformation();
+            return new Gh625Packet().ResponseGetSystemConfiguration();
         }
     }
 }

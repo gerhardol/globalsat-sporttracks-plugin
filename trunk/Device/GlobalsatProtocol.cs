@@ -78,14 +78,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                         if (response != null)
                         {
-                            if (response.CommandId == GhPacketBase.ResponseInsuficientMemory)
-                            {
-                                //throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
-                            }
-                            else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                            //Generic codes in SendPacket
+                            if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
                             {
                                 // TODO resend
-                                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                                throw new Exception(Properties.Resources.Device_SendTrack_Error);
                             }
                             else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
                             {
@@ -93,10 +90,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                             else
                             {
-                                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                                throw new Exception(Properties.Resources.Device_SendTrack_Error);
                             }
                             //TODO:
-                            throw new Exception("Send track error" + response.CommandId);
+                            throw new Exception("Send track error: " + response.CommandId);
                         }
 
                         this.Port.Close();
@@ -112,16 +109,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             return result;
                         }
                     }
-                    // should not reach here if finish ack was received
-                    //throw new Exception(Properties.Resources.Device_SendTrack_Error);
                     result++;
                 }
             }
             catch (Exception ex)
             {
-                //TODO: popup instead of exception
-                throw ex;
-                //throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                throw new Exception(Properties.Resources.Device_SendTrack_Error+ex);
             }
             finally
             {
@@ -172,40 +165,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return sendTrackPackets;
         }
 
-        public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
-        {
-            int res = 0;
-            this.Open();
-            try
-            {
-                foreach (GlobalsatRoute route in routes)
-                {
-                    GlobalsatPacket packet = PacketFactory.SendRoute(route);
-                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                    res++;
-                }
-            }
-            catch
-            {
-                //throw new Exception(Properties.Resources.Device_SendRoute_Error);
-                throw;
-            }
-            finally
-            {
-                this.Close();
-            }
-            return res;
-        }
-
-        //public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemInformation(IJobMonitor jobMonitor)
+        //public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemConfiguration(IJobMonitor jobMonitor)
         //{
         //    this.Open();
         //    try
         //    {
-        //        GlobalsatPacket packet = PacketFactory.GetSystemInformation();
+        //        GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
         //        GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-        //        GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
+        //        GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemConfiguration();
         //        return systemInfo;
         //    }
         //    catch
@@ -219,21 +187,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    }
         //}
 
-        public virtual GlobalsatDeviceConfiguration GetDeviceConfigurationData(IJobMonitor jobMonitor)
+        public virtual GlobalsatDeviceConfiguration GetSystemConfiguration2(IJobMonitor jobMonitor)
         {
             GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
 
             this.Open();
             try
             {
-                GlobalsatPacket packet = PacketFactory.GetSystemInformation();
+                GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemInformation();
+                GlobalsatPacket.GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
                 devConfig.DeviceName = systemInfo.DeviceName;
                 //devConfig.SystemInfoData = response.PacketData;
 
-                packet = PacketFactory.GetSystemConfiguration();
+                packet = PacketFactory.GetSystemConfiguration2();
                 response = (GlobalsatPacket)this.SendPacket(packet);
 
                 devConfig.SystemConfigData = response.PacketData;
@@ -241,8 +209,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch
             {
-                throw;
-                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+                throw new Exception(Properties.Resources.Device_GetInfo_Error);
             }
             finally
             {
@@ -250,20 +217,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual void SetDeviceConfigurationData(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
+        public virtual void SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
 
             this.Open();
             try
             {
-                GlobalsatPacket packet = PacketFactory.SetSystemConfiguration(devConfig.SystemConfigData);
+                GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigData);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                 //No info in the response
             }
             catch
             {
-                throw;
-                //throw new Exception(Properties.Resources.Device_GetInfo_Error);
+                throw new Exception(Properties.Resources.Device_GetInfo_Error);
             }
             finally
             {
@@ -284,8 +250,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch
             {
-                //throw new Exception(Properties.Resources.Device_GetWaypoints_Error);
-                throw;
+                throw new Exception(Properties.Resources.Device_GetWaypoints_Error);
             }
             finally
             {
@@ -302,14 +267,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                 // km500 no out of memory- waypoint overwritten
-                int nrSentWaypoints = response.GetSentWaypoints();
+                int nrSentWaypoints = response.ResponseSendWaypoints();
 
                 return nrSentWaypoints;
             }
             catch
             {
-                //throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
-                throw;
+                throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
             }
             finally
             {
@@ -327,8 +291,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch
             {
-                //throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
-                throw;
+                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
             }
             finally
             {
@@ -347,13 +310,36 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch
             {
-                //throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
-                throw;
+                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error);
             }
             finally
             {
                 this.Close();
             }
+        }
+
+        public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            int res = 0;
+            this.Open();
+            try
+            {
+                foreach (GlobalsatRoute route in routes)
+                {
+                    GlobalsatPacket packet = PacketFactory.SendRoute(route);
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    res++;
+                }
+            }
+            catch
+            {
+                throw new Exception(Properties.Resources.Device_SendRoute_Error);
+            }
+            finally
+            {
+                this.Close();
+            }
+            return res;
         }
 
         public virtual Bitmap GetScreenshot(IJobMonitor jobMonitor)
