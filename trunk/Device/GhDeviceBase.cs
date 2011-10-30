@@ -47,7 +47,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
+        public abstract GlobalsatPacket PacketFactory { get; }
 
         public string Open()
         {

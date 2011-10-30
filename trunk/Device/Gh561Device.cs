@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 
+using ZoneFiveSoftware.Common.Data.Fitness;
+using ZoneFiveSoftware.Common.Data.GPS;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
 
@@ -31,6 +33,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         public Gh561Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public Gh561Device() : base(new FitnessDevice_GH561()) { }
+        //Unknown protocol
+        public override IList<GlobalsatPacket> SendTrack(IActivity activity) { throw new Exception(); }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(); } }
     }

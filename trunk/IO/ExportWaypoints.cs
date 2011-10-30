@@ -20,6 +20,7 @@ using KeymazePlugin.Device;
 using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 
+using ZoneFiveSoftware.Common.Data.GPS;
 
 namespace KeymazePlugin.IO
 {
@@ -79,6 +80,38 @@ namespace KeymazePlugin.IO
                 CopyStream(gpx, file);
             }
             gpx.Close();
+        }
+    }
+    class ExportRoutes
+    {
+        public static Stream ExportGpxRouteStream(IList<GlobalsatRoute> routes)
+        {
+            gpxType gpxFile = new gpxType();
+            //gpxFile.creator = "SportTracks KeymazePlugin";
+
+            List<rteType> rtes = new List<rteType>();
+
+            if (routes != null && routes.Count > 0)
+            {
+                foreach (GlobalsatRoute route in routes)
+                {
+                    if (route.wpts != null && route.wpts.Count > 0)
+                    {
+                        rteType rte = new rteType();
+                        rte.name = route.Name;
+                        rte.rtept = ((List<wptType>)(route.wpts)).ToArray();
+                    }
+                }
+            }
+
+            gpxFile.rte = rtes.ToArray();
+
+            XmlSerializer serializer = new XmlSerializer(gpxFile.GetType());
+
+            Stream writer = new MemoryStream();
+            serializer.Serialize(writer, gpxFile);
+            //writer.Close();
+            return writer;
         }
     }
 }

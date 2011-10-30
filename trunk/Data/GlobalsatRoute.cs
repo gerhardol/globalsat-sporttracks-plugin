@@ -10,32 +10,25 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ZoneFiveSoftware.Common.Data.Fitness;
-using ZoneFiveSoftware.Common.Data.GPS;
-
-
-
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatRoute
     {
         public const int MaxRouteNameLength = 15;
 
-        public IGPSRoute GPSRoute;
         public string Name;
+        public IList<GlobalsatWaypoint> wpts;
 
         public GlobalsatRoute()
         {
             this.Name = "";
-            this.GPSRoute = new GPSRoute();
+            this.wpts = new List<GlobalsatWaypoint>();
         }
 
-        public GlobalsatRoute(string name, IGPSRoute route)
+        public GlobalsatRoute(string name, IList<GlobalsatWaypoint> wpts)
         {
             this.Name = name;
-            this.GPSRoute = route;
+            this.wpts = wpts;
         }
-
-
     }
 }
