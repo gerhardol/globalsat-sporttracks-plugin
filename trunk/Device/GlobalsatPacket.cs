@@ -296,7 +296,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.InitPacket(CommandSendRoute, totalLength);
 
             int offset = 0;
-            this.Write(0, maxRouteNameLenght + 1, routeName);
+            this.Write(offset, maxRouteNameLenght + 1, routeName);
             offset += maxRouteNameLenght + 1;
 
             this.PacketData[offset++] = nrPoints;
