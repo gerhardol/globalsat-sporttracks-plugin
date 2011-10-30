@@ -20,8 +20,6 @@ using KeymazePlugin.Device;
 using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 
-using ZoneFiveSoftware.Common.Data.GPS;
-
 namespace KeymazePlugin.IO
 {
     class ExportWaypoints
@@ -99,13 +97,22 @@ namespace KeymazePlugin.IO
                     {
                         rteType rte = new rteType();
                         rte.name = route.Name;
-                        rte.rtept = ((List<wptType>)(route.wpts)).ToArray();
+                        List<wptType> wpts = new List<wptType>();
+                        foreach (GlobalsatWaypoint g in route.wpts)
+                        {
+                            wptType wpt = new wptType();
+                            wpt.lat = (decimal)g.Latitude;
+                            wpt.lon = (decimal)g.Longitude;
+                            wpt.ele = g.Altitude;
+                            wpts.Add(wpt);
+                        }
+                        rte.rtept = wpts.ToArray();
+                        rtes.Add(rte);
                     }
                 }
             }
 
-            gpxFile.rte = rtes.ToArray();
-
+            gpxFile.rte = rtes.ToArray(); 
             XmlSerializer serializer = new XmlSerializer(gpxFile.GetType());
 
             Stream writer = new MemoryStream();
