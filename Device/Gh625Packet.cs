@@ -180,80 +180,80 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return systemInfo;
         }
 
-        public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
-        {
-            string userName = ByteArr2String(0, 10 + 1);
+        //public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
+        //{
+        //    string userName = ByteArr2String(0, 10 + 1);
 
-            bool isFemale = PacketData[11] != 0x00;
-            int age = (int)PacketData[12];
+        //    bool isFemale = PacketData[11] != 0x00;
+        //    int age = (int)PacketData[12];
 
-            int weightPounds = ReadInt16(13);
-            int weightKg = ReadInt16(15);
+        //    int weightPounds = ReadInt16(13);
+        //    int weightKg = ReadInt16(15);
 
-            int heightInches = ReadInt16(17);
-            int heightCm = ReadInt16(19);
+        //    int heightInches = ReadInt16(17);
+        //    int heightCm = ReadInt16(19);
 
-            int birthYear = ReadInt16(21);
-            int birthMonth = (int)PacketData[23] + 1;
-            int birthDay = (int)PacketData[24];
-            DateTime birthDate = new DateTime(birthYear, birthMonth, birthDay);
+        //    int birthYear = ReadInt16(21);
+        //    int birthMonth = (int)PacketData[23] + 1;
+        //    int birthDay = (int)PacketData[24];
+        //    DateTime birthDate = new DateTime(birthYear, birthMonth, birthDay);
 
-            int languageIndex = (int)PacketData[25];
-            int timezoneIndex = (int)PacketData[26];
-            int utcOffsetTimeIndex = (int)PacketData[27];
-            bool summertime = PacketData[28] != 0x00;
-            bool isTimeFormat24h = PacketData[29] != 0x00;
-            int unitIndex = (int)PacketData[30];
-            int beeperIndex = (int)PacketData[31];
-            bool waasOn = PacketData[32] != 0x00;
-            int recordSamplingIndex = (int)PacketData[33];
-            int recordSamplingCustomTime = (int)PacketData[34];
-            int sportTypeIndex = (int)PacketData[35];
-            int timeAlertIndex = (int)PacketData[36];
-            int timeAlertInterval = ReadInt32(37); // 0.1 secs
-            int distanceAlertIndex = (int)PacketData[41];
-            int distanceAlertInterval = ReadInt32(42); // cm
-            bool fastSpeedAlertOn = PacketData[46] != 0x00;
-            int fastSpeedMiles = ReadInt32(47);
-            int fastSpeedKm = ReadInt32(51);
-            int fastSpeedKnots = ReadInt32(55);
-            bool slowSpeedAlertOn = PacketData[59] != 0x00;
-            int slowSpeedMiles = ReadInt32(60);
-            int slowSpeedKm = ReadInt32(64);
-            int slowSpeedKnots = ReadInt32(68);
-            bool fastPaceAlertOn = PacketData[72] != 0x00;
-            int fastPace = ReadInt32(73); // by units in byte 30
-            bool slowPaceAlertOn = PacketData[77] != 0x00;
-            int slowPace = ReadInt32(78); // by units in byte 30
-            int autoPauseIndex = (int)PacketData[82];
-            int pauseSpeedMiles = ReadInt32(83);
-            int pauseSpeedKm = ReadInt32(87);
-            int pauseSpeedKnots = ReadInt32(91);
-            bool calculateCalorieByHeartrate = PacketData[95] != 0x00;
-            bool heartMaxAlertOn = PacketData[96] != 0x00;
-            int maxHeartrate = (int)PacketData[97];
-            bool heartMinAlertOn = PacketData[98] != 0x00;
-            int minHeartrate = (int)PacketData[99];
-            int coordinationIndex = (int)PacketData[100];
-            int sleepModeIndex = (int)PacketData[101];
-            int heartAlertLevelIndex = (int)PacketData[102];
-            int trainingLevelIndex = (int)PacketData[103];
-            int declinationIndex = (int)PacketData[104];
-            int declinationManualValue = ReadInt32(105);
-            int autoLapIndex = (int)PacketData[109];
-            int autoLapDistance = ReadInt32(110);
-            int autoLapTime = ReadInt32(114);
-            int extraWeightPounds = ReadInt16(118);
-            int extraWeightKg = ReadInt16(120);
-            int heartZoneLow = (int)PacketData[122];
-            int heartZoneHigh = (int)PacketData[123];
-            int switchDistanceIndex = (int)PacketData[124];
-            bool switchCorrectionOn = PacketData[125] != 0x00;
+        //    int languageIndex = (int)PacketData[25];
+        //    int timezoneIndex = (int)PacketData[26];
+        //    int utcOffsetTimeIndex = (int)PacketData[27];
+        //    bool summertime = PacketData[28] != 0x00;
+        //    bool isTimeFormat24h = PacketData[29] != 0x00;
+        //    int unitIndex = (int)PacketData[30];
+        //    int beeperIndex = (int)PacketData[31];
+        //    bool waasOn = PacketData[32] != 0x00;
+        //    int recordSamplingIndex = (int)PacketData[33];
+        //    int recordSamplingCustomTime = (int)PacketData[34];
+        //    int sportTypeIndex = (int)PacketData[35];
+        //    int timeAlertIndex = (int)PacketData[36];
+        //    int timeAlertInterval = ReadInt32(37); // 0.1 secs
+        //    int distanceAlertIndex = (int)PacketData[41];
+        //    int distanceAlertInterval = ReadInt32(42); // cm
+        //    bool fastSpeedAlertOn = PacketData[46] != 0x00;
+        //    int fastSpeedMiles = ReadInt32(47);
+        //    int fastSpeedKm = ReadInt32(51);
+        //    int fastSpeedKnots = ReadInt32(55);
+        //    bool slowSpeedAlertOn = PacketData[59] != 0x00;
+        //    int slowSpeedMiles = ReadInt32(60);
+        //    int slowSpeedKm = ReadInt32(64);
+        //    int slowSpeedKnots = ReadInt32(68);
+        //    bool fastPaceAlertOn = PacketData[72] != 0x00;
+        //    int fastPace = ReadInt32(73); // by units in byte 30
+        //    bool slowPaceAlertOn = PacketData[77] != 0x00;
+        //    int slowPace = ReadInt32(78); // by units in byte 30
+        //    int autoPauseIndex = (int)PacketData[82];
+        //    int pauseSpeedMiles = ReadInt32(83);
+        //    int pauseSpeedKm = ReadInt32(87);
+        //    int pauseSpeedKnots = ReadInt32(91);
+        //    bool calculateCalorieByHeartrate = PacketData[95] != 0x00;
+        //    bool heartMaxAlertOn = PacketData[96] != 0x00;
+        //    int maxHeartrate = (int)PacketData[97];
+        //    bool heartMinAlertOn = PacketData[98] != 0x00;
+        //    int minHeartrate = (int)PacketData[99];
+        //    int coordinationIndex = (int)PacketData[100];
+        //    int sleepModeIndex = (int)PacketData[101];
+        //    int heartAlertLevelIndex = (int)PacketData[102];
+        //    int trainingLevelIndex = (int)PacketData[103];
+        //    int declinationIndex = (int)PacketData[104];
+        //    int declinationManualValue = ReadInt32(105);
+        //    int autoLapIndex = (int)PacketData[109];
+        //    int autoLapDistance = ReadInt32(110);
+        //    int autoLapTime = ReadInt32(114);
+        //    int extraWeightPounds = ReadInt16(118);
+        //    int extraWeightKg = ReadInt16(120);
+        //    int heartZoneLow = (int)PacketData[122];
+        //    int heartZoneHigh = (int)PacketData[123];
+        //    int switchDistanceIndex = (int)PacketData[124];
+        //    bool switchCorrectionOn = PacketData[125] != 0x00;
 
-            GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
+        //    GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
 
-            return systemInfo;
-        }
+        //    return systemInfo;
+        //}
 
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
         protected override int ScreenBpp { get { return 1; } }
