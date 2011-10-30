@@ -21,8 +21,6 @@ using Utils;
 using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 using ZoneFiveSoftware.Common.Data.Measurement;
-using ZoneFiveSoftware.Common.Data.GPS;
-
 
 namespace KeymazePlugin.IO
 {
@@ -438,4 +436,4 @@ namespace KeymazePlugin.IO
             return routes;
         }
     }
-    }
+}
