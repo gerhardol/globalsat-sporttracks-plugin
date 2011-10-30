@@ -17,7 +17,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatPacket : GhPacketBase
     {
-        private static string InvalidOperation = "Invalid Operation";
+        //private static string InvalidOperation = "Invalid Operation";
 
         public class GlobalsatSystemConfiguration
         {
@@ -37,7 +37,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public int TrackpointCount;
             public int ManualRouteCount;
             public int PcRouteCount;
-            public int CourseeCount;
+            public int CourseCount;
 
             public GlobalsatSystemConfiguration(string deviceName, double version, string firmware,
                 string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
@@ -58,7 +58,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.TrackpointCount = trackpointCount;
                 this.ManualRouteCount = manualRouteCount;
                 this.PcRouteCount = pcRouteCount;
-                this.CourseeCount = courseCount;
+                this.CourseCount = courseCount;
             }
 
             public GlobalsatSystemConfiguration(string deviceName, string firmware,
@@ -71,35 +71,36 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public class GlobalsatSystemConfiguration2
-        {
-            public string UserName;
-            public bool IsFemale;
-            public int Age;
-            public int WeightPounds;
-            public int WeightKg;
-            public int HeightInches;
-            public int HeightCm;
-            public DateTime BirthDate;
+        //Not currenly used
+        //public class GlobalsatSystemConfiguration2
+        //{
+        //    public string UserName;
+        //    public bool IsFemale;
+        //    public int Age;
+        //    public int WeightPounds;
+        //    public int WeightKg;
+        //    public int HeightInches;
+        //    public int HeightCm;
+        //    public DateTime BirthDate;
 
-            public GlobalsatSystemConfiguration2()
-            {
-            }
+        //    public GlobalsatSystemConfiguration2()
+        //    {
+        //    }
 
-            public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
-                string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
-                int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
-            {
-                this.UserName = userName;
-                this.IsFemale = isFemale;
-                this.Age = age;
-                this.WeightPounds = weightPounds;
-                this.WeightKg = weightKg;
-                this.HeightInches = heightInches;
-                this.HeightCm = heightCm;
-                this.BirthDate = birthDate;
-            }
-        }
+        //    public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
+        //        string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
+        //        int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
+        //    {
+        //        this.UserName = userName;
+        //        this.IsFemale = isFemale;
+        //        this.Age = age;
+        //        this.WeightPounds = weightPounds;
+        //        this.WeightKg = weightKg;
+        //        this.HeightInches = heightInches;
+        //        this.HeightCm = heightCm;
+        //        this.BirthDate = birthDate;
+        //    }
+        //}
 
         public GlobalsatPacket GetWhoAmI()
         {
@@ -131,8 +132,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public virtual GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2() { throw new Exception(InvalidOperation); }
-
         //public virtual GlobalsatPacket SetSystemInformation(byte[] data) { throw new Exception(InvalidOperation); }
         public virtual GlobalsatPacket SetSystemConfiguration2(byte[] data)
         {
@@ -145,6 +144,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             return this;
         }
+
+        //Currently unused, info is not decoded
+        //public virtual GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2() { throw new Exception(InvalidOperation); }
 
         public GlobalsatPacket GetNextTrackSection()
         {
