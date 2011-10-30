@@ -67,6 +67,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                             catch (Exception ex1)
                             {
+							//	 Console.WriteLine("------ send error 1");
                                 nrAttempts++;
                                 if (nrAttempts >= 3)
                                 {
@@ -76,12 +77,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         while (nrAttempts < 3);
 
-                        if (response != null)
+                        if (response != null && response.CommandId != packet.CommandId )
                         {
                             //Generic codes in SendPacket
                             if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
                             {
                                 // TODO resend
+							//	Console.WriteLine("------ send error 2");
+
                                 throw new Exception(Properties.Resources.Device_SendTrack_Error);
                             }
                             else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
@@ -90,9 +93,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                             else
                             {
+							//	 Console.WriteLine("------ send error 3");
                                 throw new Exception(Properties.Resources.Device_SendTrack_Error);
                             }
                             //TODO:
+							//	 Console.WriteLine("------ send error 4");
                             throw new Exception("Send track error: " + response.CommandId);
                         }
 
@@ -134,6 +139,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             trackFileStart.TrackPointCount = (short)gpsRoute.Count;
             trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
 
+			
+			//Console.WriteLine("------ SendTrackStart()");
             GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
             sendTrackPackets.Add(startPacket);
 
@@ -158,6 +165,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 trackFileSection.EndPointIndex = (short)endPoint;
                 trackFileSection.TrackPoints = trackpoints;
 
+    			//Console.WriteLine("------ SendTrackSection()");
                 GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileSection);
                 sendTrackPackets.Add(pointsPacket);
             }

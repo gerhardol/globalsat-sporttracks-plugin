@@ -126,6 +126,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 byte[] sendPayload = packet.ConstructPayload();
+/*
+				 * Console.Write("Write:");
+				for(int i = 0; i < sendPayload.Length;i++)
+				{
+ 				    Console.Write(" " + sendPayload[i].ToString() );
+				}
+    			Console.WriteLine("");
+*/
                 port.Write(sendPayload, 0, sendPayload.Length);
             }
             catch (Exception e)
@@ -140,6 +148,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int hiPacketLen = port.ReadByte();
             int loPacketLen = port.ReadByte();
             received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
+			
             if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
                 packet.CommandId == GhPacketBase.CommandGetScreenshot && received.PacketLength > 0x1000)
             {
@@ -154,6 +163,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     received.PacketData[b] = (byte)port.ReadByte();
                 }
                 checksum = (byte)port.ReadByte();
+/*				
+			Console.Write("Read: id:" + received.CommandId + " length:" + received.PacketLength);
+			for(int i = 0; i < received.PacketLength;i++)
+			{
+ 			    Console.Write(" " + received.PacketData[i].ToString() );
+			}
+    		Console.WriteLine(" checksum:" + checksum);
+*/				
+				
             }
             catch(Exception e)
             {
@@ -165,10 +183,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             if (received.CommandId != packet.CommandId &&
-                !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
-                received.CommandId == GhPacketBase.CommandId_FINISH) &&
-                (packet.CommandId == GhPacketBase.CommandGetNextTrackSection ||
-                 packet.CommandId == GhPacketBase.CommandGetTrackFileSections)))
+                !((received.CommandId == GhPacketBase.CommandGetTrackFileSections || 
+			       received.CommandId == GhPacketBase.CommandId_FINISH || 
+			       received.CommandId == GhPacketBase.ResponseSendTrackFinish) &&
+                (packet.CommandId == GhPacketBase.CommandGetNextTrackSection || 
+			       packet.CommandId == GhPacketBase.CommandGetTrackFileSections || 
+			       packet.CommandId == GhPacketBase.CommandSendTrackSection))			    
+			    )
             {
                 if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
                 {
