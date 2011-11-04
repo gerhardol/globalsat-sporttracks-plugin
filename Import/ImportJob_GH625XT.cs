@@ -115,10 +115,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
                 activity.CadencePerMinuteTrack = new NumericTimeDataSeries();
                 activity.PowerWattsTrack = new NumericTimeDataSeries();
+                //TODO: Distance track from speed
 
                 DateTime pointTime = activity.StartTime;                
                 foreach (GhPacketBase.TrackPoint4 point in train.TrackPoints)
                 {
+                    //TODO: There are no pause markers in the Globalsat protocol
+                    //Insert pauses when estimated/listed distance differs "to much"
+                    
                     //Note: There may be points witin the same second, the second point will then overwrite the first
                     pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
 
