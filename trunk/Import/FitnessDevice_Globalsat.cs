@@ -76,7 +76,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GlobalsatProtocol device2 = device.Device(monitor);
             if (device2 != null)
             {
-                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
+                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo)+ " - " + device.devId,
+                    monitor, importResults);
                 if (job == null)
                 {
                     return false;
