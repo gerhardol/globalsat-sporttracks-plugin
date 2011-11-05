@@ -20,8 +20,6 @@
     <Compile Include="Device\GlobalsatDeviceConfiguration.cs" />
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
-    <Compile Include="Export\ExportActivityToDeviceAction.cs" />
-    <Compile Include="Export\ExtendExportActions.cs" />
     <Compile Include="Import\FitnessDevice_GH561.cs" />
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
     <Compile Include="Import\ImportJob_Globalsat.cs" />
