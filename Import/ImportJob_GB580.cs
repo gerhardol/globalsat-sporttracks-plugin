@@ -43,18 +43,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 Gb580Device device = (Gb580Device)this.device;
                 device.Open();
-                IList<Gb580Packet.Train> headers = device.ReadTrainHeaders(monitor);
-                List<Gb580Packet.Train> fetch = new List<Gb580Packet.Train>();
+                IList<Gb580Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
+                List<Gb580Packet.TrackFileHeader> fetch = new List<Gb580Packet.TrackFileHeader>();
 
                 if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
-                    IDictionary<DateTime, IList<Gb580Packet.Train>> headersByStart = new Dictionary<DateTime, IList<Gb580Packet.Train>>();
-                    foreach (Gb580Packet.Train header in headers)
+                    IDictionary<DateTime, IList<Gb580Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<Gb580Packet.TrackFileHeader>>();
+                    foreach (Gb580Packet.TrackFileHeader header in headers)
                     {
                         DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
-                            headersByStart.Add(start, new List<Gb580Packet.Train>());
+                            headersByStart.Add(start, new List<Gb580Packet.TrackFileHeader>());
                         }
                         headersByStart[start].Add(header);
                     }
@@ -66,7 +66,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             headersByStart.Remove(findTime);
                         }
                     }
-                    foreach (IList<Gb580Packet.Train> dateHeaders in headersByStart.Values)
+                    foreach (IList<Gb580Packet.TrackFileHeader> dateHeaders in headersByStart.Values)
                     {
                         fetch.AddRange(dateHeaders);
                     }

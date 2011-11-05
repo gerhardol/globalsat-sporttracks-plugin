@@ -39,13 +39,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return new ImportJob_GB580(this, sourceDescription, monitor, importResults);
         }
 
-        public IList<Gb580Packet.Train> ReadTrainHeaders(IJobMonitor monitor)
+        public IList<Gb580Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
             GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
             Gb580Packet response = (Gb580Packet)SendPacket(getHeadersPacket);
-            return response.UnpackTrainHeaders();
+            return response.UnpackTrackHeaders();
         }
 
         private enum ReadMode
@@ -55,16 +55,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Points
         }
 
-        public IList<Gb580Packet.Train> ReadTracks(IList<Gb580Packet.Train> headers, IJobMonitor monitor)
+        public IList<Gb580Packet.Train> ReadTracks(IList<Gb580Packet.TrackFileHeader> headers, IJobMonitor monitor)
         {
             if (headers.Count == 0) return new Gb580Packet.Train[0];
 
             float totalPoints = 0;
             IList<Int16> trackIndexes = new List<Int16>();
-            foreach (Gb580Packet.Train header in headers)
+            foreach (Gb580Packet.TrackFileHeader header in headers)
             {
                 totalPoints += header.TrackPointCount;
-                trackIndexes.Add(header.IndexStartPt);
+                trackIndexes.Add(header.TrackPointIndex);
             }
             float pointsRead = 0;
 
