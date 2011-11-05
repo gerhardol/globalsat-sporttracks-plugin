@@ -42,7 +42,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(99, 13);
             this.labelName.TabIndex = 15;
-            this.labelName.Text = "Globalsat Plugin";
+            this.labelName.Text = "Globalsat Device Plugin";
             // 
             // linkLabel1
             // 
