@@ -115,21 +115,48 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
                 activity.CadencePerMinuteTrack = new NumericTimeDataSeries();
                 activity.PowerWattsTrack = new NumericTimeDataSeries();
-                //TODO: Distance track from speed
+                activity.DistanceMetersTrack = new DistanceDataTrack();
+ 
+                DateTime pointTime = activity.StartTime;
+                double pointElapsed = 0;
+                float pointDist = 0;
 
-                DateTime pointTime = activity.StartTime;                
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
-                    //TODO: There are no pause markers in the Globalsat protocol
-                    //Insert pauses when estimated/listed distance differs "to much"
-                    
-                    //Note: There may be points witin the same second, the second point will then overwrite the first
-                    pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
-
+                    double time = point.IntervalTime / 10.0;
+                    float dist = (float)(point.Speed * time);
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
-                    activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
-                    
+                    IGPSPoint gpsPoint = new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude);
+                    pointElapsed += time;
+
+                    //There are no pause markers in the Globalsat protocol
+                    //Insert pauses when estimated/listed distance differs "to much"
+                    //Guess pauses - no info of real pause, but this can at least be marked in the track
+                    if (foundGPSPoint && pointDist > 0 && pointElapsed > 60 && activity.GPSRoute.Count > 0)
+                    {
+                        float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
+                        //Some limit on when to include pause
+                        if (gpsDist > 10 && gpsDist > 3 * dist)
+                        {
+                            double estimatedSec = dist * pointElapsed / pointDist;
+                            if (estimatedSec > 3)
+                            {
+                                DateTime pointTime2 = pointTime.AddSeconds(estimatedSec);
+                                activity.TimerPauses.Add(new ValueRange<DateTime>(pointTime.AddSeconds(1), pointTime2.AddSeconds(-1)));
+                                //TODO: Remove remark when stable
+                                activity.Notes += string.Format("Added pause from {0} to {1} ({2}, {3}) ", pointTime, pointTime2, dist, gpsDist);
+                                pointTime = pointTime2.AddSeconds(-time);
+                            }
+                        }
+                    }
+                    //Note: There may be points witin the same second, the second point will then overwrite the first
+                    pointTime = pointTime.AddSeconds(time);
+
+                    pointDist += dist;
+                    activity.DistanceMetersTrack.Add(pointTime, pointDist);
+
+                    activity.GPSRoute.Add(pointTime, gpsPoint);
                     if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude || point.Altitude != train.TrackPoints[0].Altitude) foundGPSPoint = true;
 
                     activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
@@ -164,6 +191,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
+                if (pointDist == 0) activity.DistanceMetersTrack = null;
             }
         }
     }
