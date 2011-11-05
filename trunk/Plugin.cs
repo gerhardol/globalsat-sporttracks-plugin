@@ -46,7 +46,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Name
         {
-            get { return "SportTracks Globalsat Device Plugin"; }
+            get { return "Globalsat Device Plugin"; }
         }
 
         public string Version
