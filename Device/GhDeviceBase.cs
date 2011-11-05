@@ -67,7 +67,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public SerialPort Port
+        private SerialPort Port
         {
             get { return port; }
         }

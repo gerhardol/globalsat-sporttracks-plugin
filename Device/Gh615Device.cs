@@ -18,10 +18,12 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 
+using ZoneFiveSoftware.Common.Data.Fitness;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
 
@@ -90,5 +92,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
+        public override int SendTrack(IList<IActivity> activities, BackgroundWorker worker, IJobMonitor jobMonitor) { throw new NotImplementedException(); }
     }
 }
