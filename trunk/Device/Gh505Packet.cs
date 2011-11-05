@@ -44,11 +44,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public IList<TrackFileHeader> UnpackTrackHeaders()
         {
-            int numHeaders = this.PacketLength / 24;
+            int numHeaders = this.PacketLength / TrackHeaderLength;
             IList<TrackFileHeader> headers = new List<TrackFileHeader>();
             for (int i = 0; i < numHeaders; i++)
             {
-                int trackStart = i * 24;
+                int trackStart = i * TrackHeaderLength;
                 TrackFileHeader header = new TrackFileHeader();
                 ReadHeader(header, trackStart);
                 header.TrackPointIndex = ReadInt16(trackStart + 18);
@@ -72,11 +72,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public IList<Lap> UnpackLaps()
         {
-            if (this.PacketLength < 24) return new List<Lap>();
+            if (this.PacketLength < TrackHeaderLength) return new List<Lap>();
 
             IList<Lap> laps = new List<Lap>();
 
-            int offset = 24;
+            int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
                 Lap lap = new Lap();
@@ -91,18 +91,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //lap.StartPointIndex = ReadInt16(18);
                 //lap.EndPointIndex = ReadInt16(20);
                 laps.Add(lap);
-                offset += 36;
+                offset += TrackLapLength;
             }
             return laps;
         }
 
         public IList<TrackPoint> UnpackTrackPoints()
         {
-            if (this.PacketLength < 24) return new List<TrackPoint>();
+            if (this.PacketLength < TrackHeaderLength) return new List<TrackPoint>();
 
             IList<TrackPoint> points = new List<TrackPoint>();
 
-            int offset = 24;
+            int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
                 TrackPoint point = new TrackPoint();
