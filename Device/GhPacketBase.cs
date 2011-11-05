@@ -321,7 +321,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected double ReadLatLon(int offset)
         {
-            return ReadInt32(offset) / 1000000;
+            return ReadInt32(offset) / 1000000.0;
         }
 
         /// <summary>
