@@ -44,4 +44,85 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return configData;
         }
     }
+
+    //Details unused
+    public class GlobalsatSystemConfiguration
+    {
+        //public string UserName;
+        //public bool IsFemale;
+        //public int Age;
+        //public int WeightPounds;
+        //public int WeightKg;
+        //public int HeightInches;
+        //public int HeightCm;
+        //public DateTime BirthDate;
+
+        public string DeviceName;
+        //public double Version;
+        public string Firmware;
+        public int WaypointCount;
+        //public int TrackpointCount;
+        //public int ManualRouteCount;
+        public int PcRouteCount;
+        //public int CourseCount;
+
+        //public GlobalsatSystemConfiguration(string deviceName, double version, string firmware,
+        //    string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
+        //    int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount, int courseCount)
+        //{
+        //    this.UserName = userName;
+        //    this.IsFemale = isFemale;
+        //    this.Age = age;
+        //    this.WeightPounds = weightPounds;
+        //    this.WeightKg = weightKg;
+        //    this.HeightInches = heightInches;
+        //    this.HeightCm = heightCm;
+        //    this.BirthDate = birthDate;
+        //    this.DeviceName = deviceName;
+        //    this.Version = version;
+        //    this.Firmware = firmware;
+        //    this.WaypointCount = waypointCount;
+        //    this.TrackpointCount = trackpointCount;
+        //    this.ManualRouteCount = manualRouteCount;
+        //    this.PcRouteCount = pcRouteCount;
+        //    this.CourseCount = courseCount;
+        //}
+
+        public GlobalsatSystemConfiguration(string deviceName, string firmware,
+            int waypointCount, int pcRouteCount)
+        {
+            this.DeviceName = deviceName;
+            this.Firmware = firmware;
+            this.WaypointCount = waypointCount;
+            this.PcRouteCount = pcRouteCount;
+        }
+    }
+
+    //Currenly unused
+    //public class GlobalsatSystemConfiguration2
+    //{
+    //    public string UserName;
+    //    public bool IsFemale;
+    //    public int Age;
+    //    public int WeightPounds;
+    //    public int WeightKg;
+    //    public int HeightInches;
+    //    public int HeightCm;
+    //    public DateTime BirthDate;
+
+    //    public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
+    //        string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
+    //        int waypointCount, int trackpointCount, int manualRouteCount, int pcRouteCount)
+    //    {
+    //        this.UserName = userName;
+    //        this.IsFemale = isFemale;
+    //        this.Age = age;
+    //        this.WeightPounds = weightPounds;
+    //        this.WeightKg = weightKg;
+    //        this.HeightInches = heightInches;
+    //        this.HeightCm = heightCm;
+    //        this.BirthDate = birthDate;
+    //    }
+    //}
+
 }

@@ -34,7 +34,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Import kept in separate structure
         public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
-            return null;
+            throw new NotImplementedException();
         }
 
         public virtual int SendTrack(IList<IActivity> activities, BackgroundWorker worker, IJobMonitor jobMonitor)
@@ -101,9 +101,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             throw new Exception("Send track error: " + response.CommandId);
                         }
 
-                        this.Port.Close();
-                        this.Port.Open();
-
                         i++;
                         double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
 
@@ -144,26 +141,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
             sendTrackPackets.Add(startPacket);
 
+            //Some protocols send laps in separate header
+            //Use common code instead of overiding this method
+            GlobalsatPacket lapPacket = PacketFactory.SendTrackLaps(trackFileStart);
+            if (lapPacket != null)
+            {
+                sendTrackPackets.Add(lapPacket);
+            }
             int nrPointsPerSection = startPacket.TrackPointsPerSection;
 
             for (int i = 0; i < gpsRoute.Count; i += nrPointsPerSection)
             {
-                int startPoint = i;
-                int endPoint = (int)Math.Min(i + nrPointsPerSection - 1, gpsRoute.Count - 1);
+                GhPacketBase.TrackFileSectionSend trackFileSection = new GhPacketBase.TrackFileSectionSend(trackFileStart);
+                trackFileSection.StartPointIndex = (Int16)i;
+                trackFileSection.EndPointIndex = (Int16)Math.Min(i + nrPointsPerSection - 1, gpsRoute.Count - 1);
+                trackFileSection.TrackPoints = new List<GhPacketBase.TrackPointSend>();
 
-                List<GhPacketBase.TrackPointSend> trackpoints = new List<GhPacketBase.TrackPointSend>();
-                for (int j = startPoint; j <= endPoint; j++)
+                for (int j = trackFileSection.StartPointIndex; j <= trackFileSection.EndPointIndex; j++)
                 {
                     IGPSPoint point = gpsRoute[j].Value;
-                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees);
-                    trackpoint.Altitude = (short)point.ElevationMeters;
-                    trackpoints.Add(trackpoint);
+                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees, (short)point.ElevationMeters);
+                    trackFileSection.TrackPoints.Add(trackpoint);
                 }
-
-                GhPacketBase.TrackFileSectionSend trackFileSection = new GhPacketBase.TrackFileSectionSend(trackFileStart);
-                trackFileSection.StartPointIndex = (short)startPoint;
-                trackFileSection.EndPointIndex = (short)endPoint;
-                trackFileSection.TrackPoints = trackpoints;
 
     			//Console.WriteLine("------ SendTrackSection()");
                 GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileSection);
@@ -173,6 +172,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return sendTrackPackets;
         }
 
+        //Not used as a separate protocol now
         //public virtual GlobalsatPacket.GlobalsatSystemInformation GetSystemConfiguration(IJobMonitor jobMonitor)
         //{
         //    this.Open();
@@ -181,7 +181,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //        GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
         //        GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-        //        GlobalsatPacket.GlobalsatSystemInformation systemInfo = response.ResponseGetSystemConfiguration();
+        //        GlobalsatPacket.GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
         //        return systemInfo;
         //    }
         //    catch(Exception e)
@@ -204,7 +204,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatPacket.GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
+                GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
                 devConfig.DeviceName = systemInfo.DeviceName;
                 //devConfig.SystemInfoData = response.PacketData;
 
@@ -226,7 +226,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual void SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
-
             this.Open();
             try
             {

@@ -191,6 +191,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 StartPointIndex;
             public Int16 EndPointIndex;
             public IList<TrackPointSend> TrackPoints = new List<TrackPointSend>();
+            public Int16 NoOfLaps = 1;
         }
 
         public class TrackPointSend
@@ -202,10 +203,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Byte HeartRate;
             public Int16 IntervalTime; // Seconds * 10
 
-            public TrackPointSend(double latitude, double longitude)
+            public TrackPointSend(double latitude, double longitude, short altitude)
             {
                 this.Latitude = (int)(1000000 * latitude);
                 this.Longitude = (int)(1000000 * longitude);
+                this.Altitude = altitude;
+                this.Speed = 0;
+                this.HeartRate = 0;
+                this.IntervalTime = 10;
             }
         }
 
@@ -265,9 +270,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// Minute = byte[4]
         /// Second = byte[5]
         /// </summary>
-        protected static DateTime ReadDateTime(byte[] data, int offset)
+        protected DateTime ReadDateTime(int offset)
         {
-            return new DateTime(data[offset + 0] + 2000, data[offset + 1], data[offset + 2], data[offset + 3], data[offset + 4], data[offset + 5]);
+            return new DateTime(PacketData[offset + 0] + 2000, PacketData[offset + 1], PacketData[offset + 2], PacketData[offset + 3], PacketData[offset + 4], PacketData[offset + 5]);
+        }
+        protected int Write(int offset, DateTime t)
+        {
+            int year = (int)Math.Max(0, t.Year - 2000);
+            this.PacketData[offset+0] = (byte)year;
+            this.PacketData[offset+1] = (byte)t.Month;
+            this.PacketData[offset+2] = (byte)t.Day;
+            this.PacketData[offset+3] = (byte)t.Hour;
+            this.PacketData[offset+4] = (byte)t.Minute;
+            this.PacketData[offset+5] = (byte)t.Second;
+
+            return 6;
         }
 
         /// <summary>
@@ -331,7 +348,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// <summary>
         /// Write a two byte integer starting at the offset.
         /// </summary>
-        protected void Write(int offset, Int16 i)
+        protected int Write(int offset, Int16 i)
         {
             byte[] b = BitConverter.GetBytes(i);
             if (endianFormat)
@@ -344,13 +361,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.PacketData[offset + 0] = b[0];
                 this.PacketData[offset + 1] = b[1];
             }
+            return 2;
         }
 
         /// <summary>
         /// Write a four byte integer in little-endian format starting at the offset.
         /// </summary>
         //No overload to make sure correct
-        protected void Write32(int offset, Int32 i)
+        protected int Write32(int offset, Int32 i)
         {
             byte[] b = BitConverter.GetBytes(i);
             if (endianFormat)
@@ -367,6 +385,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.PacketData[offset + 2] = b[2];
                 this.PacketData[offset + 3] = b[3];
             }
+            return 4;
         }
 
         //bigEndian: true, littleEndian: false

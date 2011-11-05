@@ -25,13 +25,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTPacket : GlobalsatPacket
     {
-
-        const int dbTrainHeaderLength = 29;
-        const int dbTrainHeaderCType = 28;
-        const int dbTrainHeadLength = 58;
-        const int dbLapLength = 41;
-        const int dbTrackPoint4Length = 25;
-
         public class Train : Header
         {
             //public Int16 StartPointIndex;
@@ -67,20 +60,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Both for DB_TRAINHEADER and DB_TRAIN
         private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(this.PacketData, offset).ToUniversalTime();
+            header.StartTime = ReadDateTime(offset).ToUniversalTime();
             header.TrackPointCount = ReadInt32(offset + 6);
             header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 10)) / 10);
             header.TotalDistanceMeters = ReadInt32(offset + 14);
             header.LapCount = ReadInt16(offset + 18);
+            //4byte ptrec
+            //4 byte laprec
+            //29: cType
         }
 
         public IList<TrackFileHeader> UnpackTrackHeaders()
         {
-            int numHeaders = this.PacketLength / dbTrainHeaderLength;
+            int numHeaders = this.PacketLength / TrackHeaderLength;
             IList<TrackFileHeader> headers = new List<TrackFileHeader>();
             for (int i = 0; i < numHeaders; i++)
             {
-                int trackStart = i * dbTrainHeaderLength;
+                int trackStart = i * TrackHeaderLength;
                 TrackFileHeader header = new TrackFileHeader();
                 ReadHeader(header, trackStart);
                 header.TrackPointIndex = ReadInt32(trackStart + 20);
@@ -91,7 +87,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public Train UnpackTrainHeader()
         {
-            if (this.PacketLength < dbTrainHeadLength) return null;
+            if (this.PacketLength < TrainDataHeaderLength) return null;
 
             Train train = new Train();
             ReadHeader(train, 0);
@@ -107,20 +103,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             train.MaximumCadence = ReadInt16(47);
             train.AveragePower = ReadInt16(49);
             train.MaximumPower = ReadInt16(51);
-            //5bytes of SportType
+            //5 bytes of SportType
             return train;
         }
 
         public IList<Lap> UnpackLaps()
         {
-            if (this.PacketLength < dbTrainHeaderLength ||
+            if (this.PacketLength < TrackHeaderLength ||
                 this.PacketData[dbTrainHeaderCType] != HeaderTypeLaps)
             {
                 return new List<Lap>();
             }
             IList<Lap> laps = new List<Lap>();
 
-            int offset = dbTrainHeaderLength;
+            int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
                 Lap lap = new Lap();
@@ -142,14 +138,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //lap.StartPointIndex = ReadInt16(offset + 33);
                 //lap.EndPointIndex = ReadInt16(offset + 37);
                 laps.Add(lap);
-                offset += dbLapLength;
+                offset += TrackLapLength;
             }
             return laps;
         }
 
         public IList<TrackPoint4> UnpackTrackPoints()
         {
-            if (this.PacketLength < dbTrainHeaderLength ||
+            if (this.PacketLength < TrackHeaderLength ||
                 this.PacketData[dbTrainHeaderCType] != HeaderTypeTrackPoints)
             {
                 return new List<TrackPoint4>();
@@ -157,7 +153,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IList<TrackPoint4> points = new List<TrackPoint4>();
 
-            int offset = dbTrainHeaderLength;
+            int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
                 TrackPoint4 point = new TrackPoint4();
@@ -171,14 +167,133 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //point.PowerCadence = ReadInt16(offset + 21);
                 point.Power = ReadInt16(offset + 23);
                 points.Add(point);
-                offset += dbTrackPoint4Length;
+                offset += TrackPointLength;
             }
             return points;
         }
 
-        public override GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
+        //Trackstart without laps
+        public override GlobalsatPacket SendTrackStart(TrackFileBase trackFile)
         {
-            return new Gh625Packet().ResponseGetSystemConfiguration();
+            Int16 nrLaps = 1;
+            Int16 totalLength = (Int16)TrainDataHeaderLength;
+            this.InitPacket(CommandSendTrackStart, totalLength);
+
+            int offset = 0;
+
+            offset += WriteTrackHeader(offset, nrLaps, trackFile);
+
+            offset += this.Write(offset, trackFile.TotalCalories);
+            offset += this.Write32(offset, trackFile.MaximumSpeed);
+            this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
+            this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
+            offset += this.Write(offset, trackFile.TotalAscent);
+            offset += this.Write(offset, trackFile.TotalDescent);
+
+            offset += this.Write(offset, 0); // min altitude
+            offset += this.Write(offset, 0); // max altitude
+            offset += this.Write(offset, 0); // avg cadence
+            offset += this.Write(offset, 0); // best cadence
+            offset += this.Write(offset, 0); // avg power
+            offset += this.Write(offset, 0); // max power
+            this.PacketData[offset++] = 0; // sport 1
+            this.PacketData[offset++] = 0; // sport 2
+            this.PacketData[offset++] = 0; // sport 3
+            this.PacketData[offset++] = 0; // sport 4
+            this.PacketData[offset++] = 0; // sport 5
+
+            CheckOffset(totalLength, offset);
+            return this;
         }
+
+        // DB_TRAIN_HEADER + DB_LAP
+        public override GlobalsatPacket SendTrackLaps(TrackFileBase trackFile)
+        {
+            const Int16 nrLaps = 1;
+            Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * TrackLapLength);
+            this.InitPacket(CommandSendTrackSection, totalLength);
+
+            int offset = 0;
+
+            offset += WriteTrackHeader(offset, nrLaps, trackFile);
+
+            // send only one lap
+            int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
+            offset += this.Write32(offset, totalTimeSecondsTimes10);
+            offset += this.Write32(offset, totalTimeSecondsTimes10);
+            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write(offset, trackFile.TotalCalories);
+            offset += this.Write32(offset, trackFile.MaximumSpeed);
+            this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
+            this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
+
+            offset += Write(offset, 0); // min altitude
+            offset += Write(offset, 0); // max altitude
+            offset += Write(offset, 0); // avg cadence
+            offset += Write(offset, 0); // best cadence
+            offset += Write(offset, 0); // avg power
+            offset += Write(offset, 0); // max power
+            this.PacketData[offset++] = (byte)0; // multisport index
+
+            // start/end index
+            offset += Write32(offset, 0);
+            offset += Write32(offset, (Int16)(trackFile.TrackPointCount - 1));
+
+            CheckOffset(totalLength, offset);
+            return this;
+        }
+
+        //TrackStart/TrackLap/TrackPoint share a common header
+        private int WriteTrackHeader(int offset, int noOfLaps, TrackFileBase trackFile)
+        {
+            offset += this.Write(offset, trackFile.StartTime);
+
+            offset += this.Write32(offset, trackFile.TrackPointCount);
+            int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
+            offset += this.Write32(offset, totalTimeSecondsTimes10);
+            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write(offset, (short)noOfLaps);
+
+            //unused in some headers
+            offset += this.Write32(offset, 0);
+            offset += this.Write32(offset, 0);
+
+            this.PacketData[offset++] = 0; //Multisport
+
+            return CheckOffset(TrackHeaderLength, offset);
+        }
+
+        protected override int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile)
+        {
+            offset += WriteTrackHeader(offset, 1, trackFile);
+
+            //unused fields in some headers
+            this.Write(offset - 9, trackFile.StartPointIndex);
+            this.Write(offset - 5, trackFile.EndPointIndex);
+            return CheckOffset(TrackHeaderLength, offset);
+        }
+
+        protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
+        {
+            int startOffset = offset;
+            offset += this.Write32(offset, trackpoint.Latitude);
+            offset += this.Write32(offset, trackpoint.Longitude);
+            offset += this.Write(offset, trackpoint.Altitude);
+            offset += this.Write32(offset, trackpoint.Speed);
+            this.PacketData[offset++] = (byte)trackpoint.HeartRate;
+            offset += this.Write32(offset, trackpoint.IntervalTime);
+            offset += this.Write(offset, 0); // cadence
+            offset += this.Write(offset, 0); // power cadence
+            offset += this.Write(offset, 0); // power
+            return CheckOffset(TrackPointLength, offset - startOffset);
+        }
+
+        const int dbTrainHeaderCType = 28; //type of packet in train header
+
+        public override int TrackPointsPerSection { get { return 73; } }
+        protected override int TrackHeaderLength { get { return 29; } }
+        protected override int TrainDataHeaderLength { get { return 58; } }
+        protected override int TrackLapLength { get { return 41; } }
+        protected override int TrackPointLength { get { return 25; } }
     }
 }
