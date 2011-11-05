@@ -110,8 +110,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             while (offset < this.PacketLength)
             {
                 TrackPoint point = new TrackPoint();
-                point.Latitude = (double)ReadInt32(offset) / 1000000;
-                point.Longitude = (double)ReadInt32(offset + 4) / 1000000;
+                point.Latitude = (double)ReadLatLon(offset);
+                point.Longitude = (double)ReadLatLon(offset + 4);
                 point.Altitude = ReadInt32(offset + 8);
                 point.Speed = ReadInt16(offset + 12) / 3.6 / 100;
                 point.HeartRate = this.PacketData[offset + 16];
