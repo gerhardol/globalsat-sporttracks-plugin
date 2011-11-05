@@ -20,7 +20,7 @@ using KeymazePlugin.Device;
 using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 
-namespace KeymazePlugin.IO
+namespace WaypointsPlugin.IO
 {
     class ExportWaypoints
     {

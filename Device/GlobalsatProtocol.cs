@@ -89,7 +89,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                             else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
                             {
-                                return result;
+                                //Done, all sent
+                                break;
                             }
                             else
                             {
