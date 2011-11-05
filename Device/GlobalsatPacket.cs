@@ -132,8 +132,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.Write(offset, waypointNameLength + 1, waypoint.WaypointName);
                 offset += waypointNameLength+1;
 
-                this.PacketData[offset] = (byte)waypoint.IconNr;
-                offset++;
+                this.PacketData[offset++] = (byte)waypoint.IconNr;
 
                 this.Write(offset, waypoint.Altitude);
                 offset += 2;

@@ -143,7 +143,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write32(offset, trackpoint.Longitude);
             offset += this.Write32(offset, trackpoint.Altitude);
             offset += this.Write32(offset, trackpoint.Speed);
-            this.PacketData[offset] = (byte)trackpoint.HeartRate; offset += 4;
+            this.PacketData[offset++] = (byte)trackpoint.HeartRate; offset += 3;
             offset += this.Write(offset, trackpoint.IntervalTime) +2;
             offset += this.Write(offset, 0); // cadence
             offset += this.Write(offset, 0); // power cadence
