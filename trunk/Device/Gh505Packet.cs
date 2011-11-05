@@ -164,7 +164,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        // DB_TRAIN_HEADER + DB_LAP 580
+        // DB_TRAIN_HEADER + DB_LAP
         public override GlobalsatPacket SendTrackLaps(TrackFileBase trackFile)
         {
             const Int16 nrLaps = 1;
