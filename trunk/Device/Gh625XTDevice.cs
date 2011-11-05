@@ -110,8 +110,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     case ReadMode.Points:
                         {
                             Gh625XTPacket.Train currentTrain = trains[trains.Count - 1];
-                            IList<GhPacketBase.TrackPoint4> points = response.UnpackTrackPoints();
-                            foreach (GhPacketBase.TrackPoint4 point in points) currentTrain.TrackPoints.Add(point);
+                            IList<GhPacketBase.TrackPoint> points = response.UnpackTrackPoints();
+                            foreach (GhPacketBase.TrackPoint point in points) currentTrain.TrackPoints.Add(point);
                             pointsToRead -= points.Count;
                             pointsRead += points.Count;
                             DateTime startTime = currentTrain.StartTime.ToLocalTime();

@@ -110,7 +110,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.PowerWattsTrack = new NumericTimeDataSeries();
 
                 DateTime pointTime = activity.StartTime;                
-                foreach (GhPacketBase.TrackPoint2 point in train.TrackPoints)
+                foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
 

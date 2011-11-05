@@ -118,7 +118,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //TODO: Distance track from speed
 
                 DateTime pointTime = activity.StartTime;                
-                foreach (GhPacketBase.TrackPoint4 point in train.TrackPoints)
+                foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     //TODO: There are no pause markers in the Globalsat protocol
                     //Insert pauses when estimated/listed distance differs "to much"

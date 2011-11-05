@@ -41,7 +41,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public byte AverageHeartRate;
             //public Int16 StartPointIndex;
             //public Int16 EndPointIndex;
-            public IList<TrackPoint3> TrackPoints = new List<TrackPoint3>();
+            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
         }
 
@@ -100,16 +100,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return laps;
         }
 
-        public new IList<TrackPoint3> UnpackTrackPoints()
+        public new IList<TrackPoint> UnpackTrackPoints()
         {
-            if (this.PacketLength < TrackHeaderLength) return new List<TrackPoint3>();
+            if (this.PacketLength < TrackHeaderLength) return new List<TrackPoint>();
 
-            IList<TrackPoint3> points = new List<TrackPoint3>();
+            IList<TrackPoint> points = new List<TrackPoint>();
 
             int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
-                TrackPoint3 point = new TrackPoint3();
+                TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadInt32(offset) / 1000000;
                 point.Longitude = (double)ReadInt32(offset + 4) / 1000000;
                 point.Altitude = ReadInt32(offset + 8);

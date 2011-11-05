@@ -112,7 +112,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 DateTime pointTime = activity.StartTime;
                 bool first = true;
-                foreach (GhPacketBase.TrackPoint3 point in train.TrackPoints)
+                foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     if (!first) pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
                     first = false;
