@@ -60,66 +60,66 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verwijderen waypoints</value>
+    <value>Fel vid waypoints borttagning</value>
   </data>
   <data name="Device_GetInfo_Error" xml:space="preserve">
-    <value>Fout bij ophalen apparaat info</value>
+    <value>Fel när enhets information skulle hämtas</value>
   </data>
   <data name="Device_GetWaypoints_Error" xml:space="preserve">
-    <value>Fout bij laden waypoints</value>
+    <value>Fel när waypoints laddas</value>
   </data>
   <data name="Device_InsuficientMemory_Error" xml:space="preserve">
-    <value>Onvoldoende geheugen</value>
+    <value>Slut på minne</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat apparaat niet gevonden</value>
+    <value>Globalsat enhet inte detekterad</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
-    <value>Fout bij verzenden route</value>
+    <value>Fel när route skulle skickas</value>
   </data>
   <data name="Device_SendTrack_Error" xml:space="preserve">
-    <value>Fout bij verzenden activiteit</value>
+    <value>Fel när aktivitet skulle skickas</value>
   </data>
   <data name="Device_SendWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verzenden waypoints</value>
+    <value>Fel när waypoints skulle skickas</value>
   </data>
   <data name="MessageDialog_Error_Title" xml:space="preserve">
-    <value>Fout</value>
+    <value>Problem</value>
   </data>
   <data name="UI_Settings_DeviceConfiguration_Title" xml:space="preserve">
-    <value>Apparaat configuratie</value>
+    <value>Enhets configuration</value>
   </data>
   <data name="UI_Settings_ExportConfigButton_Text" xml:space="preserve">
-    <value>Export naar bestand</value>
+    <value>Exportera till fil</value>
   </data>
   <data name="UI_Settings_ExportConfig_Error" xml:space="preserve">
-    <value>Fout bij export apparaat configuratie</value>
+    <value>Fel vi enhets konfigurations exportering</value>
   </data>
   <data name="UI_Settings_ImportConfigButton_Text" xml:space="preserve">
-    <value>Import uit bestand</value>
+    <value>Importera från fil</value>
   </data>
   <data name="UI_Settings_ImportConfig_Error" xml:space="preserve">
-    <value>Fout bij import apparaat configuratie</value>
+    <value>Fel vi enhets konfigurations importering</value>
   </data>
   <data name="UI_Settings_ImportConfig_InvalidConfiguration" xml:space="preserve">
-    <value>Onjuist configuratiebestand</value>
+    <value>Invalid konfigurations fil</value>
   </data>
   <data name="UI_Settings_ScreenCaptureSave_Error" xml:space="preserve">
-    <value>Fout bij opslaan afbeelding</value>
+    <value>Fil när bild sparades</value>
   </data>
   <data name="UI_Settings_ScreenCapture_CaptureScreen" xml:space="preserve">
-    <value>Maak schermafdruk</value>
+    <value>Skärmdump</value>
   </data>
   <data name="UI_Settings_ScreenCapture_Error" xml:space="preserve">
-    <value>Fout bij maken schermafdruk</value>
+    <value>Fel vid skärmdumps tagning</value>
   </data>
   <data name="UI_Settings_ScreenCapture_SaveImage" xml:space="preserve">
-    <value>Afbeelding opslaan</value>
+    <value>Spara bild</value>
   </data>
   <data name="UI_Settings_ScreenCapture_Title" xml:space="preserve">
-    <value>Schermafdruk</value>
+    <value>Skärmdump</value>
   </data>
   <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importeer alleen nieuwe data</value>
+    <value>Importera enbart nya aktiviteter</value>
   </data>
 </root>

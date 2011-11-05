@@ -59,67 +59,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verwijderen waypoints</value>
-  </data>
-  <data name="Device_GetInfo_Error" xml:space="preserve">
-    <value>Fout bij ophalen apparaat info</value>
-  </data>
-  <data name="Device_GetWaypoints_Error" xml:space="preserve">
-    <value>Fout bij laden waypoints</value>
-  </data>
-  <data name="Device_InsuficientMemory_Error" xml:space="preserve">
-    <value>Onvoldoende geheugen</value>
-  </data>
-  <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat apparaat niet gevonden</value>
-  </data>
-  <data name="Device_SendRoute_Error" xml:space="preserve">
-    <value>Fout bij verzenden route</value>
-  </data>
-  <data name="Device_SendTrack_Error" xml:space="preserve">
-    <value>Fout bij verzenden activiteit</value>
-  </data>
-  <data name="Device_SendWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verzenden waypoints</value>
-  </data>
-  <data name="MessageDialog_Error_Title" xml:space="preserve">
-    <value>Fout</value>
-  </data>
-  <data name="UI_Settings_DeviceConfiguration_Title" xml:space="preserve">
-    <value>Apparaat configuratie</value>
-  </data>
-  <data name="UI_Settings_ExportConfigButton_Text" xml:space="preserve">
-    <value>Export naar bestand</value>
-  </data>
-  <data name="UI_Settings_ExportConfig_Error" xml:space="preserve">
-    <value>Fout bij export apparaat configuratie</value>
-  </data>
-  <data name="UI_Settings_ImportConfigButton_Text" xml:space="preserve">
-    <value>Import uit bestand</value>
-  </data>
-  <data name="UI_Settings_ImportConfig_Error" xml:space="preserve">
-    <value>Fout bij import apparaat configuratie</value>
-  </data>
-  <data name="UI_Settings_ImportConfig_InvalidConfiguration" xml:space="preserve">
-    <value>Onjuist configuratiebestand</value>
-  </data>
-  <data name="UI_Settings_ScreenCaptureSave_Error" xml:space="preserve">
-    <value>Fout bij opslaan afbeelding</value>
-  </data>
-  <data name="UI_Settings_ScreenCapture_CaptureScreen" xml:space="preserve">
-    <value>Maak schermafdruk</value>
-  </data>
-  <data name="UI_Settings_ScreenCapture_Error" xml:space="preserve">
-    <value>Fout bij maken schermafdruk</value>
-  </data>
-  <data name="UI_Settings_ScreenCapture_SaveImage" xml:space="preserve">
-    <value>Afbeelding opslaan</value>
-  </data>
-  <data name="UI_Settings_ScreenCapture_Title" xml:space="preserve">
-    <value>Schermafdruk</value>
-  </data>
   <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importeer alleen nieuwe data</value>
+    <value>Importer seulement les nouvelles données</value>
   </data>
 </root>

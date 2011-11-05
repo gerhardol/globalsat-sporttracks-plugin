@@ -60,66 +60,66 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verwijderen waypoints</value>
+    <value>Virhe reittipisteiden poistossa</value>
   </data>
   <data name="Device_GetInfo_Error" xml:space="preserve">
-    <value>Fout bij ophalen apparaat info</value>
+    <value>Virhe laitetietojen haussa</value>
   </data>
   <data name="Device_GetWaypoints_Error" xml:space="preserve">
-    <value>Fout bij laden waypoints</value>
+    <value>Virhe reittipisteiden latauksessa</value>
   </data>
   <data name="Device_InsuficientMemory_Error" xml:space="preserve">
-    <value>Onvoldoende geheugen</value>
+    <value>Liian vähän muistia</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat apparaat niet gevonden</value>
+    <value>Globalsat laitetta ei löytynyt</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
-    <value>Fout bij verzenden route</value>
+    <value>Virhe reittiä lähetettäessä</value>
   </data>
   <data name="Device_SendTrack_Error" xml:space="preserve">
-    <value>Fout bij verzenden activiteit</value>
+    <value>Virhe harjoituksen lähetyksessä</value>
   </data>
   <data name="Device_SendWaypoints_Error" xml:space="preserve">
-    <value>Fout bij verzenden waypoints</value>
+    <value>Virhe reittipisteiden lähetyksessä</value>
   </data>
   <data name="MessageDialog_Error_Title" xml:space="preserve">
-    <value>Fout</value>
+    <value>Virhe</value>
   </data>
   <data name="UI_Settings_DeviceConfiguration_Title" xml:space="preserve">
-    <value>Apparaat configuratie</value>
+    <value>Laitteen asetukset</value>
   </data>
   <data name="UI_Settings_ExportConfigButton_Text" xml:space="preserve">
-    <value>Export naar bestand</value>
+    <value>Vie tiedostoon</value>
   </data>
   <data name="UI_Settings_ExportConfig_Error" xml:space="preserve">
-    <value>Fout bij export apparaat configuratie</value>
+    <value>Virhe laiteasetusten viennissä</value>
   </data>
   <data name="UI_Settings_ImportConfigButton_Text" xml:space="preserve">
-    <value>Import uit bestand</value>
+    <value>Tuo tiedostosta</value>
   </data>
   <data name="UI_Settings_ImportConfig_Error" xml:space="preserve">
-    <value>Fout bij import apparaat configuratie</value>
+    <value>Virhe laiteasetusten tuonnissa</value>
   </data>
   <data name="UI_Settings_ImportConfig_InvalidConfiguration" xml:space="preserve">
-    <value>Onjuist configuratiebestand</value>
+    <value>Virheellinen asetustiedosto</value>
   </data>
   <data name="UI_Settings_ScreenCaptureSave_Error" xml:space="preserve">
-    <value>Fout bij opslaan afbeelding</value>
+    <value>Virhe kuvan tallennuksessa</value>
   </data>
   <data name="UI_Settings_ScreenCapture_CaptureScreen" xml:space="preserve">
-    <value>Maak schermafdruk</value>
+    <value>Kuvankaappaus</value>
   </data>
   <data name="UI_Settings_ScreenCapture_Error" xml:space="preserve">
-    <value>Fout bij maken schermafdruk</value>
+    <value>Virhe kuvankaappauksessa</value>
   </data>
   <data name="UI_Settings_ScreenCapture_SaveImage" xml:space="preserve">
-    <value>Afbeelding opslaan</value>
+    <value>Tallenna kuva</value>
   </data>
   <data name="UI_Settings_ScreenCapture_Title" xml:space="preserve">
-    <value>Schermafdruk</value>
+    <value>Kuvankaappaus</value>
   </data>
   <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importeer alleen nieuwe data</value>
+    <value>Tuo vain uudet tiedot</value>
   </data>
 </root>
