@@ -38,7 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             this.configInfo = configInfo;
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
-            chkImportOnlyNew.Text = ResourceLookup.DeviceConfigurationDlg_chkImportOnlyNew_Text;
+            chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
             labelComPort.Text = "COM Port:"; //TODO: Translate
             btnOk.Text = CommonResources.Text.ActionOk;

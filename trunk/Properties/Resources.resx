@@ -124,60 +124,6 @@
   <data name="Image_48_GH625" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Image_48_GH625.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Import new data only</value>
-  </data>
-  <data name="ca_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importa només dades noves</value>
-  </data>
-  <data name="cs_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importovat jen nová data</value>
-  </data>
-  <data name="da_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importer kun nye data</value>
-  </data>
-  <data name="de_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Nur neue Daten importieren</value>
-  </data>
-  <data name="es_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importar solo datos nuevos</value>
-  </data>
-  <data name="fi_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Tuo vain uudet tiedot</value>
-  </data>
-  <data name="fr_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importer seulement les nouvelles données</value>
-  </data>
-  <data name="it_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importa solo nuovi dati</value>
-  </data>
-  <data name="ja_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>新しいデータのみをインポート</value>
-  </data>
-  <data name="ko_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>새로운 데이터만 가져오기</value>
-  </data>
-  <data name="nl_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importeer alleen nieuwe data</value>
-  </data>
-  <data name="no_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importer kun nye data</value>
-  </data>
-  <data name="pl_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Import tylko nowych danych</value>
-  </data>
-  <data name="pt_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importar dados novos somente</value>
-  </data>
-  <data name="ru_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Импорт только новых данных</value>
-  </data>
-  <data name="sv_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>Importera enbart nya data</value>
-  </data>
-  <data name="zh_CN_DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
-    <value>只导入新数据</value>
-  </data>
   <data name="Image_48_GH505" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Image_48_GH505.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -214,137 +160,8 @@
   <data name="Device_SendWaypoints_Error" xml:space="preserve">
     <value>Error sending waypoints</value>
   </data>
-  <data name="Edit_ReduceRoutePointsAction_Title" xml:space="preserve">
-    <value>Reduce #Points</value>
-  </data>
-  <data name="Export_ExportActivityToDeviceAction_Text" xml:space="preserve">
-    <value>to Globalsat device as Activity</value>
-  </data>
-  <data name="Export_ExportRouteToDeviceAction_Text" xml:space="preserve">
-    <value>to Globalsat device as Route</value>
-  </data>
-  <data name="GlobalsatDeviceCompatible" xml:space="preserve">
-    <value>Waypoints in a Globalsat Device can be managed in this plugin.</value>
-    <comment>Matrix</comment>
-  </data>
-  <data name="GlobalsatDevicePluginName" xml:space="preserve">
-    <value>Globalsat Device plugin</value>
-    <comment>Matrix</comment>
-  </data>
-  <data name="GlobalsatDeviceToInstall" xml:space="preserve">
-    <value>Install at least version {0} of {1} to manage waypoints in Globalsat device.</value>
-    <comment>Matrix</comment>
-  </data>
   <data name="MessageDialog_Error_Title" xml:space="preserve">
     <value>Error</value>
-  </data>
-  <data name="OtherPluginExceptionText" xml:space="preserve">
-    <value>Problem communicating with {0}.
-Make sure that {1} is installed.</value>
-    <comment>Matrix</comment>
-  </data>
-  <data name="OtherPluginVersion" xml:space="preserve">
-    <value>Detected version {0} of {1}.</value>
-    <comment>Matrix</comment>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_CreateWaypoint_Text" xml:space="preserve">
-    <value>Create new waypoint</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_DeleteAllWaypoints_Text" xml:space="preserve">
-    <value>Delete all waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_DeleteWaypoints_Text" xml:space="preserve">
-    <value>Delete selected waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_DeviceWaypoints_Title" xml:space="preserve">
-    <value>Device Waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_DownloadWaypoints_Text" xml:space="preserve">
-    <value>Download waypoints from device</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_LocalWaypoints_Title" xml:space="preserve">
-    <value>Local Waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_OpenWaypoints_Error" xml:space="preserve">
-    <value>Error loading waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_OpenWaypoints_Success" xml:space="preserve">
-    <value>Waypoints imported successfully</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_OpenWaypoints_Text" xml:space="preserve">
-    <value>Open waypoints from file</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_RefreshDeviceWaypoints_Text" xml:space="preserve">
-    <value>Import device waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_SaveWaypoints_Error" xml:space="preserve">
-    <value>Error saving waypoints</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_SaveWaypoints_Text" xml:space="preserve">
-    <value>Save selected waypoints to file</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_ShowOnMap_Text" xml:space="preserve">
-    <value>Show waypoints on map</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_UploadWaypoints_Text" xml:space="preserve">
-    <value>Export waypoints to device</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Altitude_Text" xml:space="preserve">
-    <value>Altitude</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Icon_Text" xml:space="preserve">
-    <value>Icon</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Latitude_Text" xml:space="preserve">
-    <value>Latitude</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Longitude_Text" xml:space="preserve">
-    <value>Longitude</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Name_Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="UI_Activities_WaypointsPageControl_Waypoint_Text" xml:space="preserve">
-    <value>Waypoint</value>
-  </data>
-  <data name="UI_Activities_WaypointsPage_Title" xml:space="preserve">
-    <value>Waypoints</value>
-  </data>
-  <data name="UI_ExportActivityToDeviceForm_Title" xml:space="preserve">
-    <value>Export activity to Globalsat device</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_ReducePoints_Text" xml:space="preserve">
-    <value>Reduce points</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_Route_Name_Text" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_Route_NrPoints_Text" xml:space="preserve">
-    <value>Nr Points</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_Route_Text" xml:space="preserve">
-    <value>Route</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_SplitRoute_DistancePerSegment_Text" xml:space="preserve">
-    <value>Distance per segment</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_SplitRoute_None_Text" xml:space="preserve">
-    <value>None</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_SplitRoute_NrSegments_Text" xml:space="preserve">
-    <value>Nr Segments</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_SplitRoute_Text" xml:space="preserve">
-    <value>Split route into segments</value>
-  </data>
-  <data name="UI_ExportRouteToDeviceForm_Title" xml:space="preserve">
-    <value>Export route to Globalsat device</value>
-  </data>
-  <data name="UI_ReducePointsForm_CurrentNrPoints_Text" xml:space="preserve">
-    <value>Current nr points</value>
-  </data>
-  <data name="UI_ReducePointsForm_ReducedNrPoints_Text" xml:space="preserve">
-    <value>Reduced nr points</value>
   </data>
   <data name="UI_Settings_DeviceConfiguration_Title" xml:space="preserve">
     <value>Device Configuration</value>
@@ -379,8 +196,10 @@ Make sure that {1} is installed.</value>
   <data name="UI_Settings_ScreenCapture_Title" xml:space="preserve">
     <value>Screen Capture</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Image_16_Keymaze" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Image_16_Keymaze.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
+    <value>Import new data only</value>
   </data>
 </root>
