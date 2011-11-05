@@ -22,7 +22,7 @@ using ZoneFiveSoftware.SportTracks.Device.Globalsat;
 #endif
 using ZoneFiveSoftware.Common.Data.Measurement;
 
-namespace KeymazePlugin.IO
+namespace WaypointsPlugin.IO
 {
 #if !WAYPOINTSPLUGIN
     class Utils

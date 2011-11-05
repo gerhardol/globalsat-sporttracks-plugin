@@ -46,7 +46,7 @@ namespace GlobalsatDevicePlugin
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return null; }
-            Stream result = KeymazePlugin.IO.ExportWaypoints.ExportGpxWaypointsStream(device2.GetWaypoints(jobMonitor));
+            Stream result = WaypointsPlugin.IO.ExportWaypoints.ExportGpxWaypointsStream(device2.GetWaypoints(jobMonitor));
             return result;
         }
 
@@ -55,7 +55,7 @@ namespace GlobalsatDevicePlugin
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            return device2.SendWaypoints(KeymazePlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
+            return device2.SendWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
         public static void DeleteWpt(Stream waypoints, IJobMonitor jobMonitor)
@@ -63,7 +63,7 @@ namespace GlobalsatDevicePlugin
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return; }
-            device2.DeleteWaypoints(KeymazePlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
+            device2.DeleteWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
             jobMonitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
         }
 
@@ -90,7 +90,7 @@ namespace GlobalsatDevicePlugin
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            return device2.SendRoute(KeymazePlugin.IO.ImportRoutes.ImportStreamGpxRoutes(routes), jobMonitor);
+            return device2.SendRoute(WaypointsPlugin.IO.ImportRoutes.ImportStreamGpxRoutes(routes), jobMonitor);
         }
 
         public static void DeleteRte(Stream waypoints, IJobMonitor jobMonitor)

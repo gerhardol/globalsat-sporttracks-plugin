@@ -183,6 +183,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             if (received.CommandId != packet.CommandId &&
+                //TODO: Cleanup in allowed sender/response allowed (probably overload)
                 !((received.CommandId == GhPacketBase.CommandGetTrackFileSections || 
 			       received.CommandId == GhPacketBase.CommandId_FINISH || 
 			       received.CommandId == GhPacketBase.ResponseSendTrackFinish) &&
