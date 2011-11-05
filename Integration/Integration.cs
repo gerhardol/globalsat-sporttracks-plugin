@@ -98,13 +98,12 @@ namespace GlobalsatDevicePlugin
             throw new Exception();
         }
 
-        public static int ExportActivity(IList<IActivity> activities, IJobMonitor jobMonitor)
+        public static int ExportAct(IList<IActivity> activities, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            BackgroundWorker worker = new BackgroundWorker();
-            return device2.SendTrack(activities, worker, jobMonitor);
+            return device2.SendTrack(activities, jobMonitor);
         }
     }
 }

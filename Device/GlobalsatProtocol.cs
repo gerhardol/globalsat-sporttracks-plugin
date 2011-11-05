@@ -37,10 +37,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             throw new NotImplementedException();
         }
 
-        public virtual int SendTrack(IList<IActivity> activities, BackgroundWorker worker, IJobMonitor jobMonitor)
+        public virtual int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor)
         {
             int result = 0;
-            if (worker.CancellationPending)
+            if (jobMonitor.Cancelled)
             {
                 return result;
             }
@@ -102,11 +102,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
 
                         i++;
-                        double progress = packets.Count <= 1 ? 100 : (double)(i * 100) / (double)(packets.Count - 1);
+                        float progress = (float)(packets.Count <= 1 ? 1 : (double)(i) / (double)(packets.Count - 1));
 
-                        worker.ReportProgress((int)progress);
+                        jobMonitor.PercentComplete = progress;
 
-                        if (worker.CancellationPending)
+                        if (jobMonitor.Cancelled)
                         {
                             return result;
                         }
