@@ -133,7 +133,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (activity != null)
                     {
                         bool foundHrPoint = false;
-                        foreach (Gh625Packet.TrackPoint1 point in section.TrackPoints)
+                        foreach (Gh625Packet.TrackPoint point in section.TrackPoints)
                         {
                             pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
 

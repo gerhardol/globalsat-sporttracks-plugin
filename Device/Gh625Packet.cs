@@ -47,7 +47,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             public Int16 StartPointIndex;
             public Int16 EndPointIndex;
-            public IList<TrackPoint1> TrackPoints = new List<TrackPoint1>();
+            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
         }
 
@@ -110,7 +110,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int offset = 31;
             while (offset < this.PacketLength)
             {
-                TrackPoint1 point = new TrackPoint1();
+                TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadInt32(offset) / 1000000;
                 point.Longitude = (double)ReadInt32(offset + 4) / 1000000;
                 point.Altitude = ReadInt16(offset + 8);

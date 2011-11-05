@@ -48,7 +48,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //byte Sport4;
             //byte Sport5;
 
-            public IList<TrackPoint4> TrackPoints = new List<TrackPoint4>();
+            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
         }
 
@@ -143,20 +143,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return laps;
         }
 
-        public IList<TrackPoint4> UnpackTrackPoints()
+        public IList<TrackPoint> UnpackTrackPoints()
         {
             if (this.PacketLength < TrackHeaderLength ||
                 this.PacketData[dbTrainHeaderCType] != HeaderTypeTrackPoints)
             {
-                return new List<TrackPoint4>();
+                return new List<TrackPoint>();
             }
 
-            IList<TrackPoint4> points = new List<TrackPoint4>();
+            IList<TrackPoint> points = new List<TrackPoint>();
 
             int offset = TrackHeaderLength;
             while (offset < this.PacketLength)
             {
-                TrackPoint4 point = new TrackPoint4();
+                TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadInt32(offset) / 1000000;
                 point.Longitude = (double)ReadInt32(offset + 4) / 1000000;
                 point.Altitude = ReadInt16(offset + 8);

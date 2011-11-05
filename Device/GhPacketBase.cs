@@ -101,50 +101,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //    public Int16 EndPointIndex;
         }
 
-        public class TrackPoint1
+        //Superset of all (receive) trackpoints
+        public class TrackPoint
         {
+            //Same in all
             public double Latitude; //4bit, Degrees * 1000000
             public double Longitude; //4bit, Degrees * 1000000
-            public Int16 Altitude; // Meters
-            public double Speed; //2bit, Kilometers per hour * 100
-            public Byte HeartRate;
-            public Int16 IntervalTime; // Seconds * 10
-        }
-
-        public class TrackPoint2
-        {
-            public double Latitude; //4bit, Degrees * 1000000
-            public double Longitude; //4bit, Degrees * 1000000
-            public Int16 Altitude; // Meters
-            public double Speed; //2bit, Kilometers per hour * 100
-            public Byte HeartRate;
-            public Int32 IntervalTime; // Seconds * 10
-            public Int16 Power; // Power, unknown units
-            public Int16 Cadence; // Cadence, unknown units
-        }
-
-        public class TrackPoint3
-        {
-            public double Latitude; //4bit, Degrees * 1000000
-            public double Longitude; //4bit, Degrees * 1000000
+            //Int32 in GB580, Int16 in GH625XT, GH505, GH625, GH615
             public Int32 Altitude; // Meters
-            public double Speed; //2bit, Kilometers per hour * 100
-            public Byte HeartRate;
-            public Int32 IntervalTime; // Seconds * 10
-            public Int16 Power; // Power, unknown units
-            public Int16 Cadence; // Cadence, unknown units
-        }
-
-        public class TrackPoint4
-        {
-            public double Latitude; //4bit, Degrees * 1000000
-            public double Longitude; //4bit, Degrees * 1000000
-            public Int16 Altitude; // Meters
+            //Int32 in GH625XT, Int16 in GB580, GH505, GH625, GH615
             public double Speed; //4bit, Kilometers per hour * 100
             public Byte HeartRate;
+            //Int32 in GH625XT, GB580, GH505, Int16 in GH625, GH615
             public Int32 IntervalTime; // Seconds * 10
+            //Int16 in GH625XT, GB580, GH505, (but not available?)
             public Int16 Power; // Power, unknown units
+            //Int16 in GH625XT, GB580 (but not available, unknown use)
             //public Int16 PowerCadence; // unknown units
+            //Int16 in GH625XT, GB580, GH505, (but not available?)
             public Int16 Cadence; // Cadence, unknown units
         }
 
