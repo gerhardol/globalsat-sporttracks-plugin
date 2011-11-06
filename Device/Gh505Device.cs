@@ -64,7 +64,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             foreach (Gh505Packet.TrackFileHeader header in tracks)
             {
                 totalPoints += header.TrackPointCount;
-                trackIndexes.Add(header.TrackPointIndex);
+                trackIndexes.Add((Int16)header.TrackPointIndex);
             }
             float pointsRead = 0;
 

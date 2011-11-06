@@ -37,7 +37,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //public Int16 TrackPointCount;
         }
 
-        public class TrackFileHeader : Header
+        public new class TrackFileHeader : Header
         {
             public Int16 TrackPointIndex;
         }
