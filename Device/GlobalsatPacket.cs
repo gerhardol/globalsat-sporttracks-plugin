@@ -19,11 +19,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         //private static string InvalidOperation = "Invalid Operation";
 
+        protected void ReportOffset(int headerLen, int offset)
+        {
+            //Debug, show popup?
+        }
         protected int CheckOffset(int headerLen, int offset)
         {
             if(headerLen != offset)
             {
-                //Debug
+                ReportOffset(headerLen, offset);
             }
             return headerLen;
         }
@@ -41,6 +45,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatSystemConfiguration ResponseGetSystemConfiguration()
         {
+            //No reasonable check for CheckOffset()
             string deviceName = ByteArr2String(0, 20 + 1);
             string firmware = ByteArr2String(25, 16 + 1); //21wo version
             int waypointCount = (int)PacketData[63]; //38 in 615?
@@ -84,9 +89,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
+            //No reasonable CheckOffset()
             int nrWaypoints = PacketLength / (LocationLength + GetWptOffset);
             IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
-
+            
             for (int i = 0; i < nrWaypoints; i++)
             {
                 int index = i * (LocationLength + GetWptOffset);
@@ -151,7 +157,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual int ResponseSendWaypoints()
         {
-            //TODO: Size check
+            if (PacketLength < 2)
+            {
+                ReportOffset(PacketLength, 2);
+            }
             int nrSentWaypoints = this.ReadInt16(0);
             return nrSentWaypoints;
         }
@@ -216,7 +225,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public virtual GlobalsatPacket SendTrackStart(TrackFileBase trackFile) { throw new NotImplementedException(); }
+        public virtual GlobalsatPacket SendTrackStart(TrackFileBase trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
         //Not used by all devices
         public virtual GlobalsatPacket SendTrackLaps(TrackFileBase trackFile) { return null; }
 
@@ -238,8 +247,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        protected virtual int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile) { throw new NotImplementedException(); }
-        protected virtual int WriteTrackPoint(int offset, TrackPointSend trackpoint) { throw new NotImplementedException(); }
+        protected virtual int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
+        protected virtual int WriteTrackPoint(int offset, TrackPointSend trackpoint) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route)
         {

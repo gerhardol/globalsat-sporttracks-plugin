@@ -54,6 +54,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelHoursOffset = new System.Windows.Forms.Label();
             this.textBoxComPort = new ZoneFiveSoftware.Common.Visuals.TextBox();
             this.labelComPort = new System.Windows.Forms.Label();
+            this.buttonDetect = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.labelDetect = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnOk
@@ -164,11 +166,43 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelComPort.TabIndex = 5;
             this.labelComPort.Text = "COM Port:";
             // 
+            // buttonDetect
+            // 
+            this.buttonDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDetect.BackColor = System.Drawing.Color.Transparent;
+            this.buttonDetect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
+            this.buttonDetect.CenterImage = null;
+            this.buttonDetect.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.buttonDetect.HyperlinkStyle = false;
+            this.buttonDetect.ImageMargin = 2;
+            this.buttonDetect.LeftImage = null;
+            this.buttonDetect.Location = new System.Drawing.Point(12, 62);
+            this.buttonDetect.Name = "buttonDetect";
+            this.buttonDetect.PushStyle = true;
+            this.buttonDetect.RightImage = null;
+            this.buttonDetect.Size = new System.Drawing.Size(75, 23);
+            this.buttonDetect.TabIndex = 7;
+            this.buttonDetect.Text = "Refresh";
+            this.buttonDetect.TextAlign = System.Drawing.StringAlignment.Center;
+            this.buttonDetect.TextLeftMargin = 2;
+            this.buttonDetect.TextRightMargin = 2;
+            this.buttonDetect.Click += new System.EventHandler(this.buttonDetect_Click);
+            // 
+            // labelDetect
+            // 
+            this.labelDetect.Location = new System.Drawing.Point(114, 65);
+            this.labelDetect.Name = "labelDetect";
+            this.labelDetect.Size = new System.Drawing.Size(193, 19);
+            this.labelDetect.TabIndex = 8;
+            this.labelDetect.Text = "Globalsat device not found";
+            // 
             // DeviceConfigurationDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(343, 122);
+            this.Controls.Add(this.labelDetect);
+            this.Controls.Add(this.buttonDetect);
             this.Controls.Add(this.textBoxComPort);
             this.Controls.Add(this.labelComPort);
             this.Controls.Add(this.txtHoursOffset);
@@ -196,5 +230,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private System.Windows.Forms.Label labelHoursOffset;
         private Common.Visuals.TextBox textBoxComPort;
         private System.Windows.Forms.Label labelComPort;
+        private Common.Visuals.Button buttonDetect;
+        private System.Windows.Forms.Label labelDetect;
     }
 }

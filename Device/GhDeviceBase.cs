@@ -60,6 +60,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void Close()
         {
+            //The actual port is closed after each packet, Close will require a new scan 
             if (port != null)
             {
                 port.Close();

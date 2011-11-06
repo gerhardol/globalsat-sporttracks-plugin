@@ -40,7 +40,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
-            labelComPort.Text = "COM Port:"; //TODO: Translate
+            labelComPort.Text = "COM Port:"; //Translate if visible
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
 
@@ -57,6 +57,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.textBoxComPort.Text = configInfo.ComPortsText;
             this.textBoxComPort.Visible = false;
             this.labelComPort.Visible = false;
+            this.buttonDetect.Text = ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
+            this.labelDetect.Text = "";
         }
 
         #region Public properties
@@ -131,5 +133,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private DeviceConfigurationInfo configInfo;
         #endregion
 
+        private void buttonDetect_Click(object sender, EventArgs e)
+        {
+            GenericDevice device = new GenericDevice(this.configInfo);
+            try
+            {
+                string devId = device.Open();
+                this.labelDetect.Text = devId;
+            }
+            catch (Exception)
+            {
+                this.labelDetect.Text = Properties.Resources.Device_OpenDevice_Error;
+            }
+            finally
+            {
+                device.Close();
+            }
+        }
     }
 }
