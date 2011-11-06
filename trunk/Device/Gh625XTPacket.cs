@@ -25,38 +25,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTPacket : GlobalsatPacket
     {
-        public class Train : Header
-        {
-            //public Int16 StartPointIndex;
-            //public Int16 EndPointIndex;
-            //public bool Multisport;
-            public Int16 TotalCalories;
-            //public double MaximumSpeed;
-            public byte MaximumHeartRate;
-            public byte AverageHeartRate;
-            public Int16 TotalAscend;
-            public Int16 TotalDescend;
-            //public Int16 MinimumAltitude;
-            //public Int16 MaximumAltitude;
-            public Int16 AverageCadence;
-            public Int16 MaximumCadence;
-            public Int16 AveragePower;
-            public Int16 MaximumPower;
-            //byte Sport1;
-            //byte Sport2;
-            //byte Sport3;
-            //byte Sport4;
-            //byte Sport5;
-
-            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
-            public IList<Lap> Laps = new List<Lap>();
-        }
-
-        public class TrackFileHeader : Header
-        {
-            public Int32 TrackPointIndex;
-        }
-
         //Both for DB_TRAINHEADER and DB_TRAIN
         private void ReadHeader(Header header, int offset)
         {
