@@ -1,6 +1,7 @@
 /*
  *  Globalsat/Keymaze SportTracks Plugin
- *  Copyright 2009 John Philip 
+ *  Copyright 2009 John Philip
+ *  Copyright 2011 Gerhard Olsson
  * 
  *  This software may be used and distributed according to the terms of the
  *  GNU Lesser General Public License version 2 or any later version.
@@ -26,15 +27,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GlobalsatProtocol(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GlobalsatProtocol(FitnessDevice_Globalsat fitDev) : base(fitDev) { }
 
-        //The device creating the packet, used by Send()
-        //Must be implemented in each device, a base version for generic cases where all protocols are the same
-        //public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
-        public static GlobalsatPacket PacketFactoryBase { get { return new GlobalsatPacket(); } }
-
-        //Import kept in separate structure
+        public class FeatureNotSupportedException : NotImplementedException
+        {
+            //TODO: Popup with more information too?
+        }
+        //Import kept in separate structure, while most other protocols implemented here
         public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
-            throw new NotImplementedException();
+            throw new FeatureNotSupportedException();
         }
 
         public virtual int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor)
@@ -79,12 +79,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                         if (response != null && response.CommandId != packet.CommandId )
                         {
-                            //Generic codes in SendPacket
+                            //Generic codes handled in SendPacket
                             if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
                             {
                                 // TODO resend
-							//	Console.WriteLine("------ send error 2");
-
                                 throw new Exception(Properties.Resources.Device_SendTrack_Error);
                             }
                             else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
@@ -92,14 +90,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 //Done, all sent
                                 break;
                             }
-                            else
-                            {
-							//	 Console.WriteLine("------ send error 3");
-                                throw new Exception(Properties.Resources.Device_SendTrack_Error);
-                            }
-                            //TODO:
 							//	 Console.WriteLine("------ send error 4");
-                            throw new Exception("Send track error: " + response.CommandId);
+                            throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
                         }
 
                         i++;
@@ -133,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IGPSRoute gpsRoute = activity.GPSRoute;
             GhPacketBase.TrackFileBase trackFileStart = new GhPacketBase.TrackFileBase();
             trackFileStart.TotalDistanceMeters = (int)gpsRoute.TotalDistanceMeters;
-            trackFileStart.StartTime = DateTime.Now; // trackPoints.StartTime;
+            trackFileStart.StartTime = activity.StartTime;
             trackFileStart.TrackPointCount = (short)gpsRoute.Count;
             trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
 

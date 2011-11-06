@@ -32,7 +32,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
         public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
-        public override GlobalsatPacket PacketFactory { get { return GlobalsatProtocol.PacketFactoryBase; } }
+        public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
 
         public string devId = null;
         /* Autodetect device, it is up to the caller to cache the device */
@@ -40,6 +40,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
             devId = base.Open();
+            //No close here
             if (!string.IsNullOrEmpty(devId))
             {
                 IList<GlobalsatProtocol> Devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };

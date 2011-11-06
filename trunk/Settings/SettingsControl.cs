@@ -37,19 +37,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             InitializeComponent();
 
-
+            this.buttonDetect.Text = ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
+            this.labelDetect.Text = "";
 
             if (Plugin.Instance.Application != null)
             {
                 labelName.Text = Plugin.Instance.Name;
                 ThemeChanged(Plugin.Instance.Application.VisualTheme);
             }
-
         }
-
-
-
-
 
         #region Public methods
 
@@ -71,29 +67,38 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             //this.labelGlobalsatDevice.Text = Integration.GlobalsatDevice.CompabilityText;
             //Some untranslated strings....
-            this.labelLicense.Text = "Waypoints Plugin is distributed under the GNU Lesser General Public Licence.\r\nThe Li" +
+            this.labelLicense.Text = "The Globalsat Device Plugin is distributed under the GNU Lesser General Public Licence.\r\nThe Li" +
                 "cense is included in the plugin installation directory and at:\r\nhttp://www.gnu.o" +
                 "rg/licenses/lgpl.html.";
 
         }
         #endregion
 
+        //private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        //{
+        //    try
+        //    {
+        //        System.Diagnostics.Process.Start("mailto:john.philip@sapo.pt");
+        //    }
+        //    catch { }
+        //}
 
-
-
-
-
-        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        private void buttonDetect_Click(object sender, EventArgs e)
         {
+            GenericDevice device = new GenericDevice();
             try
             {
-                System.Diagnostics.Process.Start("mailto:john.philip@sapo.pt");
+                string devId = device.Open();
+                this.labelDetect.Text = devId;
             }
-            catch { }
+            catch (Exception)
+            {
+                this.labelDetect.Text = Properties.Resources.Device_OpenDevice_Error;
+            }
+            finally
+            {
+                device.Close();
+            }
         }
-
-
-
-
     }
 }

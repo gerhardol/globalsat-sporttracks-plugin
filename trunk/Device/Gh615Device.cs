@@ -92,6 +92,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
-        public override int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor) { throw new NotImplementedException(); }
+        public override int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor) { throw new FeatureNotSupportedException(); }
     }
 }
