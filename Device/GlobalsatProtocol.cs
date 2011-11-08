@@ -24,8 +24,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public abstract class GlobalsatProtocol : GhDeviceBase
     {
-        public GlobalsatProtocol(DeviceConfigurationInfo configInfo) : base(configInfo) { }
-        public GlobalsatProtocol(FitnessDevice_Globalsat fitDev) : base(fitDev) { }
+        public GlobalsatProtocol() : base() { }
+        public GlobalsatProtocol(string configInfo) : base(configInfo) { }
 
         public class FeatureNotSupportedException : NotImplementedException
         {

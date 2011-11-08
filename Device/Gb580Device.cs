@@ -29,8 +29,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gb580Device : GlobalsatProtocol
     {
-        public Gb580Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
-        public Gb580Device() : base (new FitnessDevice_GB580()) { }
+        public Gb580Device() : base() { }
+        public Gb580Device(string configInfo) : base(configInfo) { }
+
+        public override DeviceConfigurationInfo DefaultConfig
+        {
+            get
+            {
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580" });
+                return info;
+            }
+        }
 
         public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
 

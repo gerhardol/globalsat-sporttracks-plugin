@@ -38,19 +38,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            Gb580Device device = new Gb580Device(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
+            Gb580Device device = new Gb580Device(configurationInfo);
             ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
             return job.Import();
-        }
-
-        public override DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-                info.AllowedIds = new List<string> { "GB-580" };
-                return info;
-            }
         }
     }
 }

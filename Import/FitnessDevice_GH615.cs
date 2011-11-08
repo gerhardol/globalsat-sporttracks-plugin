@@ -38,20 +38,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            Gh615Device device = new Gh615Device(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
+            Gh615Device device = new Gh615Device(configurationInfo);
             ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
             return job.Import();
-        }
-
-        public override DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-                info.AllowedIds = new List<string> { "GH-615" };
-                info.BaudRates = new List<int> { 57600 };
-                return info;
-            }
         }
     }
 }

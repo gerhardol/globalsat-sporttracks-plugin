@@ -58,7 +58,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Configure(string configurationInfo)
         {
-            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
+            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse((new GenericDevice(configurationInfo)).DefaultConfig, configurationInfo);
             DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(configInfo);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -72,7 +72,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            GenericDevice device = new GenericDevice(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
+            GenericDevice device = new GenericDevice(configurationInfo);
             GlobalsatProtocol device2 = device.Device(monitor);
             if (device2 != null)
             {
@@ -85,16 +85,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 return job.Import();
             }
             return false;
-        }
-
-        public virtual DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-                info.BaudRates = new List<int> { 115200, 57600 };
-                return info;
-            }
         }
 
         #region Private members

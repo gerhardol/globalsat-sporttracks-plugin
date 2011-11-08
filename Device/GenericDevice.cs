@@ -30,8 +30,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     //There should be no methods here, all should use Device()
     class GenericDevice : GlobalsatProtocol
     {
-        public GenericDevice(DeviceConfigurationInfo configInfo) : base(configInfo) { }
-        public GenericDevice() : base(new FitnessDevice_Globalsat()) { }
+        public GenericDevice() : base() { }
+        public GenericDevice(string configInfo) : base(configInfo) { }
+
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
 
         public string devId = null;
@@ -46,9 +47,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 IList<GlobalsatProtocol> Devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
                 foreach (GlobalsatProtocol g in Devices)
                 {
-                    if (g.configInfo.AllowedIds != null)
+                    if (g.DefaultConfig.AllowedIds != null)
                     {
-                        foreach (string s in g.configInfo.AllowedIds)
+                        foreach (string s in g.DefaultConfig.AllowedIds)
                         {
                             if (devId.StartsWith(s))
                             {
