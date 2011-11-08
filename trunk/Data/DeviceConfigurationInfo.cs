@@ -62,8 +62,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return configInfo;
         }
 
+        public DeviceConfigurationInfo(IList<string> allowedIds)
+        {
+            AllowedIds = allowedIds;
+        }
+
+        public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates) :
+            this(allowedIds)
+        {
+            BaudRates = baudRates;
+        }
+
+        //Adjust to all devices
         public DeviceConfigurationInfo()
         {
+            BaudRates = new List<int> { 115200, 57600 };
         }
 
         public override string ToString()
@@ -79,6 +92,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public int MaxPacketPayload = 2500;
         public int MaxNrWaypoints = 100;
         public IList<int> BaudRates = new List<int> { 115200 };
+        //Also used for naming families - first should be readable (null is Globalsat)
         public IList<string> AllowedIds = null;
         public bool ImportOnlyNew = true;
         public int SecondsAlwaysImport = 0;

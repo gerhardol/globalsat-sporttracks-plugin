@@ -89,6 +89,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 string devId = device.Open();
+                GlobalsatProtocol device2 = device.Device(new JobMonitor());
+                if (device2 != null)
+                {
+                    if (device2.configInfo.AllowedIds == null || device2.configInfo.AllowedIds.Count == 0)
+                    {
+                        //xxx translate
+                        devId += " (Globalsat Generic)";
+                    }
+                    else
+                    {
+                        devId += " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
+                    }
+                }
+                else
+                {
+                    devId += " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
+                }
                 this.labelDetect.Text = devId;
             }
             catch (Exception)

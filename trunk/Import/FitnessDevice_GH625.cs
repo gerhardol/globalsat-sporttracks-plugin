@@ -38,21 +38,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            Gh625Device device = new Gh625Device(DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo));
+            Gh625Device device = new Gh625Device(configurationInfo);
             ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
             return job.Import();
-        }
-
-        public override DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-                //TODO: Find valid Id for KeyMaze
-                info.AllowedIds = new List<string> { "GH-625M", "GH-625B", "KM" };
-                info.BaudRates = new List<int> { 57600 };
-                return info;
-            }
         }
     }
 }

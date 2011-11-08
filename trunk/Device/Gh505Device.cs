@@ -29,8 +29,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Device : GlobalsatProtocol
     {
-        public Gh505Device(DeviceConfigurationInfo configInfo) : base(configInfo) { }
-        public Gh505Device() : base(new FitnessDevice_GH505()) { }
+        public Gh505Device() : base() { }
+        public Gh505Device(string configInfo) : base(configInfo) { }
+
+        public override DeviceConfigurationInfo DefaultConfig
+        {
+            get
+            {
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-505", "GH-50" });
+                return info;
+            }
+        }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(); } }
 

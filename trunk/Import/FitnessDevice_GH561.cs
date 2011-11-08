@@ -44,15 +44,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //not implemented
             return false;
         }
-
-        public override DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
-                info.AllowedIds = new List<string> { "GH-561" };
-                return info;
-            }
-        }
     }
 }

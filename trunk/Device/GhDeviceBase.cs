@@ -30,20 +30,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public abstract class GhDeviceBase
     {
-        public GhDeviceBase(DeviceConfigurationInfo configInfo)
+        public GhDeviceBase()
         {
-            this.configInfo = configInfo;
+            this.configInfo = DefaultConfig;
         }
 
-        public GhDeviceBase(FitnessDevice_Globalsat fitDev)
+        public GhDeviceBase(string configurationInfo)
         {
-            this.configInfo = fitDev.DefaultConfig;
-            foreach (IConfiguredDevice c in Plugin.Instance.Application.SystemPreferences.FitnessDevices)
+            this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
+        }
+
+        public virtual DeviceConfigurationInfo DefaultConfig
+        {
+            get
             {
-                if (c.Id == fitDev.Id)
-                {
-                    this.configInfo = DeviceConfigurationInfo.Parse(configInfo, c.Configuration);
-                }
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo();
+                return info;
             }
         }
 
