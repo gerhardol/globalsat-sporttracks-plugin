@@ -192,9 +192,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int startOffset = offset;
             offset += WriteTrackHeader(offset, 1, trackFile);
 
-            //write to the "unused fields in some headers" 
-            this.Write(TrainDataHeaderLength - 4, trackFile.StartPointIndex);
-            this.Write(TrainDataHeaderLength - 2, trackFile.EndPointIndex);
+            //write to the offsets "unused fields in some headers" 
+            this.Write(offset - 4, trackFile.StartPointIndex);
+            this.Write(offset - 2, trackFile.EndPointIndex);
             return CheckOffset(TrackHeaderLength, offset - startOffset);
         }
 
