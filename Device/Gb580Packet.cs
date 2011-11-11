@@ -25,25 +25,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gb580Packet : GlobalsatPacket
     {
-        //public class TrackFileHeader : Header
-        //{
-        //    public Int16 TrackPointIndex;
-        //}
-
-        //public class Train : Header
-        //{
-        //    //public Int16 TrackPointIndex;
-        //    //public Int16 LapIndexEndPt;
-        //    public Int16 TotalCalories;
-        //    //public double MaximumSpeed;
-        //    public byte MaximumHeartRate;
-        //    public byte AverageHeartRate;
-        //    //public Int16 StartPointIndex;
-        //    //public Int16 EndPointIndex;
-        //    public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
-        //    public IList<Lap> Laps = new List<Lap>();
-        //}
-
         public IList<TrackFileHeader> UnpackTrackHeaders()
         {
             int numTrains = this.PacketLength / TrackHeaderLength;
