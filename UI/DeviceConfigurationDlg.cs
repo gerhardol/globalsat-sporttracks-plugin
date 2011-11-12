@@ -136,20 +136,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private void buttonDetect_Click(object sender, EventArgs e)
         {
             GenericDevice device = new GenericDevice();
-            device.configInfo = this.configInfo;
-            try
-            {
-                string devId = device.Open();
-                this.labelDetect.Text = devId;
-            }
-            catch (Exception)
-            {
-                this.labelDetect.Text = Properties.Resources.Device_OpenDevice_Error;
-            }
-            finally
-            {
-                device.Close();
-            }
+            device.configInfo = this.ConfigurationInfo;
+            this.labelDetect.Text = device.Detect();
         }
     }
 }
