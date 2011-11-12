@@ -36,7 +36,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580" });
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580" }, new List<int> { 115200 });
                 return info;
             }
         }
