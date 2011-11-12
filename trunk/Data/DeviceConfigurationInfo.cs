@@ -62,24 +62,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return configInfo;
         }
 
-        public DeviceConfigurationInfo(IList<string> allowedIds)
+        public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates)
         {
+            BaudRates = baudRates;
             AllowedIds = allowedIds;
         }
 
-        public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates) :
-            this(allowedIds)
-        {
-            BaudRates = baudRates;
-        }
-
-        //Adjust to all devices
-        public DeviceConfigurationInfo()
-        {
-            BaudRates = new List<int> { 115200, 57600 };
-        }
-
-        public override string ToString()
+         public override string ToString()
         {
             return "newonly=" + (ImportOnlyNew ? "1" : "0") +
                 ";hr=" + HoursAdjustment.ToString() +
@@ -91,13 +80,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public int MaxPacketPayload = 2500;
         public int MaxNrWaypoints = 100;
-        public IList<int> BaudRates = new List<int> { 115200 };
+        public IList<int> BaudRates = new List<int>();
         //Also used for naming families - first should be readable (null is Globalsat)
-        public IList<string> AllowedIds = null;
+        public IList<string> AllowedIds = new List<string>();
         public bool ImportOnlyNew = true;
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
-        public IList<string> ComPorts = null;
+        public IList<string> ComPorts = new List<string>();
+
         public string ComPortsText
         {
             get
@@ -119,7 +109,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             set
             {
-                this.ComPorts = new List<string>();
                 string[] ports = value.Split(',');
                 foreach (string port in ports)
                 {
@@ -131,6 +120,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
         }
+
         public string BaudRatesText
         {
             get
@@ -152,15 +142,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             set
             {
-                this.BaudRates = new List<int>();
                 string[] ids = value.Split(',');
                 foreach (string port in ids)
                 {
                     int port2 = int.Parse(port);
-                    BaudRates.Add(port2);
+                    if (!BaudRates.Contains(port2))
+                    {
+                       BaudRates.Add(port2);
+                    }
                 }
             }
         }
+
         public string AllowedIdsText
         {
             get
@@ -187,7 +180,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 foreach (string port in ids)
                 {
                     string port2 = port.Trim();
-                    if (!string.IsNullOrEmpty(port2))
+                    if (!string.IsNullOrEmpty(port2) && !AllowedIds.Contains(port2))
                     {
                         AllowedIds.Add(port2);
                     }

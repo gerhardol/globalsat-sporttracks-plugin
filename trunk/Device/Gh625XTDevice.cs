@@ -36,7 +36,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-625XT" });
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-625XT" }, new List<int> { 115200 });
                 return info;
             }
         }
