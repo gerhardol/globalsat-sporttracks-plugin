@@ -190,9 +190,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // labelDetect
             // 
+            this.labelDetect.AutoSize = true;
             this.labelDetect.Location = new System.Drawing.Point(114, 65);
             this.labelDetect.Name = "labelDetect";
-            this.labelDetect.Size = new System.Drawing.Size(193, 19);
+            this.labelDetect.Size = new System.Drawing.Size(134, 13);
             this.labelDetect.TabIndex = 8;
             this.labelDetect.Text = "Globalsat device not found";
             // 

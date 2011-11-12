@@ -66,5 +66,51 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             return null;
         }
+
+        public string Detect()
+        {
+            string result = "Error";
+            try
+            {
+                string devId = this.Open();
+                GlobalsatProtocol device2 = this.Device(new JobMonitor());
+                if (device2 != null)
+                {
+                    if (device2.configInfo.AllowedIds == null || device2.configInfo.AllowedIds.Count == 0)
+                    {
+                        devId += " (Globalsat Generic)";
+                    }
+                    else
+                    {
+                        bool found = false;
+                        foreach (string s in device2.DefaultConfig.AllowedIds)
+                        {
+                            if (devId.Equals(s))
+                            {
+                                found = true;
+                            }
+                        }
+                        if (!found)
+                        {
+                            devId += " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
+                        }
+                    }
+                }
+                else
+                {
+                    devId += " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
+                }
+                result = devId;
+            }
+            catch (Exception)
+            {
+                result = Properties.Resources.Device_OpenDevice_Error;
+            }
+            finally
+            {
+                this.Close();
+            }
+            return result;
+        }
     }
 }
