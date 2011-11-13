@@ -32,7 +32,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class ImportJob_GH615 : ImportJob
     {
-        public ImportJob_GH615(GhDeviceBase device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        public ImportJob_GH615(GlobalsatProtocol device, string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         : base(device, sourceDescription, monitor, importResults)
         {
         }

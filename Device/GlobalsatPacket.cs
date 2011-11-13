@@ -300,5 +300,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual int TrainDataHeaderLength { get { return 31; } }
         protected virtual int TrackLapLength { get { return 22; } }
         protected virtual int TrackPointLength { get { return 25; } }
+        protected virtual int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 1; } }
+    }
+
+
+    //Newer devices
+    public abstract class GlobalsatPacket2 : GlobalsatPacket
+    {
+        public virtual byte GetTrainContent()
+        {
+            return this.PacketData[TrainHeaderCTypeOffset];
+        }
+        public abstract IList<TrackFileHeader> UnpackTrackHeaders();
+        public abstract Train UnpackTrainHeader();
+        public abstract IList<Lap> UnpackLaps();
+        public abstract IList<TrackPoint> UnpackTrackPoints();
     }
 }

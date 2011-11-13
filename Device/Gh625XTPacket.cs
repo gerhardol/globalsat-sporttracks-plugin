@@ -23,7 +23,7 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gh625XTPacket : GlobalsatPacket
+    class Gh625XTPacket : GlobalsatPacket2
     {
         //Both for DB_TRAINHEADER and DB_TRAIN
         private void ReadHeader(Header header, int offset)
@@ -38,7 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //29: cType
         }
 
-        public IList<TrackFileHeader> UnpackTrackHeaders()
+        public override IList<TrackFileHeader> UnpackTrackHeaders()
         {
             int numHeaders = this.PacketLength / TrackHeaderLength;
             IList<TrackFileHeader> headers = new List<TrackFileHeader>();
@@ -53,7 +53,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return headers;
         }
 
-        public Train UnpackTrainHeader()
+        public override Train UnpackTrainHeader()
         {
             if (this.PacketLength < TrainDataHeaderLength) return null;
 
@@ -75,7 +75,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return train;
         }
 
-        public IList<Lap> UnpackLaps()
+        public override IList<Lap> UnpackLaps()
         {
             if (this.PacketLength < TrackHeaderLength ||
                 this.PacketData[dbTrainHeaderCType] != HeaderTypeLaps)
@@ -96,7 +96,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lap.MaximumSpeed = ReadInt32(offset + 14)/3.6/100;
                 lap.MaximumHeartRate = this.PacketData[offset + 18];
                 lap.AverageHeartRate = this.PacketData[offset + 19];
-                lap.MinimumAltitude = ReadInt16(offset + + 20);
+                lap.MinimumAltitude = ReadInt16(offset + 20);
                 lap.MaximumAltitude = ReadInt16(offset + 22);
                 lap.AverageCadence = ReadInt16(offset + 24);
                 lap.MaximumCadence = ReadInt16(offset + 26);
@@ -111,7 +111,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return laps;
         }
 
-        public IList<TrackPoint> UnpackTrackPoints()
+        public override IList<TrackPoint> UnpackTrackPoints()
         {
             if (this.PacketLength < TrackHeaderLength ||
                 this.PacketData[dbTrainHeaderCType] != HeaderTypeTrackPoints)

@@ -27,7 +27,7 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gb580Device : GlobalsatProtocol
+    class Gb580Device : GlobalsatProtocol2
     {
         public Gb580Device() : base() { }
         public Gb580Device(string configInfo) : base(configInfo) { }
@@ -48,97 +48,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return new ImportJob_GB580(this, sourceDescription, monitor, importResults);
         }
 
-        public IList<Gb580Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
-        {
-            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
-
-            GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
-            Gb580Packet response = (Gb580Packet)SendPacket(getHeadersPacket);
-            return response.UnpackTrackHeaders();
-        }
-
-        private enum ReadMode
-        {
-            Header,
-            Laps,
-            Points
-        }
-
-        public IList<Gb580Packet.Train> ReadTracks(IList<Gb580Packet.TrackFileHeader> headers, IJobMonitor monitor)
-        {
-            if (headers.Count == 0) return new Gb580Packet.Train[0];
-
-            float totalPoints = 0;
-            IList<Int16> trackIndexes = new List<Int16>();
-            foreach (Gb580Packet.TrackFileHeader header in headers)
-            {
-                totalPoints += header.TrackPointCount;
-                trackIndexes.Add((Int16)header.TrackPointIndex);
-            }
-            float pointsRead = 0;
-
-            IList<Gb580Packet.Train> trains = new List<Gb580Packet.Train>();
-            GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
-            Gb580Packet response = (Gb580Packet)SendPacket(getFilesPacket);
-
-            monitor.PercentComplete = 0;
-
-            ReadMode readMode = ReadMode.Header;
-            int trainLapsToRead = 0;
-            int pointsToRead = 0;
-            while (response.CommandId != Gb580Packet.CommandId_FINISH)
-            {
-                switch (readMode)
-                {
-                    case ReadMode.Header:
-                        {
-                            Gb580Packet.Train train = response.UnpackTrainHeader();
-                            if (train != null)
-                            {
-                                trains.Add(train);
-                                trainLapsToRead = train.LapCount;
-                                pointsToRead = train.TrackPointCount;
-                            }
-                            readMode = ReadMode.Laps;
-                            break;
-                        }
-                    case ReadMode.Laps:
-                        {
-                            Gb580Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<Gb580Packet.Lap> laps = response.UnpackLaps();
-                            foreach (Gb580Packet.Lap lap in laps) currentTrain.Laps.Add(lap);
-                            trainLapsToRead -= laps.Count;
-                            if (trainLapsToRead == 0)
-                            {
-                                readMode = ReadMode.Points;
-                            }
-                            break;
-                        }
-                    case ReadMode.Points:
-                        {
-                            Gb580Packet.Train currentTrain = trains[trains.Count - 1];
-                            IList<GhPacketBase.TrackPoint> points = response.UnpackTrackPoints();
-                            foreach (GhPacketBase.TrackPoint point in points) currentTrain.TrackPoints.Add(point);
-                            pointsToRead -= points.Count;
-                            pointsRead += points.Count;
-                            DateTime startTime = currentTrain.StartTime.ToLocalTime();
-                            string statusProgress = startTime.ToShortDateString() + " " + startTime.ToShortTimeString();
-                            monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
-                            monitor.PercentComplete = pointsRead / totalPoints;
-                            if (pointsToRead == 0)
-                            {
-                                readMode = ReadMode.Header;
-                            }
-                            break;
-                        }
-
-                }
-                response = (Gb580Packet)SendPacket(getNextPacket);
-            }
-
-            monitor.PercentComplete = 1;
-            return trains;
-        }
+        public override bool HasElevationTrack { get { return true; } }
     }
 }

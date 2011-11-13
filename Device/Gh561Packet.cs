@@ -25,7 +25,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh561Packet : GlobalsatPacket
     {
-        protected override bool endianFormat { get { return false; } } //little endian
+        protected override bool IsLittleEndian { get { return true; } }
 
         protected override int GetWptOffset { get { return 2; } }
         protected override int SendWptOffset { get { return 2; } }

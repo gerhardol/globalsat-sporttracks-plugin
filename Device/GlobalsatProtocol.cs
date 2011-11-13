@@ -360,5 +360,144 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.Close();
             }
         }
+
+        //Barometric devices
+        public virtual bool HasElevationTrack { get { return false; } }
+    }
+
+
+    public abstract class GlobalsatProtocol2 : GlobalsatProtocol
+    {
+        public GlobalsatProtocol2() : base() { }
+        public GlobalsatProtocol2(string configInfo) : base(configInfo) { }
+
+        //public abstract IList<GlobalsatPacket.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor);
+        //public abstract IList<GlobalsatPacket.Train> ReadTracks(IList<GlobalsatPacket.TrackFileHeader> tracks, IJobMonitor monitor);
+
+        public enum ReadMode
+        {
+            Header = 0x0,
+            Laps = GlobalsatPacket.HeaderTypeLaps,
+            Points = GlobalsatPacket.HeaderTypeTrackPoints
+        }
+        public virtual IList<GlobalsatPacket.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
+        {
+            //monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+
+            GlobalsatPacket getHeadersPacket = PacketFactory.GetTrackFileHeaders();
+            GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getHeadersPacket);
+            return response.UnpackTrackHeaders();
+        }
+
+        public virtual IList<GlobalsatPacket.Train> ReadTracks(IList<GlobalsatPacket.TrackFileHeader> tracks, IJobMonitor monitor)
+        {
+            if (tracks.Count == 0) return new GlobalsatPacket.Train[0];
+
+            float totalPoints = 0;
+            IList<Int16> trackIndexes = new List<Int16>();
+            foreach (GlobalsatPacket.TrackFileHeader header in tracks)
+            {
+                totalPoints += header.TrackPointCount;
+                //track number, less than 100
+                trackIndexes.Add((Int16)header.TrackPointIndex);
+            }
+            float totalPointsRead = 0;
+
+            IList<GlobalsatPacket.Train> trains = new List<GlobalsatPacket.Train>();
+            GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
+            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
+            GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getFilesPacket);
+
+            monitor.PercentComplete = 0;
+
+            ReadMode readMode = ReadMode.Header;
+            int trainLapsToRead = 0;
+            int pointsToRead = 0;
+            while (response.CommandId != GlobalsatPacket2.CommandId_FINISH)
+            {
+                //Check that previous mode was finished, especially at corruptions there can be out of sync
+                if (readMode != ReadMode.Header)
+                {
+                    byte readMode2 = response.GetTrainContent();
+                    if (readMode2 == GlobalsatPacket.HeaderTypeTrackPoints)
+                    {
+                        if (readMode != ReadMode.Points)
+                        {
+                            //TODO: Handle error
+                        }
+                        readMode = ReadMode.Points;
+                    }
+                    else if (readMode2 == GlobalsatPacket.HeaderTypeLaps)
+                    {
+                        if (readMode != ReadMode.Laps)
+                        {
+                            //TODO: Handle error
+                        }
+                        readMode = ReadMode.Laps;
+                    }
+                    else
+                    {
+                        if (readMode != ReadMode.Header)
+                        {
+                            //TODO: Handle error
+                        }
+                        readMode = ReadMode.Header;
+                    }
+                }
+                if (response.CommandId == GlobalsatPacket2.CommandId_FINISH)
+                {
+                    break;
+                }
+                switch (readMode)
+                {
+                    case ReadMode.Header:
+                        {
+                            GlobalsatPacket.Train train = response.UnpackTrainHeader();
+                            if (train != null)
+                            {
+                                trains.Add(train);
+                                trainLapsToRead = train.LapCount;
+                                pointsToRead = train.TrackPointCount;
+                            }
+                            readMode = ReadMode.Laps;
+                            break;
+                        }
+                    case ReadMode.Laps:
+                        {
+                            GlobalsatPacket.Train currentTrain = trains[trains.Count - 1];
+                            IList<GlobalsatPacket.Lap> laps = response.UnpackLaps();
+                            foreach (GlobalsatPacket.Lap lap in laps) currentTrain.Laps.Add(lap);
+                            trainLapsToRead -= laps.Count;
+                            if (trainLapsToRead <= 0)
+                            {
+                                readMode = ReadMode.Points;
+                            }
+                            break;
+                        }
+                    case ReadMode.Points:
+                        {
+                            GlobalsatPacket.Train currentTrain = trains[trains.Count - 1];
+                            IList<GlobalsatPacket.TrackPoint> points = response.UnpackTrackPoints();
+                            foreach (GlobalsatPacket.TrackPoint point in points) currentTrain.TrackPoints.Add(point);
+                            pointsToRead -= points.Count;
+                            totalPointsRead += points.Count;
+                            DateTime startTime = currentTrain.StartTime.ToLocalTime();
+                            string statusProgress = startTime.ToShortDateString() + " " + startTime.ToShortTimeString();
+                            monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
+                            monitor.PercentComplete = totalPointsRead / totalPoints;
+                            if (pointsToRead <= 0)
+                            {
+                                readMode = ReadMode.Header;
+                            }
+                            break;
+                        }
+                }
+                response = (GlobalsatPacket2)SendPacket(getNextPacket);
+            }
+
+            monitor.PercentComplete = 1;
+            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
+            return trains;
+        }
     }
 }
