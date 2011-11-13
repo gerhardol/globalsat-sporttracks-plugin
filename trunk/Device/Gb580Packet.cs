@@ -23,9 +23,9 @@ using System.Text;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class Gb580Packet : GlobalsatPacket
+    class Gb580Packet : GlobalsatPacket2
     {
-        public IList<TrackFileHeader> UnpackTrackHeaders()
+        public override IList<TrackFileHeader> UnpackTrackHeaders()
         {
             int numTrains = this.PacketLength / TrackHeaderLength;
             IList<TrackFileHeader> trains = new List<TrackFileHeader>();
@@ -41,7 +41,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return trains;
         }
 
-        public Train UnpackTrainHeader()
+        public override Train UnpackTrainHeader()
         {
             if (this.PacketLength < TrainDataHeaderLength) return null;
 
@@ -51,10 +51,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //train.MaximumSpeed = ReadInt32(28); Guessing 4byte
             train.MaximumHeartRate = this.PacketData[32];
             train.AverageHeartRate = this.PacketData[33];
+            //TODO: Guesses
+            train.TotalAscend = ReadInt16(34);
+            train.TotalDescend = ReadInt16(36);
+            //train.MinimumAltitude = ReadInt16(38);
+            //train.MaximumAltitude = ReadInt16(40);
+            train.AverageCadence = ReadInt16(42);
+            train.MaximumCadence = ReadInt16(44);
+            train.AveragePower = ReadInt16(46);
+            train.MaximumPower = ReadInt16(48);
+            //5 bytes of SportType
             return train;
         }
 
-        public IList<Lap> UnpackLaps()
+        public override IList<Lap> UnpackLaps()
         {
             if (this.PacketLength < TrackHeaderLength) return new List<Lap>();
 
@@ -80,7 +90,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return laps;
         }
 
-        public IList<TrackPoint> UnpackTrackPoints()
+        public override IList<TrackPoint> UnpackTrackPoints()
         {
             if (this.PacketLength < TrackHeaderLength) return new List<TrackPoint>();
 
@@ -132,12 +142,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, trackFile.TotalAscent);
             offset += this.Write(offset, trackFile.TotalDescent);
 
-            offset += this.Write(offset, nrLaps); // min altitude
-            offset += this.Write(offset, nrLaps); // max altitude
-            offset += this.Write(offset, nrLaps); // avg cadence
-            offset += this.Write(offset, nrLaps); // best cadence
-            offset += this.Write(offset, nrLaps); // avg power
-            offset += this.Write(offset, nrLaps); // max power
+            offset += this.Write(offset, 0); // min altitude
+            offset += this.Write(offset, 0); // max altitude
+            offset += this.Write(offset, 0); // avg cadence
+            offset += this.Write(offset, 0); // best cadence
+            offset += this.Write(offset, 0); // avg power
+            offset += this.Write(offset, 0); // max power
             this.PacketData[offset++] = 0; // sport 1  - 0x4 ??
             this.PacketData[offset++] = 0; // sport 2
             this.PacketData[offset++] = 0; // sport 3
@@ -238,7 +248,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackPointLength, offset - startOffset);
         }
 
-        protected override bool endianFormat { get { return false; } } //little endian
+        protected override bool IsLittleEndian { get { return true; } }
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
 
         protected override int GetWptOffset { get { return 2; } }
@@ -249,5 +259,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int TrainDataHeaderLength { get { return 52; } }
         protected override int TrackLapLength { get { return 40; } }
         protected override int TrackPointLength { get { return 32; } }
+        protected override int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 2; } }
     }
 }

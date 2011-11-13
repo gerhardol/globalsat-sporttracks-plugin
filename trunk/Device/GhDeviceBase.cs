@@ -125,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             else
             {
-                port.ReadTimeout = 1000;
+                port.ReadTimeout = 5000;
             }
             try
             {
@@ -160,13 +160,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             received.PacketData = new byte[received.PacketLength];
             byte checksum;
+            int receivedBytes = 0; //debug timeouts
+            //Some devices behave incorrect, some framework to override and test
+            bool overrideException = false;
             try
             {
                 for (Int16 b = 0; b < received.PacketLength; b++)
                 {
                     received.PacketData[b] = (byte)port.ReadByte();
+                    receivedBytes++;
                 }
                 checksum = (byte)port.ReadByte();
+                receivedBytes++;
 /*				
 			Console.Write("Read: id:" + received.CommandId + " length:" + received.PacketLength);
 			for(int i = 0; i < received.PacketLength;i++)
@@ -179,10 +184,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch(Exception e)
             {
-                throw e;
+                //Ignore the exception, just to get data from the device
+                if (true || !(this is Gh505Device &&
+                    (receivedBytes == 2005 && received.PacketLength == 2068 ||
+                    receivedBytes == 913 && received.PacketLength == 976)))
+                {
+                    throw e;
+                }
+                received.PacketLength = (Int16)receivedBytes;
+                checksum = 0;
+                overrideException = true;
             }
-            port.Close();
-            if (!received.ValidResponseCrc(checksum))
+            if (!overrideException)
+            {
+                port.Close();
+            }
+            if (!received.ValidResponseCrc(checksum) && !overrideException)
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
@@ -225,13 +242,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     for (int i = 0; i <= 30; i++)
                     {
                         comPorts.Add("/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
-                        comPorts.Add("/dev/ttyACM" + i); /* Linux: gh505/gh561/(gh580??) */
+                        comPorts.Add("/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
                         comPorts.Add("/dev/tty.usbserial" + i); /* OSX */
                     }
                 }
             }
 
-            Exception lastException = new Exception();
+            Exception lastException = null;
             foreach (int baudRate in configInfo.BaudRates)
             {
                 foreach (string comPort in comPorts)
@@ -259,11 +276,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         //info about the last exception only
                         lastException = e;
+                        //ignore last port, it is normally "lastExceptionText = "The port 'COM30' does not exist."
+                        if (baudRate == configInfo.BaudRates[configInfo.BaudRates.Count - 1] &&
+                            comPort == comPorts[comPorts.Count - 1])
+                        {
+                            lastException = null;
+                        }
                     }
                 }
             }
             //TODO: Filter out cannot open port, so not port30 always comes up?
-            string lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + lastException.Message;
+            string lastExceptionText = "";
+            if (lastException != null)
+            {
+               lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + lastException.Message;
+            }
             throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError +
               lastExceptionText);
         }
