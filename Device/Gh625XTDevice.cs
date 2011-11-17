@@ -43,11 +43,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(); } }
         
-        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
-        {
-            return new ImportJob_GH625XT(this, sourceDescription, monitor, importResults);
-        }
-
         public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
             this.Open();

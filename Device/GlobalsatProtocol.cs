@@ -371,8 +371,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GlobalsatProtocol2() : base() { }
         public GlobalsatProtocol2(string configInfo) : base(configInfo) { }
 
-        //public abstract IList<GlobalsatPacket.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor);
-        //public abstract IList<GlobalsatPacket.Train> ReadTracks(IList<GlobalsatPacket.TrackFileHeader> tracks, IJobMonitor monitor);
+        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        {
+            return new ImportJob2(this, sourceDescription, monitor, importResults);
+        }
 
         public enum ReadMode
         {
@@ -440,6 +442,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         if (readMode != ReadMode.Header)
                         {
                             //TODO: Handle error
+                            if (trains.Count > 0)
+                            {
+                                trains.RemoveAt(trains.Count - 1);
+                            }
                         }
                         readMode = ReadMode.Header;
                     }
