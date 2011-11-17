@@ -43,11 +43,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
 
-        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
-        {
-            return new ImportJob_GB580(this, sourceDescription, monitor, importResults);
-        }
-
         public override bool HasElevationTrack { get { return true; } }
     }
 }

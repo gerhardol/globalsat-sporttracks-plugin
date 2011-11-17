@@ -42,10 +42,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(); } }
-
-        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
-        {
-            return new ImportJob_GH505(this, sourceDescription, monitor, importResults);
-        }
     }
 }

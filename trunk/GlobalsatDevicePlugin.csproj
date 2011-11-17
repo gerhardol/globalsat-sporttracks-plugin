@@ -33,10 +33,7 @@
     <Compile Include="Import\FitnessDevice_GH625XT.cs" />
     <Compile Include="Import\FitnessDevice_GH615.cs" />
     <Compile Include="Import\ImportJob_GH615.cs" />
-    <Compile Include="Import\ImportJob_GB580.cs" />
-    <Compile Include="Import\ImportJob_GH505.cs" />
     <Compile Include="Import\ImportJob_GH625.cs" />
-    <Compile Include="Import\ImportJob_GH625XT.cs" />
     <Compile Include="Import\ExtendFitnessDevices.cs" />
     <Compile Include="Device\Gh615Device.cs" />
     <Compile Include="Device\Gh615Packet.cs" />
