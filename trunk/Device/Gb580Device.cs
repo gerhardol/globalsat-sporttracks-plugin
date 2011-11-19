@@ -42,7 +42,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
-
-        public override bool HasElevationTrack { get { return true; } }
     }
 }
