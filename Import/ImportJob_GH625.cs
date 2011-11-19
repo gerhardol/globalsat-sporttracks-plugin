@@ -114,6 +114,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         activity.MaximumCadencePerMinuteEntered = section.MaximumHeartRate;
                         activity.GPSRoute = new GPSRoute();
                         activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
+                        activity.DistanceMetersTrack = new DistanceDataTrack();
 
                         if (lastLaps != null)
                         {
@@ -133,17 +134,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (activity != null)
                     {
                         bool foundHrPoint = false;
+                        float pointDist = 0;
                         foreach (Gh625Packet.TrackPoint point in section.TrackPoints)
                         {
-                            pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
+                            double time = point.IntervalTime / 10.0;
+                            float dist = (float)(point.Speed * time);
+                            pointDist += dist;
+                            pointTime = pointTime.AddSeconds(time);
 
                             activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
                             if (point.HeartRate > 0)
                             {
                                 foundHrPoint = true;
                             }
+                            activity.DistanceMetersTrack.Add(pointTime, pointDist);
                             activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
                         }
+                        if (pointDist == 0) activity.DistanceMetersTrack = null;
                         if (foundHrPoint && !activitiesWithHeartRate.Contains(activity))
                         {
                             activitiesWithHeartRate.Add(activity);
