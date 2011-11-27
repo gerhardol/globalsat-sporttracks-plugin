@@ -55,28 +55,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     int i = 0;
                     foreach (GlobalsatPacket packet in packets)
                     {
-                        GlobalsatPacket response = null;
-                        int nrAttempts = 0;
-
-                        do
-                        {
-                            try
-                            {
-                                response = (GlobalsatPacket)this.SendPacket(packet);
-                                break;
-                            }
-                            catch (Exception ex1)
-                            {
-							//	 Console.WriteLine("------ send error 1");
-                                nrAttempts++;
-                                if (nrAttempts >= 3)
-                                {
-                                    throw ex1;
-                                }
-                            }
-                        }
-                        while (nrAttempts < 3);
-
+                        GlobalsatPacket response =  (GlobalsatPacket)this.SendPacket(packet);
+ 
                         if (response != null && response.CommandId != packet.CommandId )
                         {
                             //Generic codes handled in SendPacket
@@ -129,7 +109,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             trackFileStart.TrackPointCount = (short)gpsRoute.Count;
             trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
 
-			
 			//Console.WriteLine("------ SendTrackStart()");
             GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
             sendTrackPackets.Add(startPacket);
@@ -325,6 +304,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 foreach (GlobalsatRoute route in routes)
                 {
+                    //TODO: Routes need waypoints
+                    SendWaypoints(route.wpts, jobMonitor);
+                    this.Open();
                     GlobalsatPacket packet = PacketFactory.SendRoute(route);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                     res++;
