@@ -125,7 +125,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             else
             {
-                port.ReadTimeout = 5000;
+                port.ReadTimeout = 1000;
             }
             try
             {
@@ -184,16 +184,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch(Exception e)
             {
+                throw e;
+
+                //Debug template, if the device is corrupted
                 //Ignore the exception, just to get data from the device
-                if (true || !(this is Gh505Device &&
-                    (receivedBytes == 2005 && received.PacketLength == 2068 ||
-                    receivedBytes == 913 && received.PacketLength == 976)))
-                {
-                    throw e;
-                }
-                received.PacketLength = (Int16)receivedBytes;
-                checksum = 0;
-                overrideException = true;
+                //if (!(this is Gh505Device &&
+                //    (receivedBytes == 2005 && received.PacketLength == 2068 ||
+                //    receivedBytes == 913 && received.PacketLength == 976)))
+                //{
+                //    throw e;
+                //}
+                //received.PacketLength = (Int16)receivedBytes;
+                //checksum = 0;
+                //overrideException = true;
             }
             if (!overrideException)
             {

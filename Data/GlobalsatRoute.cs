@@ -43,5 +43,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.wpts.Add(new GlobalsatWaypoint("", 0, (short)g.Value.ElevationMeters, g.Value.LatitudeDegrees, g.Value.LongitudeDegrees));
             }
         }
+        public override string ToString() { return Name + " " + wpts.Count; }
     }
 }

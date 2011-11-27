@@ -54,14 +54,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                    // km500 no out of memory- waypoint overwritten
                     nrSentWaypoints += response.ResponseSendWaypoints();
                 }
                 return nrSentWaypoints;
             }
-            catch
+            catch (Exception ex)
             {
-                throw new Exception(Properties.Resources.Device_SendWaypoints_Error);
+                throw new Exception(Properties.Resources.Device_SendWaypoints_Error + ex);
             }
             finally
             {
