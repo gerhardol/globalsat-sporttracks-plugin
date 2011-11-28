@@ -138,7 +138,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //Points to be added requires names
                 if (string.IsNullOrEmpty(waypoint.WaypointName))
                 {
-                    waypoint.WaypointName = "#" + sendIdentification++;
+                    waypoint.WaypointName = "WR" + sendIdentification++;
                 }
 
                 this.Write(offset, waypointNameLength + 1, waypoint.WaypointName);
