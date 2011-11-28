@@ -55,7 +55,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override Train UnpackTrainHeader()
         {
-            if (this.PacketLength < TrainDataHeaderLength) return null;
+            if (this.PacketLength < TrainDataHeaderLength)
+            {
+                ReportOffset(this.PacketLength, TrackHeaderLength);
+                return null;
+            }
 
             Train train = new Train();
             ReadHeader(train, 0);
@@ -78,14 +82,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override IList<Lap> UnpackLaps()
         {
             if (this.PacketLength < TrackHeaderLength ||
-                this.PacketData[dbTrainHeaderCType] != HeaderTypeLaps)
+                this.GetTrainContent() != HeaderTypeLaps)
             {
+                ReportOffset(this.PacketLength, TrackHeaderLength);
                 return new List<Lap>();
             }
             IList<Lap> laps = new List<Lap>();
 
             int offset = TrackHeaderLength;
-            while (offset < this.PacketLength)
+            while (offset <= this.PacketLength - TrackLapLength)
             {
                 Lap lap = new Lap();
 
@@ -108,21 +113,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 laps.Add(lap);
                 offset += TrackLapLength;
             }
+            CheckOffset(this.PacketLength, offset);
             return laps;
         }
 
         public override IList<TrackPoint> UnpackTrackPoints()
         {
             if (this.PacketLength < TrackHeaderLength ||
-                this.PacketData[dbTrainHeaderCType] != HeaderTypeTrackPoints)
+                this.GetTrainContent() != HeaderTypeTrackPoints)
             {
+                ReportOffset(this.PacketLength, TrackHeaderLength);
                 return new List<TrackPoint>();
             }
 
             IList<TrackPoint> points = new List<TrackPoint>();
 
             int offset = TrackHeaderLength;
-            while (offset < this.PacketLength)
+            while (offset <= this.PacketLength - TrackPointLength)
             {
                 TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadLatLon(offset);
@@ -137,6 +144,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 points.Add(point);
                 offset += TrackPointLength;
             }
+            CheckOffset(this.PacketLength, offset);
             return points;
         }
 
@@ -184,6 +192,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int offset = 0;
 
             offset += WriteTrackHeader(offset, nrLaps, trackFile);
+            this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeLaps;
 
             // send only one lap
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
@@ -234,10 +243,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile)
         {
             offset += WriteTrackHeader(offset, 1, trackFile);
+            this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeTrackPoints;
 
             //unused fields in some headers
             this.Write(offset - 9, trackFile.StartPointIndex);
             this.Write(offset - 5, trackFile.EndPointIndex);
+            
             return CheckOffset(TrackHeaderLength, offset);
         }
 
@@ -253,10 +264,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, 0); // cadence
             offset += this.Write(offset, 0); // power cadence
             offset += this.Write(offset, 0); // power
+
             return CheckOffset(TrackPointLength, offset - startOffset);
         }
-
-        const int dbTrainHeaderCType = 28; //type of packet in train header
 
         public override int TrackPointsPerSection { get { return 73; } }
         protected override int TrackHeaderLength { get { return 29; } }
