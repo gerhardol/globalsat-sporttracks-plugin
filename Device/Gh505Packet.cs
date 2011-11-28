@@ -25,6 +25,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Packet : GlobalsatPacket2
     {
+        private void ReadHeader(Header header, int offset)
+        {
+            header.StartTime = ReadDateTime(offset).ToUniversalTime();
+            header.TrackPointCount = ReadInt16(offset + 6);
+            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 8)) / 10);
+            header.TotalDistanceMeters = ReadInt32(offset + 12);
+            header.LapCount = ReadInt16(offset + 16);
+        }
+
         public override IList<TrackFileHeader> UnpackTrackHeaders()
         {
             int numHeaders = this.PacketLength / TrackHeaderLength;
@@ -128,21 +137,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.HeartRate = this.PacketData[offset + 12];
                 point.IntervalTime = ReadInt32(offset + 16);
                 point.Cadence = ReadInt16(offset + 20);
+                //point.PowerCadence = ReadInt16(offset + 22);
                 point.Power = ReadInt16(offset + 24);
                 points.Add(point);
                 offset += TrackPointLength;
             }
             CheckOffset(this.PacketLength, offset);
             return points;
-        }
-
-        private void ReadHeader(Header header, int offset)
-        {
-            header.StartTime = ReadDateTime(offset).ToUniversalTime();
-            header.TrackPointCount = ReadInt16(offset + 6);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 8)) / 10);
-            header.TotalDistanceMeters = ReadInt32(offset + 12);
-            header.LapCount = ReadInt16(offset + 16);
         }
 
         //Trackstart without laps
@@ -190,6 +191,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int offset = 0;
 
             offset += WriteTrackHeader(offset, nrLaps, trackFile);
+            this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeLaps;
 
             // send only one lap
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
@@ -243,6 +245,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             int startOffset = offset;
             offset += WriteTrackHeader(offset, 1, trackFile);
+            this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeTrackPoints;
 
             //unused fields in some headers
             this.Write(offset - 6, trackFile.StartPointIndex);
