@@ -302,19 +302,52 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Open();
             try
             {
+                GlobalsatPacket packet = PacketFactory.GetWaypoints();
+                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
+
+                //Routes need waypoints - find those missing
+                IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
                 foreach (GlobalsatRoute route in routes)
                 {
-                    //TODO: Routes need waypoints
-                    SendWaypoints(route.wpts, jobMonitor);
+                    foreach (GlobalsatWaypoint wpt1 in route.wpts)
+                    {
+                        bool found = false;
+                        foreach (GlobalsatWaypoint wpt2 in wptDev)
+                        {
+                            if (Math.Round(1000000*wpt1.Latitude) == Math.Round(1000000*wpt2.Latitude) &&
+                                Math.Round(1000000*wpt1.Longitude) == Math.Round(1000000*wpt2.Longitude))
+                            {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found)
+                        {
+                            wptSend.Add(wpt1);
+                        }
+                    }
+                }
+
+                if (wptSend.Count > 0)
+                {
+                    //Send with normal protocol, 625XT requires one by one
+                    this.SendWaypoints(wptSend, jobMonitor);
                     this.Open();
-                    GlobalsatPacket packet = PacketFactory.SendRoute(route);
-                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                }
+
+                //Finally the routes...
+                foreach (GlobalsatRoute route in routes)
+                {
+
+                    packet = PacketFactory.SendRoute(route);
+                    response = (GlobalsatPacket)this.SendPacket(packet);
                     res++;
                 }
             }
             catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_SendRoute_Error+e);
+                throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
             }
             finally
             {
