@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using System.Windows.Forms;
 
 using ZoneFiveSoftware.Common.Data;
 
@@ -19,9 +20,29 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         //private static string InvalidOperation = "Invalid Operation";
 
+        private static bool showAgain = true;
         protected void ReportOffset(int headerLen, int offset)
         {
-            //Debug, show popup?
+            if (showAgain)///xxx
+            {
+                //Debug, show popup
+                System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(true);
+                System.Diagnostics.StackFrame[] stFrames = st.GetFrames();
+                string trace = "";
+                for (int i = 1; i < stFrames.Length && i < 6; i++)
+                {
+                    //TODO: Nicer formatting
+                    trace += stFrames[i].ToString() + System.Environment.NewLine;
+                }
+
+                string s = string.Format("Error occurred, unexpected offsets: {0}({1}).{2}{3}{2}Report to plugin maintainer.{2}To ignore further errors, press {4}",
+                        headerLen, offset, System.Environment.NewLine, trace, DialogResult.Yes);
+
+                if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                {
+                    showAgain = false;
+                }
+            }
         }
         protected int CheckOffset(int headerLen, int offset)
         {
