@@ -177,6 +177,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 this.Write32(offset, latitude);
                 this.Write32(offset + 4, longitude);
+                offset += 8;
             }
             CheckOffset(totalLength, offset);
             return this;
