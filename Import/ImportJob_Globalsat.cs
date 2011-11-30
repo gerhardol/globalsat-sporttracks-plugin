@@ -182,7 +182,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                         }
 
-                        if (estimatedSec == 0)
+                        if (false && estimatedSec == 0)
                         {
                             //TODO: from athlete? Should only filter jumps from pauses, but reconnect could give similar?
                             const int minHrStep = 20;
@@ -197,7 +197,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 estimatedSec = 4;
                             }
                         }
-                        if (false && estimatedSec > 3)
+                        if (estimatedSec > 3)
                         {
                             DateTime pointTime2 = pointTime.AddSeconds(estimatedSec);
                             activity.TimerPauses.Add(new ValueRange<DateTime>(pointTime.AddSeconds(1), pointTime2.AddSeconds(-1)));
