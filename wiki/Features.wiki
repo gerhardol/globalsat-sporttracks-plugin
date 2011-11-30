@@ -1,0 +1,7 @@
+#summary Features of this Plugin.
+
+<wiki:toc max_depth="3" />
+
+Import from Globalsat devices.
+Support for Globalsat protocols like Waypoints and Routes. GUI in other pugins.
+TBD

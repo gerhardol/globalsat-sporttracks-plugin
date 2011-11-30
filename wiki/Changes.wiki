@@ -1,0 +1,28 @@
+#summary Summary Changes
+#labels Featured
+
+This page describes the changes between plugins. See the SVN change log for details.
+
+===Changes===
+ 
+3.2.94 2011-12-01 (ongoing)
+ * Implemented known Globalsat protocols (moved from Waypoints).
+ * Generic Device support: For all devices, selecting protocols from the device identification. (This generic device is used for Waypoints and routes).
+ * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
+ * Each device configuration dialog has a "Refresh" button to find if a device is connected.
+ * Some tweaking of device detection, should be a little faster.
+ * Import enhancements:
+   - Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
+   - Pause detections. Globalsat devices have no marking of pauses. Therefore, if you pause, then resume later, the time is short, but distance is not. Reported distance is therefore incorrect. The plugin inserts a pause if moved distance between two points is more than 50m and 3 times the speed*time between points. (This may require tuning). Only for 625XT, 505 and 580 right now.
+   - Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
+ * SendRoutes did probably not work at all before (except for KeyMaze?)
+
+3.2.12 2011-10-12
+ * GH-625XT support
+
+3.1.3 2011-07-01
+ * Latest update from ZoneFiveSoftware
+
+ ===Feedback===
+For patches, bugreports or feature suggestions, use the Google Code issue list.
+For other feedback please use the !SportTracks forum or this wiki.
