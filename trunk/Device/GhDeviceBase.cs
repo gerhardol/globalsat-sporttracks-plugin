@@ -119,7 +119,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 port.Open();
             }
-            if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
+            if (packet.CommandId == GhPacketBase.CommandWhoAmI)
+            {
+                //Speed-up device detection. 625XT seem to work with 5ms, 505 needs more
+                port.ReadTimeout = 100;
+            }
+            else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
             {
                 port.ReadTimeout = 5000;
             }
@@ -148,18 +153,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //Use packet factory, to make sure the packet matches the device
             GhPacketBase received = this.PacketFactory;
 
-            received.CommandId = (byte)port.ReadByte();
-            int hiPacketLen = port.ReadByte();
-            int loPacketLen = port.ReadByte();
-            received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
-			
+            try
+            {
+                received.CommandId = (byte)port.ReadByte();
+                int hiPacketLen = port.ReadByte();
+                int loPacketLen = port.ReadByte();
+                received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }			
             if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
-                packet.CommandId == GhPacketBase.CommandGetScreenshot && received.PacketLength > 0x1000)
+                received.PacketLength > 0x1000)
             {
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             received.PacketData = new byte[received.PacketLength];
-            byte checksum;
+            byte checksum = 0;
             int receivedBytes = 0; //debug timeouts
             //Some devices behave incorrect, some framework to override and test
             bool overrideException = false;
@@ -260,6 +271,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     try
                     {
                         port = new SerialPort(comPort, baudRate);
+                        port.WriteBufferSize = configInfo.MaxPacketPayload;
                         string id = ValidGlobalsatPort(port);
                         if (!string.IsNullOrEmpty(id))
                         {

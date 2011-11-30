@@ -49,7 +49,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             case "comports":
                                 configInfo.ComPortsText = parts[1];
                                 break;
-                            case "BaudRatesText":
+                            case "baudrates":
                                 configInfo.BaudRatesText = parts[1];
                                 break;
                             case "allowedids":
@@ -68,7 +68,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             AllowedIds = allowedIds;
         }
 
-         public override string ToString()
+        public override string ToString()
         {
             return "newonly=" + (ImportOnlyNew ? "1" : "0") +
                 ";hr=" + HoursAdjustment.ToString() +
@@ -110,10 +110,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             set
             {
                 string[] ports = value.Split(',');
+                if (ports.Length > 0)
+                {
+                    this.ComPorts = new List<string>();
+                }
                 foreach (string port in ports)
                 {
                     string port2 = port.Trim();
-                    if (!string.IsNullOrEmpty(port2))
+                    if (!string.IsNullOrEmpty(port2) && !ComPorts.Contains(port2))
                     {
                         ComPorts.Add(port2);
                     }
@@ -143,10 +147,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             set
             {
                 string[] ids = value.Split(',');
+                if (ids.Length > 0)
+                {
+                    this.BaudRates = new List<int>();
+                }
                 foreach (string port in ids)
                 {
                     int port2 = int.Parse(port);
-                    if (!BaudRates.Contains(port2))
+                    if (port2 > 0 && !BaudRates.Contains(port2))
                     {
                        BaudRates.Add(port2);
                     }
@@ -177,6 +185,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.AllowedIds = new List<string>();
                 string[] ids = value.Split(',');
+                if (ids.Length > 0)
+                {
+                    this.AllowedIds = new List<string>();
+                }
                 foreach (string port in ids)
                 {
                     string port2 = port.Trim();
