@@ -339,7 +339,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //Finally the routes...
                 foreach (GlobalsatRoute route in routes)
                 {
-
                     packet = PacketFactory.SendRoute(route);
                     response = (GlobalsatPacket)this.SendPacket(packet);
                     res++;
