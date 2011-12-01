@@ -2,6 +2,50 @@
 
 <wiki:toc max_depth="3" />
 
+This plugin implements the interface to some Globalsat devices. Primary for importing to SportTracks, but also to handle Waypoints, Routes and Sending activities. The plugin also have some specific features like reading/saving configuration and saving screenshots.
+
+== Supported Devices ==
+ * GS-Sport (Generic device) Autodetect the connected device, use the device with ID matching the detected. This "device" can be used when importing, and is always used for other than import.
+ * GH-625XT
+ * GH-505 (GH-503 and GH-501 untested)
+ * GH-625M
+ * KeyMaze-500, KeyMaze-700 (untested)
+ * GB-580 (untested)
+ * GH-561 (only waypoint handling, untested) (Only via generic device)
+ * GH-615 (untested and depreciated. Upgrade to GH-625M instead.) (Only via Generic device)
+
+=== Unknown devices ===
+Most Globalsat devices have unique protocols and packet formats. However, there are some devices that have identical protocols, even if they identifies uniquely.
+ * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
+ * Take a note of the device identifier listed.
+  - If the name of the device is listed only, the device is supported
+  - If the device name is suffixed with "(<device> Compatible)", the listed device is handled as the mentioned device (but there is no specific Import Image).
+  - If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
+
+While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
+ * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ].
+ * Delete all import devices but the the device to add support for.
+ * Open Preferences.System.xml and search for "<FitnessDevices>". Take a note of the "deviceId" GUID.
+ * Restore Preferences.System.xml (but keep a backup copy), add the device identification listed previously after allowedids=. For example allowedids=GH-625XT.
+
+== Import ==
 Import from Globalsat devices.
-Support for Globalsat protocols like Waypoints and Routes. GUI in other pugins.
-TBD
+ * Generic Device support: For all devices, selecting protocols from the device identification. (This generic device is used for Waypoints and routes).
+ * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
+ * Each device configuration dialog has a "Refresh" button to find if a device is connected.
+
+=== Special features ===
+ * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
+ * Pause detections. Globalsat devices have no marking of pauses. Therefore, if you pause, then resume later, the time is short, but distance is not. Reported distance is therefore incorrect. The plugin inserts a pause if moved distance between two points is more than 50m and 3 times the speed*time between points. (This may require tuning). Only for 625XT, 505 and 580 right now.
+ * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
+
+== Waypoints, Routes and Courses ==
+The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin.
+ * Waypoints
+ * Routes.
+   Note: Will create waypoints on the device for waypoints that not already exists.
+ * Activities. Globalsat supports using activities and follow back or forwards. The plugin can send activities to the device.
+ 
+== Other ==
+ * Send and read device configuration. There is no GUI to configure settings, but profiles can be read/restored
+ * Screenshots for the device
