@@ -429,7 +429,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             ReadMode readMode = ReadMode.Header;
             int trainLapsToRead = 0;
             int pointsToRead = 0;
-            while (response.CommandId != GlobalsatPacket2.CommandId_FINISH)
+            while (response.CommandId != GlobalsatPacket2.CommandId_FINISH && !monitor.Cancelled)
             {
                 //Check that previous mode was finished, especially at corruptions there can be out of sync
                 if (readMode != ReadMode.Header)
