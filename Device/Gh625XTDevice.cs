@@ -67,5 +67,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.Close();
             }
         }
+        public override bool RouteRequiresWaypoints { get { return false; } }
     }
 }

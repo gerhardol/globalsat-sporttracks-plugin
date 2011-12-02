@@ -302,38 +302,43 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Open();
             try
             {
-                GlobalsatPacket packet = PacketFactory.GetWaypoints();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
-
-                //Routes need waypoints - find those missing
-                IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
-                foreach (GlobalsatRoute route in routes)
+                GlobalsatPacket packet;
+                GlobalsatPacket response;
+                if (this.RouteRequiresWaypoints)
                 {
-                    foreach (GlobalsatWaypoint wpt1 in route.wpts)
+                    packet = PacketFactory.GetWaypoints();
+                    response = (GlobalsatPacket)this.SendPacket(packet);
+                    IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
+
+                    //Routes need waypoints - find those missing
+                    IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
+                    foreach (GlobalsatRoute route in routes)
                     {
-                        bool found = false;
-                        foreach (GlobalsatWaypoint wpt2 in wptDev)
+                        foreach (GlobalsatWaypoint wpt1 in route.wpts)
                         {
-                            if (Math.Round(1000000*wpt1.Latitude) == Math.Round(1000000*wpt2.Latitude) &&
-                                Math.Round(1000000*wpt1.Longitude) == Math.Round(1000000*wpt2.Longitude))
+                            bool found = false;
+                            foreach (GlobalsatWaypoint wpt2 in wptDev)
                             {
-                                found = true;
-                                break;
+                                if (Math.Round(1000000 * wpt1.Latitude) == Math.Round(1000000 * wpt2.Latitude) &&
+                                    Math.Round(1000000 * wpt1.Longitude) == Math.Round(1000000 * wpt2.Longitude))
+                                {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                wptSend.Add(wpt1);
                             }
                         }
-                        if (!found)
-                        {
-                            wptSend.Add(wpt1);
-                        }
                     }
-                }
 
-                if (wptSend.Count > 0)
-                {
-                    //Send with normal protocol, 625XT requires one by one
-                    this.SendWaypoints(wptSend, jobMonitor);
-                    this.Open();
+                    if (wptSend.Count > 0)
+                    {
+                        //Send with normal protocol, 625XT requires one by one
+                        this.SendWaypoints(wptSend, jobMonitor);
+                        this.Open();
+                    }
                 }
 
                 //Finally the routes...
@@ -377,6 +382,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //Barometric devices
         public virtual bool HasElevationTrack { get { return false; } }
+        public virtual bool RouteRequiresWaypoints { get { return true; } }
     }
 
 
