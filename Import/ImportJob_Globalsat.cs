@@ -148,8 +148,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //It seems like all are the same
                     IGPSPoint gpsPoint = new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude);
                     //Bug in 625XT, incorrect last point
-                    if (activity.GPSRoute.Count > 0 && (activity.GPSRoute.Count == train.TrackPoints.Count - 1) &&
-                        this.device is Gh625XTDevice)
+                    if (activity.GPSRoute.Count > 0 && point == train.TrackPoints[train.TrackPoints.Count - 1] &&
+                        train == trains[trains.Count-1] && this.device is Gh625XTDevice)
                     {
                         gpsPoint = activity.GPSRoute[activity.GPSRoute.Count - 1].Value;
                     }
