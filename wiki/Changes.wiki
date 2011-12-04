@@ -7,8 +7,8 @@ This page describes the changes between plugins. See the SVN change log for deta
  
 3.2.94 2011-12-01 (ongoing)
 See [Features] for major changes.
- * Many changes to device handling. For instance can Globalsat devices be autodetected.
- * Implemented known Globalsat protocols (moved from Waypoints).
+ * Many changes to device handling. For instance can Globalsat devices be autodetected, using GS-Sport import device. This handling is always used when the plugin is accessed from other plugins.
+ * Implemented known Globalsat protocols (several moved from Waypoints). Some functionality is accessible from this plugin, some from other plugins. See [Features].
  * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
  * Some tweaking of device detection, should be a little faster.
  * SendRoutes did probably not work at all before (except for KeyMaze?)
