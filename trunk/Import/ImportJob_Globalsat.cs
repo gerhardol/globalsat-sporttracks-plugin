@@ -205,7 +205,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         if (estimatedSec > 3)
                         {
                             DateTime pointTime2 = pointTime.AddSeconds(estimatedSec);
-                            activity.TimerPauses.Add(new ValueRange<DateTime>(pointTime.AddSeconds(1), pointTime2.AddSeconds(-1)));
+                            activity.TimerPauses.Add(new ValueRange<DateTime>(
+                                pointTime.AddSeconds(1).AddMilliseconds(-pointTime.Millisecond), 
+                                pointTime2.AddSeconds(-1).AddMilliseconds(-pointTime2.Millisecond)));
                             //TODO: Remove remark when stable
                             activity.Notes += string.Format("Added pause from {0} to {1} ({2}, {3}) ",
                                 pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time) +
