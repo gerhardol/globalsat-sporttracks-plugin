@@ -6,7 +6,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZoneFiveSoftware.SportTracks.Device.Globalsat</RootNamespace>
     <AssemblyName>GlobalsatDevicePlugin</AssemblyName>
-    <PluginId>9d20cac2-3c37-4224-810a-366bc17ccda7</PluginId>
+    <PluginId>fb88d87e-5bea-4b70-892a-b97530108cfb</PluginId>
   </PropertyGroup>
   <Import Project=".\Common\Common-References.csproj" />
   <ItemGroup>
