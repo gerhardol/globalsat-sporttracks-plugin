@@ -147,14 +147,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
                     IGPSPoint gpsPoint = new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude);
-                    //Bug in 625XT, incorrect last point
-                    if (activity.GPSRoute.Count > 0 && point == train.TrackPoints[train.TrackPoints.Count - 1] &&
-                        train == trains[trains.Count-1] && this.device is Gh625XTDevice)
-                    {
-                        gpsPoint = activity.GPSRoute[activity.GPSRoute.Count - 1].Value;
-                    }
+
                     //There are no pause markers in the Globalsat protocol
-                    //Insert pauses when estimated/listed distance differs "to much"
+                    //Insert pauses when estimated/listed distance differs "too much"
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
                     bool isPause = false;
                     if (foundGPSPoint && activity.GPSRoute.Count > 0 ||
@@ -167,21 +162,31 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             //Some limit on when to include pause
                             if (gpsDist > 50 && gpsDist > 3 * dist)
                             {
-                                //Assume it is not a straight line, assume 2 times
-                                //Info on activity is unreliable as distance when paused is included, but average speed at start is too
-                                if (pointDist > 0 && gpsDist < 10000)
+                                //Bug in 625XT, incorrect last point
+                                if (activity.GPSRoute.Count > 0 && point == train.TrackPoints[train.TrackPoints.Count - 1] &&
+                                    train == trains[trains.Count - 1] && this.device is Gh625XTDevice)
                                 {
-                                    estimatedSec = 2 * gpsDist * pointElapsed / pointDist;
-                                    //Sudden jumps can create huge estimations, limit
-                                    estimatedSec = Math.Min(estimatedSec, 3600);
+                                    //Not a pause, but bad last point (device bug)
+                                    gpsPoint = activity.GPSRoute[activity.GPSRoute.Count - 1].Value;
                                 }
                                 else
                                 {
-                                    estimatedSec = 4;
+                                    //Assume it is not a straight line, assume 2 times
+                                    //Info on activity is unreliable as distance when paused is included, but average speed at start is too
+                                    if (pointDist > 0 && gpsDist < 10000)
+                                    {
+                                        estimatedSec = 2 * gpsDist * pointElapsed / pointDist;
+                                        //Sudden jumps can create huge estimations, limit
+                                        estimatedSec = Math.Min(estimatedSec, 3600);
+                                    }
+                                    else
+                                    {
+                                        estimatedSec = 4;
+                                    }
                                 }
                             }
                         }
-
+                        //Deactivated for now
                         if (false && estimatedSec == 0)
                         {
                             //TODO: from athlete? Should only filter jumps from pauses, but reconnect could give similar?
@@ -247,22 +252,42 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
 
                 TimeSpan lapElapsed = TimeSpan.Zero;
+                int totalDistance = 0;
                 foreach (GlobalsatPacket.Lap lapPacket in train.Laps)
                 {
                     DateTime lapTime = ZoneFiveSoftware.Common.Data.Algorithm.DateTimeRangeSeries.AddTimeAndPauses(activity.StartTime, lapElapsed, activity.TimerPauses);
                     lapElapsed += lapPacket.LapTime;
                     ILapInfo lap = activity.Laps.Add(lapTime, lapPacket.LapTime);
-                    lap.TotalDistanceMeters = lapPacket.LapDistanceMeters;
-                    lap.TotalCalories = lapPacket.LapCalories;
-                    lap.AverageHeartRatePerMinute = lapPacket.AverageHeartRate;
-                    lap.AverageCadencePerMinute = lapPacket.AverageCadence;
-                    lap.AveragePowerWatts = lapPacket.AveragePower;
+                    if (activity.TotalDistanceMetersEntered > 0)
+                    {
+                        lap.TotalDistanceMeters = lapPacket.LapDistanceMeters;
+                    }
+                    if (lapPacket.LapCalories > 0)
+                    {
+                        lap.TotalCalories = lapPacket.LapCalories;
+                    }
+                    if (lapPacket.AverageHeartRate > 0)
+                    {
+                        lap.AverageHeartRatePerMinute = lapPacket.AverageHeartRate;
+                    }
+                    if (lapPacket.AverageCadence > 0)
+                    {
+                        lap.AverageCadencePerMinute = lapPacket.AverageCadence;
+                    }
+                    if (lapPacket.AveragePower > 0)
+                    {
+                        lap.AveragePowerWatts = lapPacket.AveragePower;
+                    }
                     //TODO: Localise outputs?
                     lap.Notes = string.Format("MaxSpeed:{0:0.##}m/s MaxHr:{1} MinAlt:{2}m MaxAlt:{3}m",
                         lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude);
                     //Not adding Power/Cadence - not available
                     //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",
                     //    lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude, lapPacket.MaximumCadence, lapPacket.MaximumPower);
+                    
+                    //Add distance markers from Globalsat. Will for sure be incorrect at pause insertion
+                    totalDistance += lapPacket.LapDistanceMeters;
+                    activity.DistanceMarkersMeters.Add(totalDistance);
                 }
 
                 if (!foundGPSPoint) activity.GPSRoute = null;
