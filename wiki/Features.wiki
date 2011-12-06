@@ -38,7 +38,7 @@ Import from Globalsat devices.
  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
  * Pause detections. Globalsat devices have no marking of pauses. Therefore, if you pause, then resume later, the time is short, but distance is not. Reported distance is therefore incorrect. The plugin inserts a pause if moved distance between two points is more than 50m and 3 times the speed*time between points. (This may require tuning). Only for 625XT, 505 and 580 right now.
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
- * GH-625XT Bug fix: Last GPS point is set to last known GPS point when resetting. The last point is therefore set to the second to last point.
+ * GH-625XT Bug fix: Last GPS point is set to last known GPS point if not resetting before connecting to the PC. The last point is therefore set to the second to last point if the device reported distance is longer than expected.
 
 == Waypoints, Routes and Courses ==
 The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin.

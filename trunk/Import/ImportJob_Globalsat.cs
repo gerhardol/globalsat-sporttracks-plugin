@@ -204,7 +204,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         if (estimatedSec > 3)
                         {
-                            DateTime pointTime2 = pointTime.AddSeconds(estimatedSec);
+                            //Only add even pauses, ST only handles complete seconds
+                            DateTime pointTime2 = pointTime.AddSeconds((int)estimatedSec);
                             activity.TimerPauses.Add(new ValueRange<DateTime>(
                                 pointTime.AddSeconds(1).AddMilliseconds(-pointTime.Millisecond), 
                                 pointTime2.AddSeconds(-1).AddMilliseconds(-pointTime2.Millisecond)));
