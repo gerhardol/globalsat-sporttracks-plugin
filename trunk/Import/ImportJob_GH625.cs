@@ -94,6 +94,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<IActivity> allActivities = new List<IActivity>();
             IList<IActivity> activitiesWithHeartRate = new List<IActivity>();
             IList<Gh625Packet.Lap> lastLaps = null;
+            float pointDist = 0;
 						
             foreach (Gh625Packet.TrackFileSection section in trackSections)
             {
@@ -107,6 +108,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         pointTime = section.StartTime.ToUniversalTime().AddHours(device.configInfo.HoursAdjustment);
                         activity = importResults.AddActivity(pointTime);
+                        allActivities.Add(activity);
                         activity.Metadata.Source = string.Format(CommonResources.Text.Devices.ImportJob_ActivityImportSource, sourceDescription);
                         activity.TotalTimeEntered = section.TotalTime;
                         activity.TotalDistanceMetersEntered = section.TotalDistanceMeters;
@@ -116,6 +118,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         activity.GPSRoute = new GPSRoute();
                         activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
                         activity.DistanceMetersTrack = new DistanceDataTrack();
+                        pointDist = 0;
 
                         if (lastLaps != null)
                         {
@@ -135,7 +138,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (activity != null)
                     {
                         bool foundHrPoint = false;
-                        float pointDist = 0;
                         foreach (Gh625Packet.TrackPoint point in section.TrackPoints)
                         {
                             double time = point.IntervalTime / 10.0;
@@ -149,23 +151,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 								foundHrPoint = true;
                             }
 
-							if (activity.DistanceMetersTrack != null)
-							{
-                                activity.DistanceMetersTrack.Add(pointTime, pointDist);
-							}
+							activity.DistanceMetersTrack.Add(pointTime, pointDist);
                             activity.GPSRoute.Add(pointTime, new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude));
                         }
-                        if (pointDist == 0) activity.DistanceMetersTrack = null;
                         if (foundHrPoint && !activitiesWithHeartRate.Contains(activity))
                         {
                             activitiesWithHeartRate.Add(activity);
-
                         }
                     }
                 }
             }
             foreach (IActivity hrActivity in allActivities)
             {
+                if (hrActivity.DistanceMetersTrack.Max <= 0)
+                {
+                    hrActivity.DistanceMetersTrack = null;
+                }
                 if (!activitiesWithHeartRate.Contains(hrActivity))
                 {
                     hrActivity.HeartRatePerMinuteTrack = null;
