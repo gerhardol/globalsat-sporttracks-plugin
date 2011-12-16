@@ -19,13 +19,13 @@ Most Globalsat devices have unique protocols and packet formats. However, there 
  * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
  * Take a note of the device identifier listed.
   - If the name of the device is listed only, the device is supported
-  - If the device name is suffixed with "(<device> Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
+  - If the device name is suffixed with "('<device>' Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
   - If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
 
 While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
  * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ].
  * Delete all import devices but the the device to add support for.
- * Open Preferences.System.xml and search for "<FitnessDevices>". Take a note of the "deviceId" GUID.
+ * Open Preferences.System.xml and search for "'<FitnessDevices>'". Take a note of the "deviceId" GUID.
  * Restore Preferences.System.xml (but keep a backup copy), add the device identification listed previously after allowedids=. For example allowedids=GH-625XT.
 
 == Import ==
@@ -37,7 +37,7 @@ Import from Globalsat devices.
 === Special Features ===
  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
  * Pause detections. Globalsat devices have no marking of pauses. When you pause (including end), the time is just stopped. Distance is still calculated on all distance between points. A similar problem occur when you stop, no point is inserted. If you reset when connecting to the PC, the last known GPS point is used instead of the point the stop occurred.
- To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed*time between points, the last part is considered to be a pause. (This may require tuning).
+ To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed*time between points, the last part is considered to be a pause. (This algorithm may require tuning).
   Only for 625XT, 505 and 580 right now.
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
 
