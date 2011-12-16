@@ -138,7 +138,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 DateTime pointTime = activity.StartTime;
                 double pointElapsed = 0;
                 float pointDist = 0;
-                bool first = true;
 
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
@@ -147,89 +146,102 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
                     IGPSPoint gpsPoint = new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude);
+                    //Note: There may be points witin the same second, the second point will then overwrite the first
+                    pointTime = pointTime.AddSeconds(time);
+                    pointElapsed += time;
+                    pointDist += dist;
 
                     //There are no pause markers in the Globalsat protocol
                     //Insert pauses when estimated/listed distance differs "too much"
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
-                    bool isPause = false;
                     if (foundGPSPoint && activity.GPSRoute.Count > 0 ||
                         activity.HeartRatePerMinuteTrack.Count > 0)
                     {
+                        //estimated time for the pause
                         double estimatedSec = 0;
+                        //how far from the first point
+                        double perc = 0;
+                        string info = "";
                         if (activity.GPSRoute.Count > 0)
                         {
                             float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
                             //Some limit on when to include pause
                             if (gpsDist > 50 && gpsDist > 3 * dist)
                             {
-                                //Bug in 625XT, incorrect last point
-                                if (activity.GPSRoute.Count > 0 && point == train.TrackPoints[train.TrackPoints.Count - 1] &&
-                                    train == trains[trains.Count - 1] && this.device is Gh625XTDevice)
+                                //Assume lost path is not a straight line, assume 2 times
+                                //Info on activity is unreliable as distance when paused is included, but average speed at start is too
+                                if (pointDist > 0 && gpsDist < 10000)
                                 {
-                                    //Not a pause, but bad last point (device bug)
-                                    gpsPoint = activity.GPSRoute[activity.GPSRoute.Count - 1].Value;
+                                    estimatedSec = 2 * gpsDist * pointElapsed / pointDist;
+                                    //Sudden jumps can create huge estimations, limit
+                                    estimatedSec = Math.Min(estimatedSec, 3600);
                                 }
                                 else
                                 {
-                                    //Assume it is not a straight line, assume 2 times
-                                    //Info on activity is unreliable as distance when paused is included, but average speed at start is too
-                                    if (pointDist > 0 && gpsDist < 10000)
-                                    {
-                                        estimatedSec = 2 * gpsDist * pointElapsed / pointDist;
-                                        //Sudden jumps can create huge estimations, limit
-                                        estimatedSec = Math.Min(estimatedSec, 3600);
-                                    }
-                                    else
-                                    {
-                                        estimatedSec = 4;
-                                    }
+                                    estimatedSec = 4;
+                                }                                
+                                //The true pause point is somewhere between last and this point
+                                //Use first part of the interval, insert a new point
+                                if (gpsDist > 0)
+                                {
+                                    perc = dist / gpsDist;
                                 }
+                                info += "gps: " + gpsDist;
                             }
                         }
                         //Deactivated for now
-                        if (false && estimatedSec == 0)
-                        {
-                            //TODO: from athlete? Should only filter jumps from pauses, but reconnect could give similar?
-                            const int minHrStep = 20;
-                            const int minHr = 70;
-                            const int maxHr = 180;
-                            if (activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value > minHr &&
-                            activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value < maxHr &&
-                            point.HeartRate > minHr &&
-                            point.HeartRate < maxHr &&
-                            Math.Abs(activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value - point.HeartRate) > minHrStep)
-                            {
-                                estimatedSec = 4;
-                            }
-                        }
+                        //if (estimatedSec == 0)
+                        //{
+                        //    //TODO: from athlete? Should only filter jumps from pauses, but reconnect could give similar?
+                        //    const int minHrStep = 20;
+                        //    const int minHr = 70;
+                        //    const int maxHr = 180;
+                        //    if (activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value > minHr &&
+                        //    activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value < maxHr &&
+                        //    point.HeartRate > minHr &&
+                        //    point.HeartRate < maxHr &&
+                        //    Math.Abs(activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value - point.HeartRate) > minHrStep)
+                        //    {
+                        //        estimatedSec = 4;
+                        //    }
+                        //}
                         if (estimatedSec > 3)
                         {
-                            //Only add even pauses, ST only handles complete seconds
-                            DateTime pointTime2 = pointTime.AddSeconds((int)estimatedSec);
-                            activity.TimerPauses.Add(new ValueRange<DateTime>(
-                                pointTime.AddSeconds(1).AddMilliseconds(-pointTime.Millisecond), 
-                                pointTime2.AddSeconds(-1).AddMilliseconds(-pointTime2.Millisecond)));
-                            //TODO: Remove remark when stable
-                            activity.Notes += string.Format("Added pause from {0} to {1} ({2}, {3}) ",
-                                pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time) +
-                                System.Environment.NewLine;
-                            pointTime = pointTime2;
-                            isPause = true;
+                            IGPSPoint newPoint = (new GPSPoint.ValueInterpolator()).Interpolate(
+                                activity.GPSRoute[activity.GPSRoute.Count - 1].Value, gpsPoint, perc);
+
+                            if (point == train.TrackPoints[train.TrackPoints.Count - 1])
+                            {
+                                //Last point is incorrect, adjust (added normally)
+                                gpsPoint = newPoint;
+                            }
+                            else
+                            {
+                                //Add extra point and pause
+                                activity.DistanceMetersTrack.Add(pointTime, pointDist);
+
+                                // TODO: How are GPS points indicated in indoor activities?
+                                if (point.Latitude != 0 || point.Longitude != 0)
+                                {
+                                    activity.GPSRoute.Add(pointTime, newPoint);
+                                }
+                                else if (device.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                {
+                                    activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
+                                }
+
+                                //Only add even pauses, ST only handles complete seconds
+                                DateTime pointTime2 = pointTime.AddSeconds((int)estimatedSec);
+                                activity.TimerPauses.Add(new ValueRange<DateTime>(
+                                    pointTime.AddMilliseconds(-pointTime.Millisecond),
+                                    pointTime2.AddMilliseconds(-pointTime2.Millisecond)));
+                                //TODO: Remove remark when stable
+                                activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, sec:{3}, per:{4} {5}) ",
+                                    pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time, perc, info) +
+                                    System.Environment.NewLine;
+                                pointTime = pointTime2;
+                            }
                         }
-                    }
-                    //Note: There may be points witin the same second, the second point will then overwrite the first
-                    if (!isPause)
-                    {
-                        if (!first)
-                        {
-                            pointTime = pointTime.AddSeconds(time);
-                        }
-                        else
-                        {
-                            first = false;
-                        }
-                        pointElapsed += time;
-                        pointDist += dist;
                     }
                     activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
@@ -238,7 +250,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         activity.GPSRoute.Add(pointTime, gpsPoint);
                     }
-                    else if (device.HasElevationTrack)
+                    else if (device.HasElevationTrack && !float.IsNaN(point.Altitude))
                     {
                         activity.ElevationMetersTrack.Add(pointTime, point.Altitude);
                     }
