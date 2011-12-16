@@ -11,7 +11,7 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
  * GH-625M
  * KeyMaze-500, KeyMaze-700 (untested)
  * GB-580 (untested)
- * GH-561 (only waypoint handling, untested) (Only via generic device)
+ * GH-561 (only waypoint handling, untested) (Only via Generic device)
  * GH-615 (untested and depreciated. Upgrade to GH-625M instead.) (Only via Generic device)
 
 === Unknown devices ===
@@ -19,7 +19,7 @@ Most Globalsat devices have unique protocols and packet formats. However, there 
  * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
  * Take a note of the device identifier listed.
   - If the name of the device is listed only, the device is supported
-  - If the device name is suffixed with "(<device> Compatible)", the listed device is handled as the mentioned device (but there is no specific Import Image).
+  - If the device name is suffixed with "(<device> Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
   - If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
 
 While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
@@ -34,19 +34,21 @@ Import from Globalsat devices.
  * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
  * Each device configuration dialog has a "Refresh" button to find if a device is connected.
 
-=== Special features ===
+=== Special Features ===
  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
- * Pause detections. Globalsat devices have no marking of pauses. Therefore, if you pause, then resume later, the time is short, but distance is not. Reported distance is therefore incorrect. The plugin inserts a pause if moved distance between two points is more than 50m and 3 times the speed*time between points. (This may require tuning). Only for 625XT, 505 and 580 right now.
+ * Pause detections. Globalsat devices have no marking of pauses. When you pause (including end), the time is just stopped. Distance is still calculated on all distance between points. A similar problem occur when you stop, no point is inserted. If you reset when connecting to the PC, the last known GPS point is used instead of the point the stop occurred.
+ To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed*time between points, the last part is considered to be a pause. (This may require tuning).
+  Only for 625XT, 505 and 580 right now.
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
- * GH-625XT Bug fix: Last GPS point is set to last known GPS point if not resetting before connecting to the PC. The last point is therefore set to the second to last point if the device reported distance is longer than expected.
 
 == Waypoints, Routes and Courses ==
 The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin.
  * Waypoints
- * Routes.
-   Note: Will create waypoints on the device for waypoints that not already exists.
- * Activities. Globalsat supports using activities and follow back or forwards. The plugin can send activities to the device.
+ * Routes
+   Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
+ * Activities. Globalsat supports using activities for trackback. The plugin can send activities to the device.
  
 == Other ==
- * Send and read device configuration. There is no GUI to configure settings, but profiles can be read/restored
+See Plugin->Settings
+ * Send and read device configuration. There is no GUI to configure settings, but profiles can be read and restored.
  * Screenshots for the device
