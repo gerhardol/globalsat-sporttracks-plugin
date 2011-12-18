@@ -220,7 +220,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 //Add extra point and pause
                                 activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
-                                // TODO: How are GPS points indicated in indoor activities?
                                 if (point.Latitude != 0 || point.Longitude != 0)
                                 {
                                     activity.GPSRoute.Add(pointTime, newPoint);
@@ -245,7 +244,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
-                    // TODO: How are GPS points indicated in indoor activities?
                     if (point.Latitude != 0 || point.Longitude != 0)
                     {
                         activity.GPSRoute.Add(pointTime, gpsPoint);
@@ -300,7 +298,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",
                     //    lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude, lapPacket.MaximumCadence, lapPacket.MaximumPower);
                     
-                    //Add distance markers from Globalsat. Will for sure be incorrect at pause insertion
+                    //Add distance markers from Globalsat. Will for sure be incorrect after pause insertion
                     totalDistance += lapPacket.LapDistanceMeters;
                     activity.DistanceMarkersMeters.Add(totalDistance);
                 }
