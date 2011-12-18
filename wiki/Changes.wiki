@@ -5,9 +5,10 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.108 2011-12-17
  * Pause handling updated. See [Features#Special_Features Pause Handling].
  
-3.2.105 2011-12-07 (ongoing)
+3.2.105 2011-12-07
  * Plugin GUID was changed after 3.1.3. Uninstall previous 3.2.* versions prior to installing this version.
  * Pauses were inserted in some situation, but ST did not save the pauses if they contained milliseconds. Workaround done, pauses are now always estimated to full seconds.
  * Lap info: Cadence and Power were added as 0. This was only visible in .fitlog exports.

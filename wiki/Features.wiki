@@ -36,7 +36,8 @@ Import from Globalsat devices.
 
 === Special Features ===
  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
- * Pause detections. Globalsat devices have no marking of pauses. When you pause (including end), the time is just stopped. Distance is still calculated on all distance between points. A similar problem occur when you stop, no point is inserted. If you reset when connecting to the PC, the last known GPS point is used instead of the point the stop occurred.
+ * Pause detections. Globalsat devices have no marking of pauses. When you pause, the time is just stopped, there is no stop inserted at the recorded points. Distance is still calculated on all distance between points. 
+ This creates special problems when stopping. It is first when you reset that the device records a point. The GPS position is actually correct if the activity is reset with the reset button, but if reset when connecting to PC, the last GPS point is the last GPS point known when the device had GPS contact instead of the last point when recording. 
  To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed*time between points, the last part is considered to be a pause. (This algorithm may require tuning).
   Only for 625XT, 505 and 580 right now.
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
