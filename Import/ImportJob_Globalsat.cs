@@ -207,6 +207,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         //}
                         if (estimatedSec > 3)
                         {
+                            //Use complete seconds only - pause is estimated, ST handles sec internally and this must be synced to laps
+                            estimatedSec = Math.Round(estimatedSec);
                             IGPSPoint newPoint = (new GPSPoint.ValueInterpolator()).Interpolate(
                                 activity.GPSRoute[activity.GPSRoute.Count - 1].Value, gpsPoint, perc);
 
