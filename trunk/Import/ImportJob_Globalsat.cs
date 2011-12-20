@@ -273,10 +273,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     DateTime lapTime = ZoneFiveSoftware.Common.Data.Algorithm.DateTimeRangeSeries.AddTimeAndPauses(activity.StartTime, lapElapsed, activity.TimerPauses);
                     lapElapsed += lapPacket.LapTime;
                     ILapInfo lap = activity.Laps.Add(lapTime, lapPacket.LapTime);
-                    if (activity.TotalDistanceMetersEntered > 0)
-                    {
-                        lap.TotalDistanceMeters = lapPacket.LapDistanceMeters;
-                    }
+                    //Adding Distance markers will make ST fail to add new laps, it is not needed (Markers added)
+                    //if (activity.TotalDistanceMetersEntered > 0)
+                    //{
+                    //    lap.TotalDistanceMeters = lapPacket.LapDistanceMeters;
+                    //}
                     if (lapPacket.LapCalories > 0)
                     {
                         lap.TotalCalories = lapPacket.LapCalories;
