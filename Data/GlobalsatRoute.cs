@@ -17,7 +17,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatRoute
     {
-        public const int MaxRouteNameLength = 15;
+        //public const int MaxRouteNameLength = 14;
 
         public string Name;
         public IList<GlobalsatWaypoint> wpts;

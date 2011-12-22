@@ -280,7 +280,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route)
         {
-            int maxRouteNameLenght = GlobalsatRoute.MaxRouteNameLength;
+            int maxRouteNameLenght = MaxRouteNameLength;
             const int nrPointsLength = 1;
 
             byte nrPoints = (byte)Math.Min(0xFF, route.wpts.Count);
@@ -332,7 +332,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual int TrackLapLength { get { return 22; } }
         protected virtual int TrackPointLength { get { return 25; } }
         protected virtual int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 1; } }
-
+		
+        protected virtual int MaxRouteNameLength { get { return 15; } }		
+		
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
         protected virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
