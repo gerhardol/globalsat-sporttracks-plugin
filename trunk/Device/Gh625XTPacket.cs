@@ -273,5 +273,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int TrainDataHeaderLength { get { return 58; } }
         protected override int TrackLapLength { get { return 41; } }
         protected override int TrackPointLength { get { return 25; } }
+		
+		protected override int MaxRouteNameLength { get { return 14; } }	
+
+		
     }
 }
