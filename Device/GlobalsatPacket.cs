@@ -280,17 +280,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route)
         {
-            int maxRouteNameLenght = MaxRouteNameLength;
             const int nrPointsLength = 1;
 
             byte nrPoints = (byte)Math.Min(0xFF, route.wpts.Count);
-            string routeName = route.Name.Substring(0, Math.Min(maxRouteNameLenght, route.Name.Length));
-            Int16 totalLength = (Int16)((maxRouteNameLenght + 1) + nrPointsLength + nrPoints * 8); // save a byte for the ending null char
+            string routeName = route.Name.Substring(0, Math.Min(MaxRouteNameLength, route.Name.Length));
+            //Name limitations in some devives?
+            if (this is Gh625XTPacket)
+            {
+                routeName = routeName.Replace('-', '_');
+            }
+            Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + nrPointsLength + nrPoints * 8); // save a byte for the ending null char
             this.InitPacket(CommandSendRoute, totalLength);
 
             int offset = 0;
-            this.Write(offset, maxRouteNameLenght + 1, routeName);
-            offset += maxRouteNameLenght + 1;
+            this.Write(offset, MaxRouteNameLength + 1, routeName);
+            offset += MaxRouteNameLength + 1;
 
             this.PacketData[offset++] = nrPoints;
 
