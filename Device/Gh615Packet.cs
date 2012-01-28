@@ -81,9 +81,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.Latitude = (double)ReadLatLon(offset);
                 point.Longitude = (double)ReadLatLon(offset + 4);
                 point.Altitude = ReadInt16(offset + 8);
-                point.Speed = ReadInt16(offset + 10) / 3.6 / 100;
+                point.Speed = FromGlobSpeed(ReadInt16(offset + 10));
                 point.HeartRate = this.PacketData[offset + 12];
-                point.IntervalTime = ReadInt16(offset + 13);
+                point.IntervalTime = FromGlobTime(ReadInt16(offset + 13));
                 section.TrackPoints.Add(point);
                 offset += 15;
             }
@@ -93,10 +93,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private void ReadHeader(Header header, int offset)
         {
             header.StartTime = ReadDateTime(offset);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 6)) / 10);
+            header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 6)));
             header.TotalDistanceMeters = ReadInt32(offset + 10);
             header.TotalCalories = ReadInt16(offset + 14);
-            header.MaximumSpeed = ReadInt16(offset + 16) / 3.6 / 100;
+            header.MaximumSpeed = FromGlobSpeed(ReadInt16(offset + 16));
             header.MaximumHeartRate = this.PacketData[offset + 18];
             header.AverageHeartRate = this.PacketData[offset + 19];
         }

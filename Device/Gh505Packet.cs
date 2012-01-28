@@ -29,7 +29,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             header.StartTime = ReadDateTime(offset).ToUniversalTime();
             header.TrackPointCount = ReadInt16(offset + 6);
-            header.TotalTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 8)) / 10);
+            header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 8)));
             header.TotalDistanceMeters = ReadInt32(offset + 12);
             header.LapCount = ReadInt16(offset + 16);
         }
@@ -60,7 +60,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Train train = new Train();
             ReadHeader(train, 0);
             train.TotalCalories = ReadInt16(24);
-            //train.MaximumSpeed = ReadInt16(26) / 3.6 / 100;
+            //train.MaximumSpeed = FromGlobSpeed(ReadInt16(26));
             train.MaximumHeartRate = this.PacketData[28];
             train.AverageHeartRate = this.PacketData[29];
             //TODO: Guesses
@@ -91,11 +91,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 Lap lap = new Lap();
 
-                lap.EndTime = TimeSpan.FromSeconds(((double)ReadInt32(offset)) / 10);
-                lap.LapTime = TimeSpan.FromSeconds(((double)ReadInt32(offset + 4)) / 10);
+                lap.EndTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset)));
+                lap.LapTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 4)));
                 lap.LapDistanceMeters = ReadInt32(offset + 8);
                 lap.LapCalories = ReadInt16(offset + 12);
-                lap.MaximumSpeed = ReadInt16(offset + 14) / 3.6 / 100;
+                lap.MaximumSpeed = FromGlobSpeed(ReadInt16(offset + 14));
                 lap.MaximumHeartRate = this.PacketData[offset + 16];
                 lap.AverageHeartRate = this.PacketData[offset + 17];
                 lap.MinimumAltitude = ReadInt16(offset + 18);
@@ -133,9 +133,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.Latitude = (double)ReadLatLon(offset);
                 point.Longitude = (double)ReadLatLon(offset + 4);
                 point.Altitude = ReadInt16(offset + 8);
-                point.Speed = ReadInt16(offset + 10) / 3.6 / 100;
+                point.Speed = FromGlobSpeed(ReadInt16(offset + 10));
                 point.HeartRate = this.PacketData[offset + 12];
-                point.IntervalTime = ReadInt32(offset + 16);
+                point.IntervalTime = FromGlobTime(ReadInt32(offset + 16));
                 point.Cadence = ReadInt16(offset + 20);
                 //point.PowerCadence = ReadInt16(offset + 22);
                 point.Power = ReadInt16(offset + 24);
@@ -158,7 +158,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += WriteTrackHeader(offset, nrLaps, trackFile);
 
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
+            offset += this.Write(offset, ToGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
             offset += this.Write(offset, trackFile.TotalAscent);
@@ -194,12 +194,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeLaps;
 
             // send only one lap
-            int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
+            int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
+            offset += this.Write(offset, ToGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
 
@@ -226,7 +226,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, trackFile.StartTime);
 
             offset += this.Write(offset, trackFile.TrackPointCount);
-            int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
+            int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, (short)noOfLaps);
@@ -257,13 +257,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
         {
             int startOffset = offset;
-            offset += this.Write32(offset, GetGlobLatLon(trackpoint.Latitude));
-            offset += this.Write32(offset, GetGlobLatLon(trackpoint.Longitude));
+            offset += this.Write32(offset, ToGlobLatLon(trackpoint.Latitude));
+            offset += this.Write32(offset, ToGlobLatLon(trackpoint.Longitude));
             offset += this.Write(offset, (Int16)trackpoint.Altitude);
-            offset += this.Write32(offset, (Int32)(trackpoint.Speed*100/3.6));
+            offset += this.Write32(offset, ToGlobSpeed(trackpoint.Speed));
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
             offset += 3; //padding
-            offset += this.Write32(offset, (Int32)(10*trackpoint.IntervalTime));
+            offset += this.Write32(offset, ToGlobTime(trackpoint.IntervalTime));
             offset += this.Write(offset, 0); // cadence
             offset += this.Write(offset, 0); // power cadence
             offset += this.Write(offset, 0); // power

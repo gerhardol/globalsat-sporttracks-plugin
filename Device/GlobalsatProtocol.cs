@@ -131,7 +131,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     IGPSPoint point = gpsRoute[j].Value;
                     GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees, 
-                        point.ElevationMeters);
+                        (Int32)point.ElevationMeters);
                     uint intTime = 0;
                     float dist = 0;
                     if (i == 0)
@@ -334,8 +334,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             bool found = false;
                             foreach (GlobalsatWaypoint wpt2 in wptDev)
                             {
-                                if (GhPacketBase.GetGlobLatLon(wpt1.Latitude)  == GhPacketBase.GetGlobLatLon(wpt2.Latitude) &&
-                                    GhPacketBase.GetGlobLatLon(wpt1.Longitude) == GhPacketBase.GetGlobLatLon(wpt2.Longitude))
+                                if (GhPacketBase.ToGlobLatLon(wpt1.Latitude)  == GhPacketBase.ToGlobLatLon(wpt2.Latitude) &&
+                                    GhPacketBase.ToGlobLatLon(wpt1.Longitude) == GhPacketBase.ToGlobLatLon(wpt2.Longitude))
                                 {
                                     found = true;
                                     break;

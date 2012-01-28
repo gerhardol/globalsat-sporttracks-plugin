@@ -141,7 +141,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
-                    double time = point.IntervalTime / 10.0;
+                    double time = point.IntervalTime;
                     float dist = (float)(point.Speed * time);
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
