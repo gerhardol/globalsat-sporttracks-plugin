@@ -115,7 +115,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     bool foundHrPoint = false;
                     foreach (Gh615Packet.TrackPoint point in section.TrackPoints)
                     {
-                        pointTime = pointTime.AddSeconds((double)point.IntervalTime / 10);
+                        pointTime = pointTime.AddSeconds(point.IntervalTime);
 
                         activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
                         if (point.HeartRate > 0)

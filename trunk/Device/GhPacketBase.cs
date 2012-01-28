@@ -142,16 +142,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //Int32 in GB580, Int16 in GH625XT, GH505, GH625, GH615
             public Int32 Altitude; // Meters
             //Int32 in GH625XT, Int16 in GB580, GH505, GH625, GH615
-            public double Speed; //4bit, Kilometers per hour * 100
-            public Byte HeartRate;
+            public double Speed=0; //4bit, Kilometers per hour * 100
+            public Byte HeartRate=0;
             //Int32 in GH625XT, GB580, GH505, Int16 in GH625, GH615
-            public Int32 IntervalTime; // Seconds * 10
+            public double IntervalTime=0; // Seconds * 10
             //Int16 in GH625XT, GB580, GH505, (but not available?)
-            public Int16 Power; // Power, unknown units
+            public Int16 Power=0; // Power, unknown units
             //Int16 in GH625XT, GB580 (but not available, unknown use)
-            //public Int16 PowerCadence; // unknown units
+            public Int16 PowerCadence=0; // unknown units
             //Int16 in GH625XT, GB580, GH505, (but not available?)
-            public Int16 Cadence; // Cadence, unknown units
+            public Int16 Cadence=0; // Cadence, unknown units
         }
 
         //Sending tracks
@@ -207,12 +207,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //The format in packets listed - SI units are used here
             public double Latitude; // Degrees * 1000000
             public double Longitude; // Degrees * 1000000
-            public double Altitude; // Meters
+            public Int32 Altitude; // Meters
             public double Speed; // Kilometers per hour * 100
             public Byte HeartRate;
             public double IntervalTime; // Seconds *10
 
-            public TrackPointSend(double latitude, double longitude, double altitude)
+            public TrackPointSend(double latitude, double longitude, Int32 altitude)
             {
                 this.Latitude = latitude;
                 this.Longitude = longitude;
@@ -359,14 +359,33 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return ReadInt32(offset) / 1000000.0;
         }
-        static public Int32 GetGlobLatLon(double latlon)
+
+        //Some static methods for standard field formats
+        static public Int32 ToGlobLatLon(double latlon)
         {
             return (int)Math.Round(latlon * 1000000);
         }
-        static public Int16 GetGlobSpeed(double speed)
+        static public Int16 ToGlobSpeed(double speed)
         {
-            return (Int16)Math.Round(speed*100/3.6);
+            return (Int16)Math.Round(speed * 100 * 3.6);
         }
+        static public double FromGlobSpeed(int speed)
+        {
+            return speed / 100.0 / 3.6;
+        }
+        static public Int32 ToGlobTime(double time)
+        {
+            return (Int32)Math.Round(time * 10);
+        }
+        static public Int16 ToGlobTime16(double time)
+        {
+            return (Int16)ToGlobTime(time);
+        }
+        static public double FromGlobTime(int time)
+        {
+            return time/10.0;
+        }
+
         /// <summary>
         /// Write a two byte integer starting at the offset.
         /// </summary>

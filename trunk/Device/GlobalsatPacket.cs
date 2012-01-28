@@ -170,8 +170,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 offset += SendWptOffset; //pad?
 
-                offset += this.Write32(offset, GetGlobLatLon(waypoint.Latitude));
-                offset += this.Write32(offset, GetGlobLatLon(waypoint.Longitude));
+                offset += this.Write32(offset, ToGlobLatLon(waypoint.Latitude));
+                offset += this.Write32(offset, ToGlobLatLon(waypoint.Longitude));
             }
             CheckOffset(totalLength, offset);
             return this;
@@ -294,8 +294,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             for (int i = 0; i < nrPoints; i++)
             {
-                offset += this.Write32(offset, GetGlobLatLon(route.wpts[i].Latitude));
-                offset += this.Write32(offset, GetGlobLatLon(route.wpts[i].Longitude));
+                offset += this.Write32(offset, ToGlobLatLon(route.wpts[i].Latitude));
+                offset += this.Write32(offset, ToGlobLatLon(route.wpts[i].Longitude));
             }
 
             CheckOffset(totalLength, offset);
