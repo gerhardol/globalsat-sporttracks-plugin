@@ -198,29 +198,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             public Int16 StartPointIndex=0;
             public Int16 EndPointIndex=0;
-            public IList<TrackPointSend> TrackPoints = new List<TrackPointSend>();
+            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public Int16 NoOfLaps = 1;
-        }
-
-        public class TrackPointSend
-        {
-            //The format in packets listed - SI units are used here
-            public double Latitude; // Degrees * 1000000
-            public double Longitude; // Degrees * 1000000
-            public Int32 Altitude; // Meters
-            public double Speed; // Kilometers per hour * 100
-            public Byte HeartRate;
-            public double IntervalTime; // Seconds *10
-
-            public TrackPointSend(double latitude, double longitude, Int32 altitude)
-            {
-                this.Latitude = latitude;
-                this.Longitude = longitude;
-                this.Altitude = altitude;
-                this.Speed = 0;
-                this.HeartRate = 0;
-                this.IntervalTime = 1; //Default one second
-            }
         }
 
         public byte[] ConstructPayload()

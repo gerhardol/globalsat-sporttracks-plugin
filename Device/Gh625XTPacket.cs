@@ -252,7 +252,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackHeaderLength, offset);
         }
 
-        protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
+        protected override int WriteTrackPoint(int offset, TrackPoint trackpoint)
         {
             int startOffset = offset;
             offset += this.Write32(offset, ToGlobLatLon(trackpoint.Latitude));
@@ -261,9 +261,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write32(offset, ToGlobSpeed(trackpoint.Speed));
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
             offset += this.Write32(offset, ToGlobTime(trackpoint.IntervalTime));
-            offset += this.Write(offset, 0); // cadence
-            offset += this.Write(offset, 0); // power cadence
-            offset += this.Write(offset, 0); // power
+            offset += this.Write(offset, trackpoint.Cadence);
+            offset += this.Write(offset, trackpoint.PowerCadence);
+            offset += this.Write(offset, trackpoint.Power);
 
             return CheckOffset(TrackPointLength, offset - startOffset);
         }
