@@ -103,11 +103,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<GlobalsatPacket> sendTrackPackets = new List<GlobalsatPacket>();
 
             IGPSRoute gpsRoute = activity.GPSRoute;
-            GhPacketBase.TrackFileBase trackFileStart = new GhPacketBase.TrackFileBase();
-            trackFileStart.TotalDistanceMeters = (int)gpsRoute.TotalDistanceMeters;
-            trackFileStart.StartTime = activity.StartTime;
+            GhPacketBase.TrackFileBase trackFileStart = new GhPacketBase.TrackFileBase(
+                activity.StartTime, TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds), gpsRoute.TotalDistanceMeters);
             trackFileStart.TrackPointCount = (short)gpsRoute.Count;
-            trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
 
 			//Console.WriteLine("------ SendTrackStart()");
             GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
@@ -132,7 +130,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 for (int j = trackFileSection.StartPointIndex; j <= trackFileSection.EndPointIndex; j++)
                 {
                     IGPSPoint point = gpsRoute[j].Value;
-                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees, (short)point.ElevationMeters);
+                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees, 
+                        point.ElevationMeters);
+                    uint intTime = 0;
+                    float dist = 0;
+                    if (i == 0)
+                    {
+                        trackpoint.IntervalTime = 0;
+                    }
+                    else
+                    {
+                        intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
+                        dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j-1].Value);
+                    }
+                    if (intTime > 0)
+                    {
+                        trackpoint.IntervalTime = intTime;
+                        trackpoint.Speed = dist / intTime;
+                    }
                     trackFileSection.TrackPoints.Add(trackpoint);
                 }
 
@@ -319,8 +334,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             bool found = false;
                             foreach (GlobalsatWaypoint wpt2 in wptDev)
                             {
-                                if (Math.Round(1000000 * wpt1.Latitude) == Math.Round(1000000 * wpt2.Latitude) &&
-                                    Math.Round(1000000 * wpt1.Longitude) == Math.Round(1000000 * wpt2.Longitude))
+                                if (GhPacketBase.GetGlobLatLon(wpt1.Latitude)  == GhPacketBase.GetGlobLatLon(wpt2.Latitude) &&
+                                    GhPacketBase.GetGlobLatLon(wpt1.Longitude) == GhPacketBase.GetGlobLatLon(wpt2.Longitude))
                                 {
                                     found = true;
                                     break;

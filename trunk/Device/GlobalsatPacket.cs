@@ -121,10 +121,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string waypointName = ByteArr2String(index, 6);
                 int iconNr = (int)PacketData[index + 7];
                 short altitude = ReadInt16(index + 8);
-                int latitudeInt = ReadInt32(index + 10 + GetWptOffset);
-                int longitudeInt = ReadInt32(index + 14 + GetWptOffset);
-                double latitude = (double)latitudeInt / 1000000.0;
-                double longitude = (double)longitudeInt / 1000000.0;
+                double latitude = ReadLatLon(index + 10 + GetWptOffset);
+                double longitude = ReadLatLon(index + 14 + GetWptOffset);
 
                 GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
                 waypoints.Add(waypoint);
@@ -172,12 +170,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 offset += SendWptOffset; //pad?
 
-                int latitude = (int)Math.Round(waypoint.Latitude * 1000000);
-                int longitude = (int)Math.Round(waypoint.Longitude * 1000000);
-
-                this.Write32(offset, latitude);
-                this.Write32(offset + 4, longitude);
-                offset += 8;
+                offset += this.Write32(offset, GetGlobLatLon(waypoint.Latitude));
+                offset += this.Write32(offset, GetGlobLatLon(waypoint.Longitude));
             }
             CheckOffset(totalLength, offset);
             return this;
@@ -300,13 +294,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             for (int i = 0; i < nrPoints; i++)
             {
-                int latitude = (int)Math.Round(route.wpts[i].Latitude * 1000000);
-                int longitude = (int)Math.Round(route.wpts[i].Longitude * 1000000);
-
-                Write32(offset, latitude);
-                Write32(offset + 4, longitude);
-
-                offset += 8;
+                offset += this.Write32(offset, GetGlobLatLon(route.wpts[i].Latitude));
+                offset += this.Write32(offset, GetGlobLatLon(route.wpts[i].Longitude));
             }
 
             CheckOffset(totalLength, offset);

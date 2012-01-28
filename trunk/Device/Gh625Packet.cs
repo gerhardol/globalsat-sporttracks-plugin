@@ -149,9 +149,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
-            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, trackFile.MaximumSpeed);
+            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
 
@@ -171,9 +171,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.PacketData[offset++] = (byte)noOfLaps;
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
-            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, trackFile.MaximumSpeed);
+            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
             offset += this.Write(offset, trackFile.TotalAscent);
@@ -200,12 +200,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
         {
-            this.Write32(offset, trackpoint.Latitude); offset += 4;
-            this.Write32(offset, trackpoint.Longitude); offset += 4;
-            this.Write(offset, trackpoint.Altitude); offset += 2;
-            this.Write(offset, trackpoint.Speed); offset += 2;
+            this.Write32(offset, GetGlobLatLon(trackpoint.Latitude)); offset += 4;
+            this.Write32(offset, GetGlobLatLon(trackpoint.Longitude)); offset += 4;
+            this.Write(offset, (Int16)trackpoint.Altitude); offset += 2;
+            this.Write(offset, GetGlobSpeed(trackpoint.Speed)); offset += 2;
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
-            this.Write(offset, trackpoint.IntervalTime); offset += 2;
+            this.Write(offset, (short)(10*trackpoint.IntervalTime)); offset += 2;
             return TrackPointLength;
         }
 

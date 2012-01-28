@@ -6,7 +6,7 @@ This page describes the changes between plugins. See the SVN change log for deta
 ===Changes===
 
 3.2.113 2012-01-27
- * Send Routes to GH625XT cannot have "-".
+ * Routes to GH625XT cannot have "-" in the name.
  * Estimated pauses in complete seconds only, to avoid changing activity time.
  
 3.2.108 2011-12-17
