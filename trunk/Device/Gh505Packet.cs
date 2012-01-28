@@ -254,7 +254,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackHeaderLength, offset - startOffset);
         }
 
-        protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
+        protected override int WriteTrackPoint(int offset, TrackPoint trackpoint)
         {
             int startOffset = offset;
             offset += this.Write32(offset, ToGlobLatLon(trackpoint.Latitude));

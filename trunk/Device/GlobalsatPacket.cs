@@ -260,7 +260,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int offset = 0;
 
             offset += WriteTrackPointHeader(offset, trackFile);
-            foreach (TrackPointSend trackpoint in trackFile.TrackPoints)
+            foreach (TrackPoint trackpoint in trackFile.TrackPoints)
             {
                 offset += WriteTrackPoint(offset, trackpoint);
             }
@@ -270,7 +270,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         protected virtual int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
-        protected virtual int WriteTrackPoint(int offset, TrackPointSend trackpoint) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
+        protected virtual int WriteTrackPoint(int offset, TrackPoint trackpoint) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route)
         {

@@ -125,13 +125,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 GhPacketBase.TrackFileSectionSend trackFileSection = new GhPacketBase.TrackFileSectionSend(trackFileStart);
                 trackFileSection.StartPointIndex = (Int16)i;
                 trackFileSection.EndPointIndex = (Int16)Math.Min(i + nrPointsPerSection - 1, gpsRoute.Count - 1);
-                trackFileSection.TrackPoints = new List<GhPacketBase.TrackPointSend>();
+                trackFileSection.TrackPoints = new List<GhPacketBase.TrackPoint>();
 
                 for (int j = trackFileSection.StartPointIndex; j <= trackFileSection.EndPointIndex; j++)
                 {
                     IGPSPoint point = gpsRoute[j].Value;
-                    GhPacketBase.TrackPointSend trackpoint = new GhPacketBase.TrackPointSend(point.LatitudeDegrees, point.LongitudeDegrees, 
-                        (Int32)point.ElevationMeters);
+                    GhPacketBase.TrackPoint trackpoint = new GhPacketBase.TrackPoint();
+                    trackpoint.Latitude = point.LatitudeDegrees;
+                    trackpoint.Longitude = point.LongitudeDegrees;
+                    trackpoint.Altitude = (Int32)point.ElevationMeters;
                     uint intTime = 0;
                     float dist = 0;
                     if (i == 0)
