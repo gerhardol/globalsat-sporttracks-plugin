@@ -159,32 +159,34 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             public DateTime StartTime;
             public TimeSpan TotalTime;
-            public Int32 TotalDistanceMeters;
-            public Int16 TotalCalories;
-            public Int16 MaximumSpeed;
-            public byte MaximumHeartRate;
-            public byte AverageHeartRate;
-            public Int16 TrackPointCount;
-            public Int16 TotalAscent;
-            public Int16 TotalDescent;
+            public double TotalDistanceMeters;
 
-            public TrackFileBase()
+            public Int16 TotalCalories=0;
+            public double MaximumSpeed=0;
+            public byte MaximumHeartRate=0;
+            public byte AverageHeartRate=0;
+            public Int16 TrackPointCount=0;
+            public Int16 TotalAscent=0;
+            public Int16 TotalDescent=0;
+
+            public TrackFileBase(DateTime StartTime, TimeSpan TotalTime, double TotalDistanceMeters)
             {
+                this.StartTime = StartTime;
+                this.TotalTime = TotalTime;
+                this.TotalDistanceMeters = TotalDistanceMeters;
+                if (TotalTime.TotalSeconds >= 1)
+                {
+                    //Better than 0(?)
+                    this.MaximumSpeed = this.TotalDistanceMeters / this.TotalTime.TotalSeconds;
+                }
             }
-        }
-
-        public class TrackFileHeaderSend : TrackFileBase
-        {
-            public Int16 TrackPointIndex;
         }
 
         public class TrackFileSectionSend : TrackFileBase
         {
-            public TrackFileSectionSend(TrackFileBase trackFile)
+            public TrackFileSectionSend(TrackFileBase trackFile) :
+                base(trackFile.StartTime, trackFile.TotalTime, trackFile.TotalDistanceMeters)
             {
-                this.StartTime = trackFile.StartTime;
-                this.TotalTime = trackFile.TotalTime;
-                this.TotalDistanceMeters = trackFile.TotalDistanceMeters;
                 this.TotalCalories = trackFile.TotalCalories;
                 this.MaximumSpeed = trackFile.MaximumSpeed;
                 this.MaximumHeartRate = trackFile.MaximumHeartRate;
@@ -194,29 +196,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.TotalDescent = trackFile.TotalDescent;
             }
 
-            public Int16 StartPointIndex;
-            public Int16 EndPointIndex;
+            public Int16 StartPointIndex=0;
+            public Int16 EndPointIndex=0;
             public IList<TrackPointSend> TrackPoints = new List<TrackPointSend>();
             public Int16 NoOfLaps = 1;
         }
 
         public class TrackPointSend
         {
-            public Int32 Latitude; // Degrees * 1000000
-            public Int32 Longitude; // Degrees * 1000000
-            public Int16 Altitude; // Meters
-            public Int16 Speed; // Kilometers per hour * 100
+            //The format in packets listed - SI units are used here
+            public double Latitude; // Degrees * 1000000
+            public double Longitude; // Degrees * 1000000
+            public double Altitude; // Meters
+            public double Speed; // Kilometers per hour * 100
             public Byte HeartRate;
-            public Int16 IntervalTime; // Seconds * 10
+            public double IntervalTime; // Seconds *10
 
-            public TrackPointSend(double latitude, double longitude, short altitude)
+            public TrackPointSend(double latitude, double longitude, double altitude)
             {
-                this.Latitude = (int)(1000000 * latitude);
-                this.Longitude = (int)(1000000 * longitude);
+                this.Latitude = latitude;
+                this.Longitude = longitude;
                 this.Altitude = altitude;
                 this.Speed = 0;
                 this.HeartRate = 0;
-                this.IntervalTime = 10;
+                this.IntervalTime = 1; //Default one second
             }
         }
 
@@ -356,7 +359,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             return ReadInt32(offset) / 1000000.0;
         }
-
+        static public Int32 GetGlobLatLon(double latlon)
+        {
+            return (int)Math.Round(latlon * 1000000);
+        }
+        static public Int16 GetGlobSpeed(double speed)
+        {
+            return (Int16)Math.Round(speed*100/3.6);
+        }
         /// <summary>
         /// Write a two byte integer starting at the offset.
         /// </summary>

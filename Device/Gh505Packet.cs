@@ -158,7 +158,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += WriteTrackHeader(offset, nrLaps, trackFile);
 
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, trackFile.MaximumSpeed);
+            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
             offset += this.Write(offset, trackFile.TotalAscent);
@@ -197,9 +197,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
-            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, trackFile.TotalCalories);
-            offset += this.Write(offset, trackFile.MaximumSpeed);
+            offset += this.Write(offset, GetGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
 
@@ -228,7 +228,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, trackFile.TrackPointCount);
             int totalTimeSecondsTimes10 = (int)(trackFile.TotalTime.TotalMilliseconds / 100);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
-            offset += this.Write32(offset, trackFile.TotalDistanceMeters);
+            offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
             offset += this.Write(offset, (short)noOfLaps);
 
             //unused in some headers
@@ -257,13 +257,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int WriteTrackPoint(int offset, TrackPointSend trackpoint)
         {
             int startOffset = offset;
-            offset += this.Write32(offset, trackpoint.Latitude);
-            offset += this.Write32(offset, trackpoint.Longitude);
-            offset += this.Write(offset, trackpoint.Altitude);
-            offset += this.Write32(offset, trackpoint.Speed);
+            offset += this.Write32(offset, GetGlobLatLon(trackpoint.Latitude));
+            offset += this.Write32(offset, GetGlobLatLon(trackpoint.Longitude));
+            offset += this.Write(offset, (Int16)trackpoint.Altitude);
+            offset += this.Write32(offset, (Int32)(trackpoint.Speed*100/3.6));
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
             offset += 3; //padding
-            offset += this.Write32(offset, trackpoint.IntervalTime);
+            offset += this.Write32(offset, (Int32)(10*trackpoint.IntervalTime));
             offset += this.Write(offset, 0); // cadence
             offset += this.Write(offset, 0); // power cadence
             offset += this.Write(offset, 0); // power
