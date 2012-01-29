@@ -5,9 +5,13 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.123 2012-01-29
+ * Export activity for GH625XT
+
 3.2.113 2012-01-27
- * Routes to GH625XT cannot have "-" in the name.
+ * Routes to GH625XT cannot have "-" in the name, name filtered.
  * Estimated pauses in complete seconds only, to avoid changing activity time.
+ * GH625XT export 
  
 3.2.108 2011-12-17
  * Pause handling updated. See [Features#Special_Features Pause Handling].

@@ -39,15 +39,26 @@ Import from Globalsat devices.
  * Pause detections. Globalsat devices have no marking of pauses. When you pause, the time is just stopped, there is no stop inserted at the recorded points. Distance is still calculated on all distance between points. 
  This creates special problems when stopping. It is first when you reset that the device records a point. The GPS position is actually correct if the activity is reset with the reset button, but if reset when connecting to PC, the last GPS point is the last GPS point known when the device had GPS contact instead of the last point when recording. 
  To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed*time between points, the last part is considered to be a pause. (This algorithm may require tuning).
-  Only for 625XT, 505 and 580 right now.
+  Only for 625XT, 505 and 580.
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
 
 == Waypoints, Routes and Courses ==
-The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin.
+The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin to have GUI for the action. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin. The handling could be implemented in other plugins too.
  * Waypoints
  * Routes
    Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
- * Activities. Globalsat supports using activities for trackback. The plugin can send activities to the device.
+   A route can have maximum 99 waypoints.
+ * Activities. Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not complete copy of the activity.
+ 
+=== Navigation ===
+A special note about navigation. This is assuming that the Waypoints plugin is installed.
+
+ * Use a separate category under "My Friends Activities" for navigation "activities". ST Routes view is limited in features, export to Globalsat is not possible (You can use ApplyRoutes plugin to transfer GPS tracks Activities<->Routes).
+ * Copy an existing activity or create a new activity. ST3.1 has a possibility to create GPS tracks from Google navigation.
+ * The time for an activity is not used when navigating in the Globalsat device. (There are enhancement suggestions to show how much before after you are the reference though). Time can be set with plugins (like MiscPlugin).
+ * Clean up normal activities before sending, to speed up handling in the device: Edit->Reduce Points. The Douglas-peuker algoritm makes a good job reducing activity points, maybe down to 10% of the original. Make sure that there are points at for instance turns.
+ * Use waypoints (add separately) in for instance turning points.
+ * As Routes only have 99 points, Waypoints are normally a better choice.
  
 == Other ==
 See Plugin->Settings

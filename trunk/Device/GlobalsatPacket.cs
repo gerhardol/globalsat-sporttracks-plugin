@@ -19,10 +19,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         //private static string InvalidOperation = "Invalid Operation";
 
-        private static bool showAgain = true;
+        private static bool showOffsetPopup = true;
         protected void ReportOffset(int headerLen, int offset)
         {
-            if (showAgain)///xxx
+            if (showOffsetPopup)
             {
                 //Debug, show popup
                 System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(true);
@@ -39,7 +39,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
-                    showAgain = false;
+                    showOffsetPopup = false;
                 }
             }
         }
@@ -283,7 +283,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 routeName = routeName.Replace('-', '_');
             }
-            Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + nrPointsLength + nrPoints * 8); // save a byte for the ending null char
+            Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + nrPointsLength + nrPoints * RouteWaypointLength); // save a byte for the ending null char
             this.InitPacket(CommandSendRoute, totalLength);
 
             int offset = 0;
@@ -326,7 +326,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual int TrackPointLength { get { return 25; } }
         protected virtual int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 1; } }
 		
-        protected virtual int MaxRouteNameLength { get { return 15; } }		
+        protected virtual int MaxRouteNameLength { get { return 15; } }
+        protected virtual int RouteWaypointLength { get { return 8; } }
 		
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
