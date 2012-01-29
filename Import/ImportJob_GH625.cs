@@ -43,18 +43,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 Gh625Device device = (Gh625Device)this.device;
                 device.Open();
-                IList<Gh625Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
-                List<Gh625Packet.TrackFileHeader> fetch = new List<Gh625Packet.TrackFileHeader>();
+                IList<Gh625Packet.TrackFileHeader625M> headers = device.ReadTrackHeaders(monitor);
+                List<Gh625Packet.TrackFileHeader625M> fetch = new List<Gh625Packet.TrackFileHeader625M>();
 
                 if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                 {
-                    IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader>>();
-                    foreach (Gh625Packet.TrackFileHeader header in headers)
+                    IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>>();
+                    foreach (Gh625Packet.TrackFileHeader625M header in headers)
                     {
                         DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         if (!headersByStart.ContainsKey(start))
                         {
-                            headersByStart.Add(start, new List<Gh625Packet.TrackFileHeader>());
+                            headersByStart.Add(start, new List<Gh625Packet.TrackFileHeader625M>());
                         }
                         headersByStart[start].Add(header);
                     }
@@ -66,7 +66,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             headersByStart.Remove(findTime);
                         }
                     }
-                    foreach (IList<Gh625Packet.TrackFileHeader> dateHeaders in headersByStart.Values)
+                    foreach (IList<Gh625Packet.TrackFileHeader625M> dateHeaders in headersByStart.Values)
                     {
                         fetch.AddRange(dateHeaders);
                     }
@@ -76,7 +76,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     fetch.AddRange(headers);
                 }
 
-                IList<Gh625Packet.TrackFileSection> sections = device.ReadTracks(fetch, monitor);
+                IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
                 AddActivities(importResults, sections);
                 return true;
             }
@@ -87,7 +87,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        private void AddActivities(IImportResults importResults, IList<Gh625Packet.TrackFileSection> trackSections)
+        private void AddActivities(IImportResults importResults, IList<Gh625Packet.TrackFileSection625M> trackSections)
         {
             DateTime pointTime = DateTime.MinValue;
             IActivity activity = null;
@@ -96,7 +96,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<Gh625Packet.Lap> lastLaps = null;
             float pointDist = 0;
 						
-            foreach (Gh625Packet.TrackFileSection section in trackSections)
+            foreach (Gh625Packet.TrackFileSection625M section in trackSections)
             {
                 if (section.LapCount > 0)
                 {

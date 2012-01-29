@@ -49,7 +49,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return new ImportJob_GH625(this, sourceDescription, monitor, importResults);
         }
 
-        public IList<Gh625Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
+        public IList<Gh625Packet.TrackFileHeader625M> ReadTrackHeaders(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
@@ -60,27 +60,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return response.UnpackTrackHeaders();
         }
 
-        public IList<Gh625Packet.TrackFileSection> ReadTracks(IList<Gh625Packet.TrackFileHeader> tracks, IJobMonitor monitor)
+        public IList<Gh625Packet.TrackFileSection625M> ReadTracks(IList<Gh625Packet.TrackFileHeader625M> tracks, IJobMonitor monitor)
         {
-            if (tracks.Count == 0) return new Gh625Packet.TrackFileSection[0];
+            if (tracks.Count == 0) return new Gh625Packet.TrackFileSection625M[0];
 
             float totalPoints = 0;
             IList<Int16> trackIndexes = new List<Int16>();
-            foreach (Gh625Packet.TrackFileHeader header in tracks)
+            foreach (Gh625Packet.TrackFileHeader625M header in tracks)
             {
                 totalPoints += header.TrackPointCount;
                 trackIndexes.Add(header.TrackPointIndex);
             }
             float pointsRead = 0;
 
-            IList<Gh625Packet.TrackFileSection> trackSections = new List<Gh625Packet.TrackFileSection>();
+            IList<Gh625Packet.TrackFileSection625M> trackSections = new List<Gh625Packet.TrackFileSection625M>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
             GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
             Gh625Packet response = (Gh625Packet)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
 
-            Gh625Packet.TrackFileSection trackSection;
+            Gh625Packet.TrackFileSection625M trackSection;
             int numInCurrentTrain = 0;
             int readInCurrentTrain = 0;
             do
