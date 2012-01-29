@@ -105,7 +105,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         readInCurrentTrain += pointsInThisSection;
                         pointsRead += pointsInThisSection;
 
-                        string statusProgress = trackSection.StartTime.ToShortDateString() + " " + trackSection.StartTime.ToShortTimeString();
+                        DateTime time = trackSection.StartTime.ToLocalTime();
+                        string statusProgress = time.ToShortDateString() + " " + time.ToShortTimeString();
                         monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
                         monitor.PercentComplete = pointsRead / totalPoints;
 

@@ -44,9 +44,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(); } }
 
-        //Crashes the device - OK in TGP
-        public override IList<GlobalsatPacket> SendTrackPackets(IActivity activity) { throw new FeatureNotSupportedException(); }
-
         public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
             this.Open();
