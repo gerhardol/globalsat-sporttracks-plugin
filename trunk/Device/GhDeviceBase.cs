@@ -20,11 +20,9 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using System.IO.Ports;
+
 using ZoneFiveSoftware.Common.Visuals;
-using ZoneFiveSoftware.Common.Visuals.Fitness;
-using ZoneFiveSoftware.Common.Data.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {

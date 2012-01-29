@@ -16,6 +16,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
+
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     [Serializable]

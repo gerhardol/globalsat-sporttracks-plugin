@@ -22,7 +22,6 @@ using System.Text;
 using System.IO.Ports;
 
 using ZoneFiveSoftware.Common.Visuals;
-using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {

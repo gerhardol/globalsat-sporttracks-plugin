@@ -14,7 +14,6 @@ using System.Drawing;
 using System.Windows.Forms;
 
 
-
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatBitmap
