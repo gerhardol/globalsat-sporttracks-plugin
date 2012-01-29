@@ -104,7 +104,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IGPSRoute gpsRoute = activity.GPSRoute;
             GhPacketBase.TrackFileBase trackFileStart = new GhPacketBase.TrackFileBase(
-                activity.StartTime, TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds), gpsRoute.TotalDistanceMeters);
+                activity.StartTime, TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds), (Int32)gpsRoute.TotalDistanceMeters);
             trackFileStart.TrackPointCount = (short)gpsRoute.Count;
 
 			//Console.WriteLine("------ SendTrackStart()");

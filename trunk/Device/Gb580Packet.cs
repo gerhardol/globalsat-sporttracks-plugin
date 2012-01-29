@@ -209,7 +209,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             // start/end index
             offset += Write(offset, 0);
-            offset += Write(offset, (short)(trackFile.TrackPointCount - 1));
+            offset += Write(offset, (Int16)(trackFile.TrackPointCount - 1));
 
             CheckOffset(totalLength, offset);
             return this;
@@ -220,7 +220,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int startOffset = offset;
             offset += this.Write(offset, trackFile.StartTime);
 
-            offset += this.Write(offset, trackFile.TrackPointCount);
+            offset += this.Write(offset, (Int16)trackFile.TrackPointCount);
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
             offset += this.Write32(offset, totalTimeSecondsTimes10);
             offset += this.Write32(offset, (Int32)trackFile.TotalDistanceMeters);
