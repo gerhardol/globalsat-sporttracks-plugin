@@ -27,15 +27,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     {
         public class Header625M : GhPacketBase.Header
         {
-            //public DateTime StartTime;
-            //public byte LapCount;
-            //public TimeSpan TotalTime;
-            //public Int32 TotalDistanceMeters;
             public Int16 TotalCalories;
             public double MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
-            //public Int16 TrackPointCount;
         }
 
         public class TrackFileHeader625M : Header625M
@@ -57,7 +52,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<TrackFileHeader625M> headers = new List<TrackFileHeader625M>();
             for (int i = 0; i < numHeaders; i++)
             {
-                int trackStart = i * 31;
+                int trackStart = i * TrackHeaderLength;
                 TrackFileHeader625M header = new TrackFileHeader625M();
                 ReadHeader(header, trackStart);
                 header.TrackPointCount = ReadInt16(trackStart + 25);
@@ -69,7 +64,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public TrackFileSection625M UnpackTrackSectionLaps()
         {
-            if (this.PacketLength < 31) return null;
+            if (this.PacketLength < TrackHeaderLength) return null;
 
             TrackFileSection625M section = new TrackFileSection625M();
             ReadHeader(section, 0);
@@ -78,8 +73,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             section.StartPointIndex = ReadInt16(27);
             section.EndPointIndex = ReadInt16(29);
 
-            int offset = 31;
-            while (offset < this.PacketLength)
+            int offset = TrackHeaderLength;
+            while (offset <= this.PacketLength - TrackLapLength)
             {
                 Lap lap = new Lap();
                 lap.EndTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset)));
@@ -92,14 +87,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //lap.StartPointIndex = ReadInt16(18);
                 //lap.EndPointIndex = ReadInt16(20);
                 section.Laps.Add(lap);
-                offset += 22;
+                offset += TrackLapLength;
             }
             return section;
         }
 
         public TrackFileSection625M UnpackTrackSection()
         {
-            if (this.PacketLength < 31) return null;
+            if (this.PacketLength < TrackHeaderLength) return null;
 
             TrackFileSection625M section = new TrackFileSection625M();
             ReadHeader(section, 0);
@@ -107,8 +102,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             section.StartPointIndex = ReadInt16(27);
             section.EndPointIndex = ReadInt16(29);
 
-            int offset = 31;
-            while (offset < this.PacketLength)
+            int offset = TrackHeaderLength;
+            while (offset <= this.PacketLength - TrackPointLength)
             {
                 TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadLatLon(offset);

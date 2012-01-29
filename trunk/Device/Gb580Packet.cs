@@ -89,7 +89,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<Lap> laps = new List<Lap>();
 
             int offset = TrackHeaderLength;
-            while (offset < this.PacketLength)
+            while (offset <= this.PacketLength - TrackLapLength)
             {
                 Lap lap = new Lap();
 
@@ -121,7 +121,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<TrackPoint> points = new List<TrackPoint>();
 
             int offset = TrackHeaderLength;
-            while (offset < this.PacketLength)
+            while (offset <= this.PacketLength - TrackPointLength)
             {
                 TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadLatLon(offset);
