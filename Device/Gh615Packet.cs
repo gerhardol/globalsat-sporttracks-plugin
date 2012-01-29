@@ -92,7 +92,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(offset);
+            header.StartTime = ReadDateTime(offset).ToUniversalTime();
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 6)));
             header.TotalDistanceMeters = ReadInt32(offset + 10);
             header.TotalCalories = ReadInt16(offset + 14);

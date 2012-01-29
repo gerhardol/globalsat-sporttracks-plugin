@@ -139,7 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.HeartRate = this.PacketData[offset + 14];
                 point.IntervalTime = FromGlobTime(ReadInt32(offset + 15));
                 point.Cadence = ReadInt16(offset + 19);
-                //point.PowerCadence = ReadInt16(offset + 21);
+                point.PowerCadence = ReadInt16(offset + 21);
                 point.Power = ReadInt16(offset + 23);
                 points.Add(point);
                 offset += TrackPointLength;
@@ -148,8 +148,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return points;
         }
 
+        ////////////////////////////////////////////////////
         //Trackstart without laps
-        public override GlobalsatPacket SendTrackStart(TrackFileBase trackFile)
+        public override GlobalsatPacket SendTrackStart(Train trackFile)
         {
             Int16 nrLaps = 1;
             Int16 totalLength = (Int16)TrainDataHeaderLength;
@@ -163,15 +164,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write32(offset, ToGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
-            offset += this.Write(offset, trackFile.TotalAscent);
-            offset += this.Write(offset, trackFile.TotalDescent);
+            offset += this.Write(offset, trackFile.TotalAscend);
+            offset += this.Write(offset, trackFile.TotalDescend);
 
             offset += this.Write(offset, 0); // min altitude
             offset += this.Write(offset, 0); // max altitude
-            offset += this.Write(offset, 0); // avg cadence
-            offset += this.Write(offset, 0); // best cadence
-            offset += this.Write(offset, 0); // avg power
-            offset += this.Write(offset, 0); // max power
+            offset += this.Write(offset, trackFile.AverageCadence); // avg cadence
+            offset += this.Write(offset, trackFile.MaximumCadence); // best cadence
+            offset += this.Write(offset, trackFile.AveragePower); // avg power
+            offset += this.Write(offset, trackFile.MaximumPower); // max power
             this.PacketData[offset++] = 0; // sport 1
             this.PacketData[offset++] = 0; // sport 2
             this.PacketData[offset++] = 0; // sport 3
@@ -183,7 +184,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         // DB_TRAIN_HEADER + DB_LAP
-        public override GlobalsatPacket SendTrackLaps(TrackFileBase trackFile)
+        public override GlobalsatPacket SendTrackLaps(Train trackFile)
         {
             const Int16 nrLaps = 1;
             Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * TrackLapLength);
@@ -221,9 +222,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         //TrackStart/TrackLap/TrackPoint share a common header
-        private int WriteTrackHeader(int offset, int noOfLaps, TrackFileBase trackFile)
+        private int WriteTrackHeader(int offset, int noOfLaps, Header trackFile)
         {
-            offset += this.Write(offset, trackFile.StartTime);
+            offset += this.Write(offset, trackFile.StartTime.ToLocalTime());
 
             offset += this.Write32(offset, trackFile.TrackPointCount);
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
@@ -240,14 +241,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackHeaderLength, offset);
         }
 
-        protected override int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile)
+        protected override int WriteTrackPointHeader(int offset, Train trackFile, int StartPointIndex, int EndPointIndex)
         {
             offset += WriteTrackHeader(offset, 1, trackFile);
             this.PacketData[TrainHeaderCTypeOffset] = HeaderTypeTrackPoints;
 
             //unused fields in some headers
-            this.Write(offset - 9, trackFile.StartPointIndex);
-            this.Write(offset - 5, trackFile.EndPointIndex);
+            this.Write32(offset - 9, StartPointIndex);
+            this.Write32(offset - 5, EndPointIndex);
             
             return CheckOffset(TrackHeaderLength, offset);
         }
@@ -275,7 +276,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int TrackPointLength { get { return 25; } }
 		
 		protected override int MaxRouteNameLength { get { return 14; } }	
-
-		
     }
 }

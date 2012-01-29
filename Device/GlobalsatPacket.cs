@@ -247,29 +247,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        public virtual GlobalsatPacket SendTrackStart(TrackFileBase trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
+        public virtual GlobalsatPacket SendTrackStart(Train trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
         //Not used by all devices
-        public virtual GlobalsatPacket SendTrackLaps(TrackFileBase trackFile) { return null; }
+        public virtual GlobalsatPacket SendTrackLaps(Train trackFile) { return null; }
 
-        public virtual GlobalsatPacket SendTrackSection(TrackFileSectionSend trackFile)
+        public virtual GlobalsatPacket SendTrackSection(Train trackFile, int startIndex, int endIndex)
         {
-            int trackPointCount = trackFile.EndPointIndex - trackFile.StartPointIndex + 1;
+            int trackPointCount = endIndex - startIndex + 1;
 
             Int16 totalLength = (Int16)(TrackHeaderLength + trackPointCount * TrackPointLength);
             this.InitPacket(CommandSendTrackSection, totalLength);
             int offset = 0;
 
-            offset += WriteTrackPointHeader(offset, trackFile);
-            foreach (TrackPoint trackpoint in trackFile.TrackPoints)
+            offset += WriteTrackPointHeader(offset, trackFile, startIndex, endIndex);
+            for (int i = startIndex; i<=endIndex; i++)
             {
-                offset += WriteTrackPoint(offset, trackpoint);
+                offset += WriteTrackPoint(offset, trackFile.TrackPoints[i]);
             }
 
             CheckOffset(totalLength, offset);
             return this;
         }
 
-        protected virtual int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
+        //Only 625M uses Train, other only Header
+        protected virtual int WriteTrackPointHeader(int offset, Train trackFile, int StartPointIndex, int EndPointIndex) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
         protected virtual int WriteTrackPoint(int offset, TrackPoint trackpoint) { throw new GlobalsatProtocol.FeatureNotSupportedException(); }
 
         public virtual GlobalsatPacket SendRoute(GlobalsatRoute route)

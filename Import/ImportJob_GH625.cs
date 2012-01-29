@@ -106,7 +106,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     if (section.StartPointIndex == 0)
                     {
-                        pointTime = section.StartTime.ToUniversalTime().AddHours(device.configInfo.HoursAdjustment);
+                        pointTime = section.StartTime.AddHours(device.configInfo.HoursAdjustment);
                         activity = importResults.AddActivity(pointTime);
                         allActivities.Add(activity);
                         activity.Metadata.Source = string.Format(CommonResources.Text.Devices.ImportJob_ActivityImportSource, sourceDescription);

@@ -83,11 +83,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public class Train : Header
         {
-            //public Int16 StartPointIndex;
-            //public Int16 EndPointIndex;
+            //public Int16 StartPointIndex=0;
+            //public Int16 EndPointIndex=0;
             //public bool Multisport;
             public Int16 TotalCalories;
-            //public double MaximumSpeed;
+            public double MaximumSpeed;
             public byte MaximumHeartRate;
             public byte AverageHeartRate;
             public Int16 TotalAscend;
@@ -152,49 +152,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 PowerCadence=0; // unknown units
             //Int16 in GH625XT, GB580, GH505, (but not available?)
             public Int16 Cadence=0; // Cadence, unknown units
-        }
-
-        //Sending tracks
-        public class TrackFileBase : Header
-        {
-            public Int16 TotalCalories=0;
-            public double MaximumSpeed=0;
-            public byte MaximumHeartRate=0;
-            public byte AverageHeartRate=0;
-            public Int16 TotalAscent=0;
-            public Int16 TotalDescent=0;
-
-            public TrackFileBase(DateTime StartTime, TimeSpan TotalTime, Int32 TotalDistanceMeters)
-            {
-                this.StartTime = StartTime;
-                this.TotalTime = TotalTime;
-                this.TotalDistanceMeters = TotalDistanceMeters;
-                if (TotalTime.TotalSeconds >= 1)
-                {
-                    //Better than 0(?)
-                    this.MaximumSpeed = this.TotalDistanceMeters / this.TotalTime.TotalSeconds;
-                }
-            }
-        }
-
-        public class TrackFileSectionSend : TrackFileBase
-        {
-            public TrackFileSectionSend(TrackFileBase trackFile) :
-                base(trackFile.StartTime, trackFile.TotalTime, trackFile.TotalDistanceMeters)
-            {
-                this.TotalCalories = trackFile.TotalCalories;
-                this.MaximumSpeed = trackFile.MaximumSpeed;
-                this.MaximumHeartRate = trackFile.MaximumHeartRate;
-                this.AverageHeartRate = trackFile.AverageHeartRate;
-                this.TrackPointCount = trackFile.TrackPointCount;
-                this.TotalAscent = trackFile.TotalAscent;
-                this.TotalDescent = trackFile.TotalDescent;
-            }
-
-            public Int16 StartPointIndex=0;
-            public Int16 EndPointIndex=0;
-            public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
-            public IList<Lap> Laps = new List<Lap>();
         }
 
         public byte[] ConstructPayload()

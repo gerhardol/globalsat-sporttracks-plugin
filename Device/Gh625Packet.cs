@@ -25,7 +25,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class Gh625Packet : GlobalsatPacket
     {
-        public new class Header : GhPacketBase.Header
+        public new class HeaderRead : GhPacketBase.Header
         {
             //public DateTime StartTime;
             //public byte LapCount;
@@ -38,12 +38,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //public Int16 TrackPointCount;
         }
 
-        public new class TrackFileHeader : Header
+        public new class TrackFileHeader : HeaderRead
         {
             public Int16 TrackPointIndex;
         }
 
-        public class TrackFileSection : Header
+        public class TrackFileSection : HeaderRead
         {
             public Int16 StartPointIndex;
             public Int16 EndPointIndex;
@@ -123,9 +123,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return section;
         }
 
-        private void ReadHeader(Header header, int offset)
+        private void ReadHeader(HeaderRead header, int offset)
         {
-            header.StartTime = ReadDateTime(offset);
+            header.StartTime = ReadDateTime(offset).ToUniversalTime();
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 7)));
             header.TotalDistanceMeters = ReadInt32(offset + 11);
             header.TotalCalories = ReadInt16(offset + 15);
@@ -135,7 +135,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         //Trackstart with laps
-        public override GlobalsatPacket SendTrackStart(TrackFileBase trackFile)
+        public override GlobalsatPacket SendTrackStart(Train trackFile)
         {
             Int16 nrLaps = 1;
             Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * TrackLapLength);
@@ -163,10 +163,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return this;
         }
 
-        private int WriteTrackHeader(int offset, int noOfLaps, TrackFileBase trackFile)
+        private int WriteTrackHeader(int offset, int noOfLaps, Train trackFile)
         {
             int startOffset = offset;
-            offset += this.Write(offset, trackFile.StartTime);
+            offset += this.Write(offset, trackFile.StartTime.ToLocalTime());
 
             this.PacketData[offset++] = (byte)noOfLaps;
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
@@ -176,8 +176,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, ToGlobSpeed(trackFile.MaximumSpeed));
             this.PacketData[offset++] = (byte)trackFile.MaximumHeartRate;
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
-            offset += this.Write(offset, trackFile.TotalAscent);
-            offset += this.Write(offset, trackFile.TotalDescent);
+            offset += this.Write(offset, trackFile.TotalAscend);
+            offset += this.Write(offset, trackFile.TotalDescend);
             offset += this.Write(offset, (Int16)trackFile.TrackPointCount);
 
             //unused in some headers
@@ -187,14 +187,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackHeaderLength, offset - startOffset);
         }
 
-        protected override int WriteTrackPointHeader(int offset, TrackFileSectionSend trackFile)
+        protected override int WriteTrackPointHeader(int offset, Train trackFile, int StartPointIndex, int EndPointIndex)
         {
             int startOffset = offset;
             offset += WriteTrackHeader(offset, 1, trackFile);
 
             //write to the offsets "unused fields in some headers" 
-            this.Write(offset - 4, trackFile.StartPointIndex);
-            this.Write(offset - 2, trackFile.EndPointIndex);
+            this.Write(offset - 4, (Int16)StartPointIndex);
+            this.Write(offset - 2, (Int16)EndPointIndex);
             return CheckOffset(TrackHeaderLength, offset - startOffset);
         }
 
