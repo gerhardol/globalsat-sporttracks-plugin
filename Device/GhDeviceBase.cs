@@ -119,8 +119,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             if (packet.CommandId == GhPacketBase.CommandWhoAmI)
             {
-                //Speed-up device detection. 625XT seem to work with 5ms, 505 needs more
-                port.ReadTimeout = 100;
+                //Speed-up device detection. 625XT seem to work with 5ms, 505 needs more than 100
+                port.ReadTimeout = 300;
             }
             else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
             {
