@@ -75,7 +75,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public class Header
         {
             public DateTime StartTime;
-            public Int32 TrackPointCount; //Int16 in some devices
+            public Int32 TrackPointCount; //Int16 in all but 625XT
             public TimeSpan TotalTime;
             public Int32 TotalDistanceMeters;
             public Int16 LapCount; //Not used in all
@@ -133,7 +133,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //    public Int16 EndPointIndex;
         }
 
-        //Superset of all (receive) trackpoints
+        //Superset of all trackpoints
         public class TrackPoint
         {
             //Same in all
@@ -155,21 +155,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         //Sending tracks
-        public class TrackFileBase
+        public class TrackFileBase : Header
         {
-            public DateTime StartTime;
-            public TimeSpan TotalTime;
-            public double TotalDistanceMeters;
-
             public Int16 TotalCalories=0;
             public double MaximumSpeed=0;
             public byte MaximumHeartRate=0;
             public byte AverageHeartRate=0;
-            public Int16 TrackPointCount=0;
             public Int16 TotalAscent=0;
             public Int16 TotalDescent=0;
 
-            public TrackFileBase(DateTime StartTime, TimeSpan TotalTime, double TotalDistanceMeters)
+            public TrackFileBase(DateTime StartTime, TimeSpan TotalTime, Int32 TotalDistanceMeters)
             {
                 this.StartTime = StartTime;
                 this.TotalTime = TotalTime;
@@ -199,7 +194,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 StartPointIndex=0;
             public Int16 EndPointIndex=0;
             public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
-            public Int16 NoOfLaps = 1;
+            public IList<Lap> Laps = new List<Lap>();
         }
 
         public byte[] ConstructPayload()

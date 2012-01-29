@@ -157,7 +157,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             // start/end index
             offset += Write(offset, 0);
-            offset += Write(offset, (short)(trackFile.TrackPointCount - 1));
+            offset += Write(offset, (Int16)(trackFile.TrackPointCount - 1));
 
             CheckOffset(totalLength, offset);
             return this;
@@ -178,7 +178,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.PacketData[offset++] = (byte)trackFile.AverageHeartRate;
             offset += this.Write(offset, trackFile.TotalAscent);
             offset += this.Write(offset, trackFile.TotalDescent);
-            offset += this.Write(offset, trackFile.TrackPointCount);
+            offset += this.Write(offset, (Int16)trackFile.TrackPointCount);
 
             //unused in some headers
             offset += this.Write(offset, 0); offset += 2;

@@ -214,7 +214,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             // start/end index
             offset += Write32(offset, 0);
-            offset += Write32(offset, (Int16)(trackFile.TrackPointCount - 1));
+            offset += Write32(offset, trackFile.TrackPointCount - 1);
 
             CheckOffset(totalLength, offset);
             return this;
