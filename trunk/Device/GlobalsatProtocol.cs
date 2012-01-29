@@ -13,12 +13,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
 using System.ComponentModel;
-
 using System.IO.Ports;
-using ZoneFiveSoftware.Common.Data.Fitness;
+
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
-using ZoneFiveSoftware.Common.Data.GPS;
+
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -37,7 +36,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             throw new FeatureNotSupportedException();
         }
 
-        public virtual int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor)
+        public virtual int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor)
         {
             int result = 0;
             if (jobMonitor.Cancelled)
@@ -48,9 +47,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Open();
             try
             {
-                foreach (IActivity activity in activities)
+                foreach (GhPacketBase.Train train in trains)
                 {
-                    IList<GlobalsatPacket> packets = SendTrackPackets(activity);
+                    IList<GlobalsatPacket> packets = SendTrackPackets(train);
 
                     int i = 0;
                     foreach (GlobalsatPacket packet in packets)
@@ -98,28 +97,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return result;
         }
 
-        public virtual IList<GlobalsatPacket> SendTrackPackets(IActivity activity)
+        public virtual IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train trackFileStart)
         {
             IList<GlobalsatPacket> sendTrackPackets = new List<GlobalsatPacket>();
-
-            IGPSRoute gpsRoute = activity.GPSRoute;
-            GhPacketBase.Train trackFileStart = new GhPacketBase.Train();
-            trackFileStart.StartTime = activity.StartTime;
-            trackFileStart.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
-            trackFileStart.TotalDistanceMeters = (Int32)Math.Round(gpsRoute.TotalDistanceMeters);
-            trackFileStart.TrackPointCount = (short)gpsRoute.Count;
-            //TBD
-            //trackFileSection.TotalCalories = trackFileStart.TotalCalories;
-            //trackFileSection.MaximumSpeed = trackFileStart.MaximumSpeed;
-            //trackFileSection.MaximumHeartRate = trackFileStart.MaximumHeartRate;
-            //trackFileSection.AverageHeartRate = trackFileStart.AverageHeartRate;
-            //trackFileSection.TotalAscend = trackFileStart.TotalAscend;
-            //trackFileSection.TotalDescend = trackFileStart.TotalDescend;
-            //if (trackFileSection.MaximumSpeed == 0 && trackFileSection.TotalTime.TotalSeconds >= 1)
-            //{
-            //    //Better than 0(?)
-            //    trackFileSection.MaximumSpeed = trackFileSection.TotalDistanceMeters / trackFileSection.TotalTime.TotalSeconds;
-            //}
 
 			//Console.WriteLine("------ SendTrackStart()");
             GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
@@ -133,40 +113,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 sendTrackPackets.Add(lapPacket);
             }
 
-            trackFileStart.TrackPoints = new List<GhPacketBase.TrackPoint>();
-            for (int j = 0; j < gpsRoute.Count; j++)
-            {
-                IGPSPoint point = gpsRoute[j].Value;
-                GhPacketBase.TrackPoint trackpoint = new GhPacketBase.TrackPoint();
-                trackpoint.Latitude = point.LatitudeDegrees;
-                trackpoint.Longitude = point.LongitudeDegrees;
-                trackpoint.Altitude = (Int32)point.ElevationMeters;
-                uint intTime = 0;
-                float dist = 0;
-                if (j == 0)
-                {
-                    trackpoint.IntervalTime = 0;
-                }
-                else
-                {
-                    intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
-                    dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j - 1].Value);
-                }
-                if (intTime > 0)
-                {
-                    trackpoint.IntervalTime = intTime;
-                    trackpoint.Speed = dist / intTime;
-                }
-                trackFileStart.TrackPoints.Add(trackpoint);
-            }
-
             int nrPointsPerSection = startPacket.TrackPointsPerSection;
 
             for (int i = 0; i < trackFileStart.TrackPoints.Count; i += nrPointsPerSection)
             {
     			//Console.WriteLine("------ SendTrackSection()");
-                GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileStart, i, 
-                    Math.Min(i + nrPointsPerSection - 1, gpsRoute.Count - 1));
+                GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileStart, i,
+                    Math.Min(i + nrPointsPerSection - 1, trackFileStart.TrackPoints.Count - 1));
                 sendTrackPackets.Add(pointsPacket);
             }
 
