@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 
-using ZoneFiveSoftware.Common.Data.Fitness;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
 
@@ -102,6 +101,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
-        public override int SendTrack(IList<IActivity> activities, IJobMonitor jobMonitor) { throw new FeatureNotSupportedException(); }
+
+        public override int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor) { throw new FeatureNotSupportedException(); }
     }
 }

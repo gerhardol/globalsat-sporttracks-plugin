@@ -98,12 +98,78 @@ namespace GlobalsatDevicePlugin
             throw new Exception();
         }
 
+        //Get the data in a generic Globalsat format, to separate ST
+        public static IList<GhPacketBase.Train> ToGlobTrack(IList<IActivity> activities)
+        {
+            IList<GhPacketBase.Train> result = new List<GhPacketBase.Train>();
+
+            foreach (IActivity activity in activities)
+            {
+                IGPSRoute gpsRoute = activity.GPSRoute;
+                GhPacketBase.Train train = new GhPacketBase.Train();
+                train.StartTime = activity.StartTime;
+                train.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
+                train.TotalDistanceMeters = (Int32)Math.Round(gpsRoute.TotalDistanceMeters);
+                train.LapCount = 1;
+
+                train.TotalCalories = (Int16)activity.TotalCalories;
+                if (train.MaximumSpeed == 0 && train.TotalTime.TotalSeconds >= 1)
+                {
+                    //Better than 0(?) - Info() could be used
+                    train.MaximumSpeed = train.TotalDistanceMeters / train.TotalTime.TotalSeconds;
+                }
+                train.MaximumHeartRate = (byte)activity.MaximumHeartRatePerMinuteEntered;
+                train.AverageHeartRate = (byte)activity.AverageHeartRatePerMinuteEntered;
+                train.TotalAscend = (Int16)activity.TotalAscendMetersEntered;
+                train.TotalDescend = (Int16)activity.TotalDescendMetersEntered;
+                train.AverageCadence = (Int16)activity.AverageCadencePerMinuteEntered;
+                train.MaximumCadence = (Int16)activity.MaximumCadencePerMinuteEntered;
+                train.AveragePower = (Int16)activity.AveragePowerWattsEntered;
+                train.MaximumPower = (Int16)activity.MaximumPowerWattsEntered;
+                //Some protocols send laps in separate header
+                //Use common code instead of overiding this method
+
+                //Laps are not implemented when sending, one lap hardcoded
+
+                for (int j = 0; j < gpsRoute.Count; j++)
+                {
+                    IGPSPoint point = gpsRoute[j].Value;
+                    GhPacketBase.TrackPoint trackpoint = new GhPacketBase.TrackPoint();
+                    trackpoint.Latitude = point.LatitudeDegrees;
+                    trackpoint.Longitude = point.LongitudeDegrees;
+                    trackpoint.Altitude = (Int32)point.ElevationMeters;
+                    uint intTime = 0;
+                    float dist = 0;
+                    if (j == 0)
+                    {
+                        trackpoint.IntervalTime = 0;
+                    }
+                    else
+                    {
+                        intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
+                        dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j - 1].Value);
+                    }
+                    if (intTime > 0)
+                    {
+                        trackpoint.IntervalTime = intTime;
+                        trackpoint.Speed = dist / intTime;
+                    }
+                    train.TrackPoints.Add(trackpoint);
+                }
+                train.TrackPointCount = (short)train.TrackPoints.Count;
+
+                result.Add(train);
+            }
+
+            return result;
+        }
+
         public static int ExportAct(IList<IActivity> activities, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            return device2.SendTrack(activities, jobMonitor);
+            return device2.SendTrack(ToGlobTrack(activities), jobMonitor);
         }
     }
 }
