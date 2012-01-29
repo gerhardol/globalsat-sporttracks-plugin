@@ -25,7 +25,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class Gh625Packet : GlobalsatPacket
     {
-        public new class HeaderRead : GhPacketBase.Header
+        public  class HeaderRead : GhPacketBase.Header
         {
             //public DateTime StartTime;
             //public byte LapCount;

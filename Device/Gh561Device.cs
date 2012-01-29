@@ -22,11 +22,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 
-using ZoneFiveSoftware.Common.Data.Fitness;
-using ZoneFiveSoftware.Common.Data.GPS;
-using ZoneFiveSoftware.Common.Visuals;
-using ZoneFiveSoftware.Common.Visuals.Fitness;
-
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh561Device : GlobalsatProtocol
@@ -43,7 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
         //Unknown protocol
-        public override IList<GlobalsatPacket> SendTrackPackets(IActivity activity) { throw new FeatureNotSupportedException(); }
+        public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(); } }
     }

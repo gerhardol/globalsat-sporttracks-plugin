@@ -12,7 +12,6 @@ using System.Text;
 using System.IO.Ports;
 using System.Windows.Forms;
 
-using ZoneFiveSoftware.Common.Data;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
