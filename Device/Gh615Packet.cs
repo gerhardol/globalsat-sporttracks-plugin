@@ -75,7 +75,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             section.StartPointIndex = ReadInt16(22);
             section.EndPointIndex = ReadInt16(24);
             int offset = 26;
-            while (offset < this.PacketData.Length)
+            while (offset <= this.PacketData.Length - 15)
             {
                 TrackPoint point = new TrackPoint();
                 point.Latitude = (double)ReadLatLon(offset);
