@@ -138,21 +138,25 @@ namespace GlobalsatDevicePlugin
                     trackpoint.Latitude = point.LatitudeDegrees;
                     trackpoint.Longitude = point.LongitudeDegrees;
                     trackpoint.Altitude = (Int32)point.ElevationMeters;
-                    uint intTime = 0;
-                    float dist = 0;
                     if (j == 0)
                     {
                         trackpoint.IntervalTime = 0;
                     }
                     else
                     {
-                        intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
-                        dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j - 1].Value);
-                    }
-                    if (intTime > 0)
-                    {
-                        trackpoint.IntervalTime = intTime;
-                        trackpoint.Speed = dist / intTime;
+                        uint intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
+                        float dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j - 1].Value);
+                        if (intTime > 0)
+                        {
+                            trackpoint.IntervalTime = intTime;
+                            trackpoint.Speed = dist / intTime;
+                        }
+                        else
+                        {
+                            //Time is not really used - could probably be empty
+                            //The alternative would be to drop the points
+                            trackpoint.IntervalTime = 1;
+                        }
                     }
                     train.TrackPoints.Add(trackpoint);
                 }

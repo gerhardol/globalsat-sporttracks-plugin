@@ -48,6 +48,7 @@ The implement implements support for communicating some other protocols with Glo
  * Routes
    Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
    A route can have maximum 99 waypoints.
+   Note: The GH-505 cannot receive Routes, the command only sends the waypoints in the route.
  * Activities. Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not complete copy of the activity.
  
 === Navigation ===
