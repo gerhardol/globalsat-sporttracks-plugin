@@ -245,7 +245,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return str;
         }
 
-        public void Write(int startIndex, int length, string s)
+        public int Write(int startIndex, int length, string s)
         {
             for (int j = 0; j < length; j++)
             {
@@ -254,6 +254,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             //Ensure null termination
             this.PacketData[startIndex + length - 1] = 0;
+            return length;
         }
 
         /// <summary>

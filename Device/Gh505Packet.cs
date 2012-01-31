@@ -137,7 +137,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.HeartRate = this.PacketData[offset + 12];
                 point.IntervalTime = FromGlobTime(ReadInt32(offset + 16));
                 point.Cadence = ReadInt16(offset + 20);
-                //point.PowerCadence = ReadInt16(offset + 22);
+                point.PowerCadence = ReadInt16(offset + 22);
                 point.Power = ReadInt16(offset + 24);
                 points.Add(point);
                 offset += TrackPointLength;
@@ -259,13 +259,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write32(offset, ToGlobLatLon(trackpoint.Latitude));
             offset += this.Write32(offset, ToGlobLatLon(trackpoint.Longitude));
             offset += this.Write(offset, (Int16)trackpoint.Altitude);
-            offset += this.Write32(offset, ToGlobSpeed(trackpoint.Speed));
+            offset += this.Write(offset, ToGlobSpeed(trackpoint.Speed));
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
             offset += 3; //padding
             offset += this.Write32(offset, ToGlobTime(trackpoint.IntervalTime));
             offset += this.Write(offset, 0); // cadence
             offset += this.Write(offset, 0); // power cadence
             offset += this.Write(offset, 0); // power
+            offset += 2; //padding (assuming, no doc)
 
             return CheckOffset(TrackPointLength, offset - startOffset);
         }

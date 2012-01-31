@@ -38,6 +38,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
         }
 
+        //Timeout when communicating
+        public virtual int ReadTimeout
+        {
+            get
+            {
+                return 1000;
+            }
+        }
+
+        //Timeout when detecting
+        public virtual int ReadTimeoutDetect
+        {
+            get
+            {
+                return 500;
+            }
+        }
+
         public virtual DeviceConfigurationInfo DefaultConfig
         {
             get
@@ -119,8 +137,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             if (packet.CommandId == GhPacketBase.CommandWhoAmI)
             {
-                //Speed-up device detection. 625XT seem to work with 5ms, 505 needs more than 100
-                port.ReadTimeout = 300;
+                //Speed-up device detection, keep this as short as possible. 
+                //625XT seem to work with 5ms, 505 needs more than 100
+                port.ReadTimeout = this.ReadTimeoutDetect;
             }
             else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
             {
@@ -128,7 +147,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             else
             {
-                port.ReadTimeout = 1000;
+                port.ReadTimeout = this.ReadTimeout;
             }
             try
             {
