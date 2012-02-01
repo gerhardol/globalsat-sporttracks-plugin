@@ -19,13 +19,13 @@ Most Globalsat devices have unique protocols and packet formats. However, there 
  * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
  * Take a note of the device identifier listed.
   - If the name of the device is listed only, the device is supported
-  - If the device name is suffixed with "('<device>' Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
+  - If the device name is suffixed with "('{{{<device>}}}' Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
   - If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
 
 While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
  * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ].
  * Delete all import devices but the the device to add support for.
- * Open Preferences.System.xml and search for "'<FitnessDevices>'". Take a note of the "deviceId" GUID.
+ * Open Preferences.System.xml and search for "'{{{<FitnessDevices>}}}'". Take a note of the "deviceId" GUID.
  * Restore Preferences.System.xml (but keep a backup copy), add the device identification listed previously after allowedids=. For example allowedids=GH-625XT.
 
 == Import ==
@@ -44,22 +44,30 @@ Import from Globalsat devices.
 
 == Waypoints, Routes and Courses ==
 The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin to have GUI for the action. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin. The handling could be implemented in other plugins too.
- * Waypoints
- * Routes
+
+Routes and Courses etc are explained some in the ST FAQ:
+http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=6389
+The Globalsat devices does not use Courses, but allows use of activities directly, as well as sending activities to the device. However, there is no equivalence to Course Points.
+
+ * Waypoints - Find specific positions
+ * Routes - Normally only keypoints, the direction between kepoints may be incomplete.
    Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
    A route can have maximum 99 waypoints.
    Note: The GH-505 cannot receive Routes, the command only sends the waypoints in the route.
- * Activities. Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not complete copy of the activity.
- 
+ * Activities - Follow a detailed track (but can be used as a route too).
+   Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not complete copy of the activity.
+
 === Navigation ===
 A special note about navigation. This is assuming that the Waypoints plugin is installed.
 
- * Use a separate category under "My Friends Activities" for navigation "activities". ST Routes view is limited in features, export to Globalsat is not possible (You can use ApplyRoutes plugin to transfer GPS tracks Activities<->Routes).
- * Copy an existing activity or create a new activity. ST3.1 has a possibility to create GPS tracks from Google navigation.
- * The time for an activity is not used when navigating in the Globalsat device. (There are enhancement suggestions to show how much before after you are the reference though). Time can be set with plugins (like MiscPlugin).
- * Clean up normal activities before sending, to speed up handling in the device: Edit->Reduce Points. The Douglas-peuker algoritm makes a good job reducing activity points, maybe down to 10% of the original. Make sure that there are points at for instance turns.
- * Use waypoints (add separately) in for instance turning points.
- * As Routes only have 99 points, Waypoints are normally a better choice.
+ * Use a separate category under "My Friends Activities" for navigation "activities". ST Routes view is limited in features, export to Globalsat is not possible (You can use ApplyRoutes plugin to transfer GPS tracks Activities{{{<->}}}Routes).
+ * The normal use in ST would be to draw a route point to point, to get key information like crossings.
+ * Copy an existing activity or create a new activity. ST Help:[http://www.zonefivesoftware.com/sporttracks/support/help/?topic=manual-exploring-activity-details#editing-gps-route Editing a GPS Route]
+ * ST3.1 has a possibility to create GPS tracks from Google navigation, you get a detailed track information.
+ * The time for an activity is (currently) not used when navigating in the Globalsat device. (There are enhancement suggestions to show how much before after you are the reference though). Time can be set with plugins (like MiscPlugin).
+ * Clean up normal activities before sending, to speed up handling in the device: Edit->Reduce Points. The Douglas-Peuker algoritm makes a good job reducing activity points, maybe down to 10% of the original. Make sure that there are points at for instance turns.
+ * Use waypoints (add separately) in for instance turning points. (They will not show at the same though.)
+ * As Routes only have 99 points, Activities are normally a better choice to follow a a track.
  
 == Other ==
 See Plugin->Settings
