@@ -5,7 +5,7 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
-3.2
+3.2.125 2012-02-01
  * Incorrect offsets when writing activities to 505, 580
 
 3.2.123 2012-01-29
