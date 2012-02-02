@@ -19,13 +19,13 @@ Most Globalsat devices have unique protocols and packet formats. However, there 
  * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
  * Take a note of the device identifier listed.
   - If the name of the device is listed only, the device is supported
-  - If the device name is suffixed with "('{{{<device>}}}' Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
+  - If the device name is suffixed with "({{{<device>}}} Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
   - If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
 
 While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
  * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ].
  * Delete all import devices but the the device to add support for.
- * Open Preferences.System.xml and search for "'{{{<FitnessDevices>}}}'". Take a note of the "deviceId" GUID.
+ * Open Preferences.System.xml and search for "{{{<FitnessDevices>}}}". Take a note of the "deviceId" GUID.
  * Restore Preferences.System.xml (but keep a backup copy), add the device identification listed previously after allowedids=. For example allowedids=GH-625XT.
 
 == Import ==
@@ -67,7 +67,7 @@ A special note about navigation. This is assuming that the Waypoints plugin is i
  * The time for an activity is (currently) not used when navigating in the Globalsat device. (There are enhancement suggestions to show how much before after you are the reference though). Time can be set with plugins (like MiscPlugin).
  * Clean up normal activities before sending, to speed up handling in the device: Edit->Reduce Points. The Douglas-Peuker algoritm makes a good job reducing activity points, maybe down to 10% of the original. Make sure that there are points at for instance turns.
  * Use waypoints (add separately) in for instance turning points. (They will not show at the same though.)
- * As Routes only have 99 points, Activities are normally a better choice to follow a a track.
+ * As Routes only have 99 points, Activities are normally a better choice to follow a a track. If you reduce the number of points in an activity before sending, the navigation functionality is the same for Globalsat activities and Globalsat routes.
  
 == Other ==
 See Plugin->Settings
