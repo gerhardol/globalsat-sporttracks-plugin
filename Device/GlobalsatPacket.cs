@@ -275,10 +275,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             const int nrPointsLength = 1;
 
             //Name limitations in some devives?
-            if (this is Gh625XTPacket)
-            {
-                route.Name = route.Name.Replace('-', '_');
-            }
+            //if (this is Gh625XTPacket)
+            //{
+            //    route.Name = route.Name.Replace('-', '_');
+            //}
 
             byte nrPoints = (byte)Math.Min(0xFF, route.wpts.Count);
             Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + nrPointsLength + nrPoints * RouteWaypointLength); // save a byte for the ending null char
