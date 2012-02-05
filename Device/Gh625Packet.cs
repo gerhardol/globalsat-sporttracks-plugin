@@ -48,7 +48,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public IList<TrackFileHeader625M> UnpackTrackHeaders()
         {
-            int numHeaders = this.PacketLength / 31;
+            int numHeaders = this.PacketLength / TrackHeaderLength;
             IList<TrackFileHeader625M> headers = new List<TrackFileHeader625M>();
             for (int i = 0; i < numHeaders; i++)
             {
@@ -176,8 +176,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, (Int16)trackFile.TrackPointCount);
 
             //unused in some headers
-            offset += this.Write(offset, 0); offset += 2;
-            offset += this.Write(offset, 0); offset += 2;
+            offset += this.Write(offset, 0);
+            offset += this.Write(offset, 0);
 
             return CheckOffset(TrackHeaderLength, offset - startOffset);
         }
@@ -195,12 +195,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected override int WriteTrackPoint(int offset, TrackPoint trackpoint)
         {
-            this.Write32(offset, ToGlobLatLon(trackpoint.Latitude)); offset += 4;
-            this.Write32(offset, ToGlobLatLon(trackpoint.Longitude)); offset += 4;
-            this.Write(offset, (Int16)trackpoint.Altitude); offset += 2;
-            this.Write(offset, ToGlobSpeed(trackpoint.Speed)); offset += 2;
+            offset += this.Write32(offset, ToGlobLatLon(trackpoint.Latitude));
+            offset += this.Write32(offset, ToGlobLatLon(trackpoint.Longitude)); 
+            offset += this.Write(offset, (Int16)trackpoint.Altitude);
+            offset += this.Write(offset, ToGlobSpeed(trackpoint.Speed));
             this.PacketData[offset++] = (byte)trackpoint.HeartRate;
-            this.Write(offset, ToGlobTime16(trackpoint.IntervalTime)); offset += 2;
+            offset += this.Write(offset, ToGlobTime16(trackpoint.IntervalTime));
             return TrackPointLength;
         }
 
