@@ -154,8 +154,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //There are no pause markers in the Globalsat protocol
                     //Insert pauses when estimated/listed distance differs "too much"
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
-                    if (foundGPSPoint && activity.GPSRoute.Count > 0 ||
-                        activity.HeartRatePerMinuteTrack.Count > 0)
+                    //Share setting with global split
+                    if (ZoneFiveSoftware.SportTracks.Device.Globalsat.Plugin.Instance.Application.SystemPreferences.ImportSettings.SplitActivity &&
+                        (foundGPSPoint && activity.GPSRoute.Count > 0 ||
+                        activity.HeartRatePerMinuteTrack.Count > 0))
                     {
                         //estimated time for the pause
                         double estimatedSec = 0;
@@ -237,7 +239,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                     pointTime.AddMilliseconds(-pointTime.Millisecond),
                                     pointTime2.AddMilliseconds(-pointTime2.Millisecond)));
                                 //TODO: Remove remark when stable
-                                activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, sec:{3}, per:{4} {5}) ",
+                                activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
                                     pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time, perc, info) +
                                     System.Environment.NewLine;
                                 pointTime = pointTime2;
