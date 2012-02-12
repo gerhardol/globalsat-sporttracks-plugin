@@ -74,17 +74,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             GenericDevice device = new GenericDevice(configurationInfo);
             GlobalsatProtocol device2 = device.Device(monitor);
+            bool result = false;
             if (device2 != null)
             {
-                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo)+ " - " + device.devId,
+                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + device.devId,
                     monitor, importResults);
                 if (job == null)
                 {
                     return false;
                 }
-                return job.Import();
+                try
+                {
+                    result = job.Import();
+                }
+                catch
+                {
+                    //Here we know the devid but it is not connected
+                    monitor.ErrorText = "Device " + device.devId + " detected but not connected to PC.";
+                }
             }
-            return false;
+            return result;
         }
 
         #region Private members

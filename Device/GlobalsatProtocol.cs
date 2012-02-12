@@ -364,7 +364,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //Barometric devices
         public virtual bool HasElevationTrack { get { return false; } }
+        //625XT (but other?) do not require waypoints in routes
         public virtual bool RouteRequiresWaypoints { get { return true; } }
+        //The 561 only(?) have little endian size...
+        public virtual bool BigEndianPacketLength { get { return true; } }
     }
 
 
