@@ -151,7 +151,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             try
             {
-                byte[] sendPayload = packet.ConstructPayload(((GlobalsatProtocol)this).BigEndianPacketLength);
+                byte[] sendPayload = packet.ConstructPayload(BigEndianPacketLength);
 /*
 				 * Console.Write("Write:");
 				for(int i = 0; i < sendPayload.Length;i++)
@@ -328,6 +328,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
               lastExceptionText);
         }
 
+        //The 561 only(?) have little endian size...
+        public virtual bool BigEndianPacketLength { get { return true; } }
         public DeviceConfigurationInfo configInfo;
         private SerialPort port = null;
         private string devId = "";
