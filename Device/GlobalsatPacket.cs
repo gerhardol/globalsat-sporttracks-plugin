@@ -326,6 +326,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual int MaxRouteNameLength { get { return 15; } }
         protected virtual int RouteWaypointLength { get { return 8; } }
 		
+        //Some device related settings - accessed from packet classes
+        //Could be moved to device classes, accessed with a device reference when creating packets
         protected virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         protected virtual int ScreenBpp { get { return 2; } }
         protected virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
