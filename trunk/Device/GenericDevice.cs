@@ -26,43 +26,67 @@ using ZoneFiveSoftware.Common.Visuals;
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     //A generic device that should resolve to the actual device
-    //There should be no methods here, all should use Device()
+    //There should be no overridden methods in this class, all should use Device()
     class GenericDevice : GlobalsatProtocol
     {
         public GenericDevice() : base() { }
         public GenericDevice(string configInfo) : base(configInfo) { }
 
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
+        public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
+        private bool m_bigEndianPacketLength = true;
 
         public string devId = null;
         /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
-            devId = base.Open();
-            //No close here
+            try
+            {
+                devId = base.Open();
+                //No close here
+            }
+            catch
+            {
+                //561 - this could be skipped by default
+                m_bigEndianPacketLength = false;
+                devId = base.Open();
+            }
             if (!string.IsNullOrEmpty(devId))
             {
-                IList<GlobalsatProtocol> Devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
-                foreach (GlobalsatProtocol g in Devices)
+                IList<GlobalsatProtocol> devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
+                GlobalsatProtocol g = checkValidId(devId, devices);
+                if (g != null)
                 {
-                    if (g.DefaultConfig.AllowedIds != null)
+                    //No need to translate, will just flash by
+                    monitor.StatusText = devId + " detected";
+                    return g;
+                }
+            }
+            monitor.ErrorText = "Globalsat device not detected";
+            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
+            return null;
+        }
+
+        private GlobalsatProtocol checkValidId(string devId, IList<GlobalsatProtocol> Devices)
+        {
+            foreach (GlobalsatProtocol g in Devices)
+            {
+                if (g.DefaultConfig.AllowedIds != null)
+                {
+                    foreach (string s in g.DefaultConfig.AllowedIds)
                     {
-                        foreach (string s in g.DefaultConfig.AllowedIds)
+                        if (devId.StartsWith(s))
                         {
-                            if (devId.StartsWith(s))
-                            {
-                                g.CopyPort(this);
-                                //Copy settings from generic
-                                g.configInfo.HoursAdjustment = this.configInfo.HoursAdjustment;
-                                g.configInfo.ImportOnlyNew = this.configInfo.ImportOnlyNew;
-                                return g;
-                            }
+                            g.CopyPort(this);
+                            //Copy settings from generic
+                            g.configInfo.HoursAdjustment = this.configInfo.HoursAdjustment;
+                            g.configInfo.ImportOnlyNew = this.configInfo.ImportOnlyNew;
+                            return g;
                         }
                     }
                 }
             }
-            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             return null;
         }
 

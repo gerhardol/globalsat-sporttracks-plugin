@@ -154,15 +154,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 Cadence=0; // Cadence, unknown units
         }
 
-        public byte[] ConstructPayload()
+        public byte[] ConstructPayload(bool bigEndianPacketLength)
         {
             byte[] data = new byte[5 + this.PacketLength];
             data[0] = 0x02;
             //Add CommandId to length, always big endian
             //Write(true, data, 1, (Int16)(this.PacketLength + 1));
             byte[] b = BitConverter.GetBytes((Int16)(this.PacketLength + 1));
-            data[1] = b[1];
-            data[2] = b[0];
+            if (bigEndianPacketLength)
+            {
+                data[1] = b[1];
+                data[2] = b[0];
+            }
+            else
+            {
+                //Only for the 625XT
+                data[1] = b[0];
+                data[2] = b[1];
+            }
             data[3] = this.CommandId;
 
             for (int i = 0; i < this.PacketLength; i++)

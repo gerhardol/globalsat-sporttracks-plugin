@@ -151,7 +151,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             try
             {
-                byte[] sendPayload = packet.ConstructPayload();
+                byte[] sendPayload = packet.ConstructPayload(((GlobalsatProtocol)this).BigEndianPacketLength);
 /*
 				 * Console.Write("Write:");
 				for(int i = 0; i < sendPayload.Length;i++)
@@ -175,6 +175,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 received.CommandId = (byte)port.ReadByte();
                 int hiPacketLen = port.ReadByte();
                 int loPacketLen = port.ReadByte();
+                //Note: The size from the device always seem to be the same (not when sending)
                 received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
             }
             catch (Exception e)
