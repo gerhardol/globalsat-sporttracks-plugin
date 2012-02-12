@@ -327,7 +327,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    return systemInfo;
         //}
 
-        protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
+        protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(120, 80); } }
         protected override int ScreenBpp { get { return 1; } }
         protected override int TrackHeaderLength { get { return 31; } }
         protected override int TrainDataHeaderLength { get { return TrackHeaderLength; } }
