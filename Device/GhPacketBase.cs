@@ -168,7 +168,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             else
             {
-                //Only for the 625XT
+                //Only for the 561
                 data[1] = b[0];
                 data[2] = b[1];
             }

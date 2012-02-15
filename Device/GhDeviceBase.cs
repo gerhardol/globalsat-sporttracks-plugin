@@ -256,6 +256,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected virtual void OpenPort(IList<string> comPorts)
         {
+            this.devId = "";
             if (comPorts == null || comPorts.Count == 0)
             {
                 comPorts = new List<string>();
@@ -328,10 +329,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
               lastExceptionText);
         }
 
+        public string devId = "";
         //The 561 only(?) have little endian size...
         public virtual bool BigEndianPacketLength { get { return true; } }
         public DeviceConfigurationInfo configInfo;
+
         private SerialPort port = null;
-        private string devId = "";
     }
 }
