@@ -36,30 +36,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
         private bool m_bigEndianPacketLength = true;
 
-        public string devId = null;
         /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
             try
             {
-                devId = base.Open();
+                this.Open();
                 //No close here
             }
             catch
             {
+                this.Close();
                 //561 - this could be skipped by default
                 m_bigEndianPacketLength = false;
-                devId = base.Open();
+                this.Open();
             }
-            if (!string.IsNullOrEmpty(devId))
+            if (!string.IsNullOrEmpty(this.devId))
             {
                 IList<GlobalsatProtocol> devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
-                GlobalsatProtocol g = checkValidId(devId, devices);
+                GlobalsatProtocol g = checkValidId(this.devId, devices);
                 if (g != null)
                 {
                     //No need to translate, will just flash by
-                    monitor.StatusText = devId + " detected";
+                    monitor.StatusText = this.devId + " detected";
                     return g;
                 }
             }
