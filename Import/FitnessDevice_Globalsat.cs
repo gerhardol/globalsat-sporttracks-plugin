@@ -90,7 +90,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 catch
                 {
                     //Here we know the devid but it is not connected
-                    monitor.ErrorText = "Device " + device.devId + " detected but not connected to PC.";
+                    //monitor.ErrorText = "Device " + device.devId + " detected but not connected to PC.";
                 }
             }
             return result;
