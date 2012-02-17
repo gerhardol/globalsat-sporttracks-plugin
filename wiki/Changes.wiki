@@ -5,6 +5,10 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.135 2012-02-17
+ * Get screenshot for GH-625M
+ * Read waypoints for 561
+ 
 3.2.125 2012-02-01
  * Incorrect offsets when writing activities to 505, 580
 
