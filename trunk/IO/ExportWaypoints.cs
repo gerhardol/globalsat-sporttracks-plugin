@@ -40,6 +40,7 @@ namespace WaypointsPlugin.IO
                     wpt.lat = (decimal)waypoint.Latitude;
                     wpt.lon = (decimal)waypoint.Longitude;
                     wpt.ele = (decimal)waypoint.Altitude;
+                    wpt.eleSpecified = true;
                     wpt.type = waypoint.IconNr.ToString();
 
                     wptList.Add(wpt);
@@ -104,6 +105,7 @@ namespace WaypointsPlugin.IO
                             wpt.lat = (decimal)g.Latitude;
                             wpt.lon = (decimal)g.Longitude;
                             wpt.ele = g.Altitude;
+                            wpt.eleSpecified = true;
                             wpts.Add(wpt);
                         }
                         rte.rtept = wpts.ToArray();

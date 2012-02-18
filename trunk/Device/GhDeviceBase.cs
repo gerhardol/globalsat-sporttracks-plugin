@@ -133,6 +133,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (!port.IsOpen)
             {
+                //Physical port should be closed
                 port.Open();
             }
             if (packet.CommandId == GhPacketBase.CommandWhoAmI)
@@ -164,6 +165,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (Exception e)
             {
+                port.Close();
                 throw e;
             }
 
@@ -180,11 +182,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (Exception e)
             {
+                port.Close();
                 throw e;
             }			
             if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
                 received.PacketLength > 0x1000)
             {
+                port.Close();
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             received.PacketData = new byte[received.PacketLength];
@@ -213,6 +217,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch(Exception e)
             {
+                port.Close();
                 throw e;
 
                 //Debug template, if the device is corrupted

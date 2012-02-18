@@ -80,6 +80,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 AddActivities(importResults, sections);
                 return true;
             }
+            catch (TimeoutException)
+            {
+                device.ConnectedNoComm(monitor);
+                return false;
+            }
             finally
             {
                 device.Close();

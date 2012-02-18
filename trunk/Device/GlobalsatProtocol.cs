@@ -30,6 +30,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             //TODO: Popup with more information too?
         }
+        //Standard error text when a device is detected but "second protocol" times out
+        public void ConnectedNoComm(IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = this.devId + " detected but not connected.";
+        }
+
         //Import kept in separate structure, while most other protocols implemented here
         public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -85,6 +91,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     result++;
                 }
+            }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
+                return 0;
             }
             catch (Exception ex)
             {
@@ -150,6 +161,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual GlobalsatDeviceConfiguration GetSystemConfiguration2(IJobMonitor jobMonitor)
         {
+            //No need to check if device is connected
             GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
 
             this.Open();
@@ -180,6 +192,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual void SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
+            //No need to check if device is connected
             this.Open();
             try
             {
@@ -208,6 +221,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 return waypoints;
             }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
+                return null;
+            }
             catch (Exception e)
             {
                 throw new Exception(Properties.Resources.Device_GetWaypoints_Error+e);
@@ -231,6 +249,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 return nrSentWaypoints;
             }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
+                return 0;
+            }
             catch (Exception e)
             {
                 throw new Exception(Properties.Resources.Device_SendWaypoints_Error+e);
@@ -248,6 +271,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.configInfo.MaxNrWaypoints, waypointNames);
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+            }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
             }
             catch (Exception e)
             {
@@ -267,6 +294,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 GlobalsatPacket packet = PacketFactory.DeleteAllWaypoints();
                 GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+            }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
             }
             catch (Exception e)
             {
@@ -331,6 +362,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     res++;
                 }
             }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
+                return 0;
+            }
             catch (Exception e)
             {
                 throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
@@ -344,7 +380,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual Bitmap GetScreenshot(IJobMonitor jobMonitor)
         {
-
+            //Note: No check for connected here
             this.Open();
             try
             {

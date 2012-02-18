@@ -99,7 +99,7 @@ namespace WaypointsPlugin.IO
 
                     string name = trackName.Substring(0, subLenght);
                     name += string.Format("{0:" + numberFormat + "}", pointNr);
-                    GlobalsatWaypoint waypoint = new GlobalsatWaypoint(name, 0, 0, (double)trkPoint.lat, (double)trkPoint.lon);
+                    GlobalsatWaypoint waypoint = new GlobalsatWaypoint(name, 0, (short)trkPoint.ele, (double)trkPoint.lat, (double)trkPoint.lon);
 
                     waypoint.Altitude = (short)trkPoint.ele;
 

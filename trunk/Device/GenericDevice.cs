@@ -63,7 +63,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     return g;
                 }
             }
-            monitor.ErrorText = "Globalsat device not detected";
+            monitor.ErrorText = "Globalsat device not detected.";
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             return null;
         }
