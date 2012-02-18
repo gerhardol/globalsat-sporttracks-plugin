@@ -38,11 +38,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.sourceDescription = sourceDescription.Replace(Environment.NewLine, " ");
             this.monitor = monitor;
             this.importResults = importResults;
-            //Here we know the devid, assume it is not connected
-            if (!string.IsNullOrEmpty(device.devId))
-            {
-                monitor.ErrorText = "Device " + device.devId + " detected but not connected to PC.";
-            }
         }
 
         public abstract bool Import();
@@ -102,6 +97,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
                 AddActivities(importResults, trains);
                 return true;
+            }
+            catch (TimeoutException)
+            {
+                device.ConnectedNoComm(monitor);
+                return false;
             }
             finally
             {

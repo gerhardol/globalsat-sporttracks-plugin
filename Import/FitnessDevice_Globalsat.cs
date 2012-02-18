@@ -81,17 +81,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     monitor, importResults);
                 if (job == null)
                 {
+                    monitor.ErrorText = "Import not supported for " + device.devId;
                     return false;
                 }
-                try
-                {
-                    result = job.Import();
-                }
-                catch
-                {
-                    //Here we know the devid but it is not connected
-                    //monitor.ErrorText = "Device " + device.devId + " detected but not connected to PC.";
-                }
+                result = job.Import();
             }
             return result;
         }

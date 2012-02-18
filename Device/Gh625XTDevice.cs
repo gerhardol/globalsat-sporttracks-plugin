@@ -60,6 +60,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 return nrSentWaypoints;
             }
+            catch (TimeoutException)
+            {
+                ConnectedNoComm(jobMonitor);
+                return 0;
+            }
             catch (Exception ex)
             {
                 throw new Exception(Properties.Resources.Device_SendWaypoints_Error + ex);
