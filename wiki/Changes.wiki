@@ -5,11 +5,14 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.138 2012-02-19
+ * When a device is connected and turned on but not prepared to communicate, try to inform the user. Requires updated Waypoints plugin for waypoints/activities/routes.
+ * Minor translation update - some added to online spreadsheet
+
 3.2.136 2012-02-17
  * Get screenshot for GH-625M
  * Read waypoints for 561
  * Elevation always 0 for waypoints
- * When a device is connected and turned on but not prepared to communicate, try to inform the user
  
 3.2.125 2012-02-01
  * Incorrect offsets when writing activities to 505, 580

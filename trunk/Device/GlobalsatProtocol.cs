@@ -28,20 +28,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public class FeatureNotSupportedException : NotImplementedException
         {
-            //TODO: Popup with more information too?
-            public FeatureNotSupportedException() : base("Not supported by this device.") { }
+            //This info should be handled by callers
+            public FeatureNotSupportedException() : base(Properties.Resources.Device_Unsupported) { }
         }
         //Standard error text when a device is detected but "second protocol" times out
         public void NoCommunicationError(IJobMonitor jobMonitor)
         {
-            //TBD Translate
             if (!string.IsNullOrEmpty(this.devId))
             {
-                jobMonitor.ErrorText = this.devId + " turned on but not connected.";
+                jobMonitor.ErrorText = string.Format(Properties.Resources.Device_TurnOnNotConnected, this.devId);
             }
             else
             {
-                jobMonitor.ErrorText = "Globalsat device not detected.";
+                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error;
             }
         }
 

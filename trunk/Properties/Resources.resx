@@ -146,7 +146,7 @@
     <value>Error loading waypoints</value>
   </data>
   <data name="Device_InsuficientMemory_Error" xml:space="preserve">
-    <value>Insuficient memory</value>
+    <value>Insuficient device memory</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
     <value>Globalsat device not found</value>
@@ -201,5 +201,11 @@
   </data>
   <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
     <value>Import new data only</value>
+  </data>
+  <data name="Device_TurnOnNotConnected" xml:space="preserve">
+    <value>{0} turned on but not connected</value>
+  </data>
+  <data name="Device_Unsupported" xml:space="preserve">
+    <value>Not supported by this Globalsat device</value>
   </data>
 </root>
