@@ -59,54 +59,65 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             try
             {
-                device.Open();
-                IList<GlobalsatPacket.TrackFileHeader> headers = ((GlobalsatProtocol2)device).ReadTrackHeaders(monitor);
-                List<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
-
-                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.Open())
                 {
-                    IDictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>>();
-                    foreach (GlobalsatPacket.TrackFileHeader header in headers)
-                    {
-                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
-                        if (!headersByStart.ContainsKey(start))
-                        {
-                            headersByStart.Add(start, new List<GlobalsatPacket.TrackFileHeader>());
-                        }
-                        headersByStart[start].Add(header);
-                    }
-                    DateTime now = DateTime.UtcNow;
-                    foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
-                    {
-                        DateTime findTime = activity.StartTime;
-                        if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.configInfo.SecondsAlwaysImport)
-                        {
-                            headersByStart.Remove(findTime);
-                        }
-                    }
-                    foreach (IList<GlobalsatPacket.TrackFileHeader> dateHeaders in headersByStart.Values)
-                    {
-                        fetch.AddRange(dateHeaders);
-                    }
-                }
-                else
-                {
-                    fetch.AddRange(headers);
-                }
+                    IList<GlobalsatPacket.TrackFileHeader> headers = ((GlobalsatProtocol2)device).ReadTrackHeaders(monitor);
+                    List<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
 
-                IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                AddActivities(importResults, trains);
-                return true;
+                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    {
+                        IDictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>>();
+                        foreach (GlobalsatPacket.TrackFileHeader header in headers)
+                        {
+                            DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                            if (!headersByStart.ContainsKey(start))
+                            {
+                                headersByStart.Add(start, new List<GlobalsatPacket.TrackFileHeader>());
+                            }
+                            headersByStart[start].Add(header);
+                        }
+                        DateTime now = DateTime.UtcNow;
+                        foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
+                        {
+                            DateTime findTime = activity.StartTime;
+                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.configInfo.SecondsAlwaysImport)
+                            {
+                                headersByStart.Remove(findTime);
+                            }
+                        }
+                        foreach (IList<GlobalsatPacket.TrackFileHeader> dateHeaders in headersByStart.Values)
+                        {
+                            fetch.AddRange(dateHeaders);
+                        }
+                    }
+                    else
+                    {
+                        fetch.AddRange(headers);
+                    }
+
+                    IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
+                    AddActivities(importResults, trains);
+                }
             }
-            catch (TimeoutException)
+            catch (Exception e)
             {
-                device.ConnectedNoComm(monitor);
-                return false;
+                if (!device.DataRecieved)
+                {
+                    device.NoCommunicationError(monitor);
+                    return false;
+                }
+                throw e;
             }
             finally
             {
                 device.Close();
             }
+            if (!device.DataRecieved)
+            {
+                device.NoCommunicationError(monitor);
+                return false;
+            }
+            return true;
         }
 
         protected virtual void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains)

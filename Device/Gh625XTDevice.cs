@@ -47,32 +47,40 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
-            this.Open();
-            try
+            int nrSentWaypoints = 0;
+            if (this.Open())
             {
-                int nrSentWaypoints = 0;
-                foreach (GlobalsatWaypoint g in waypoints)
+                try
                 {
-                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
-                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    foreach (GlobalsatWaypoint g in waypoints)
+                    {
+                        GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
+                        GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                    nrSentWaypoints += response.ResponseSendWaypoints();
+                        nrSentWaypoints += response.ResponseSendWaypoints();
+                    }
                 }
-                return nrSentWaypoints;
+                catch (Exception ex)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        this.NoCommunicationError(jobMonitor);
+                        return 0;
+                    }
+                    throw new Exception(Properties.Resources.Device_SendWaypoints_Error + ex);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
+                //Normal case
+                NoCommunicationError(jobMonitor);
                 return 0;
             }
-            catch (Exception ex)
-            {
-                throw new Exception(Properties.Resources.Device_SendWaypoints_Error + ex);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return nrSentWaypoints;
         }
         public override bool RouteRequiresWaypoints { get { return false; } }
     }

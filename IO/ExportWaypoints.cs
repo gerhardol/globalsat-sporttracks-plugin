@@ -26,6 +26,10 @@ namespace WaypointsPlugin.IO
     {
         public static Stream ExportGpxWaypointsStream(IList<GlobalsatWaypoint> waypoints)
         {
+            if (waypoints == null)
+            {
+                return null;
+            }
             gpxType gpxFile = new gpxType();
             //gpxFile.creator = "SportTracks KeymazePlugin";
 
@@ -85,6 +89,10 @@ namespace WaypointsPlugin.IO
     {
         public static Stream ExportGpxRouteStream(IList<GlobalsatRoute> routes)
         {
+            if (routes == null)
+            {
+                return null;
+            }
             gpxType gpxFile = new gpxType();
             //gpxFile.creator = "SportTracks KeymazePlugin";
 

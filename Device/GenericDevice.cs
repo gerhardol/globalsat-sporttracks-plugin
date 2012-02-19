@@ -35,17 +35,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
         public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
         private bool m_bigEndianPacketLength = true;
+        public IList<GlobalsatProtocol> AllowedDevices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
 
         /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device(IJobMonitor monitor)
         {
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
-            try
-            {
-                this.Open();
-                //No close here
-            }
-            catch
+            if(!this.Open())
             {
                 this.Close();
                 //561 - this could be skipped by default
@@ -54,8 +50,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             if (!string.IsNullOrEmpty(this.devId))
             {
-                IList<GlobalsatProtocol> devices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
-                GlobalsatProtocol g = checkValidId(this.devId, devices);
+                GlobalsatProtocol g = checkValidId(this.devId, AllowedDevices);
                 if (g != null)
                 {
                     //No need to translate, will just flash by
@@ -63,7 +58,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     return g;
                 }
             }
-            monitor.ErrorText = "Globalsat device not detected.";
+            //Failed to open, set monitor.ErrorText
+            this.NoCommunicationError(monitor);
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             return null;
         }
@@ -95,35 +91,35 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             string result = "Error";
             try
             {
-                string devId = this.Open();
+                this.Open();
                 GlobalsatProtocol device2 = this.Device(new JobMonitor());
                 if (device2 != null)
                 {
                     if (device2.configInfo.AllowedIds == null || device2.configInfo.AllowedIds.Count == 0)
                     {
-                        devId += " (Globalsat Generic)";
+                        result = this.devId + " (Globalsat Generic)";
                     }
                     else
                     {
                         bool found = false;
                         foreach (string s in device2.DefaultConfig.AllowedIds)
                         {
-                            if (devId.Equals(s))
+                            if (this.devId.Equals(s))
                             {
                                 found = true;
+                                result = devId;
                             }
                         }
                         if (!found)
                         {
-                            devId += " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
+                            result = devId + " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
                         }
                     }
                 }
                 else
                 {
-                    devId += " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
+                    result = devId + " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
                 }
-                result = devId;
             }
             catch (Exception)
             {

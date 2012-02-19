@@ -45,6 +45,10 @@ namespace WaypointsPlugin.IO
     {
         public static IList<GlobalsatWaypoint> ImportStreamGpxWaypoints(Stream file)
         {
+            if (file == null)
+            {
+                return null;
+            }
             XmlTextReader xmlReader = null;
             gpxType gpxFile = null;
             file.Position = 0;
@@ -364,6 +368,10 @@ namespace WaypointsPlugin.IO
     {
         public static IList<GlobalsatRoute> ImportStreamGpxRoutes(Stream file)
         {
+            if (file == null)
+            {
+                return null;
+            }
             XmlTextReader xmlReader = null;
             gpxType gpxFile = null;
             file.Position = 0;
