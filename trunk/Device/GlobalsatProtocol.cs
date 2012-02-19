@@ -29,11 +29,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public class FeatureNotSupportedException : NotImplementedException
         {
             //TODO: Popup with more information too?
+            public FeatureNotSupportedException() : base("Not supported by this device.") { }
         }
         //Standard error text when a device is detected but "second protocol" times out
-        public void ConnectedNoComm(IJobMonitor jobMonitor)
+        public void NoCommunicationError(IJobMonitor jobMonitor)
         {
-            jobMonitor.ErrorText = this.devId + " detected but not connected.";
+            //TBD Translate
+            if (!string.IsNullOrEmpty(this.devId))
+            {
+                jobMonitor.ErrorText = this.devId + " turned on but not connected.";
+            }
+            else
+            {
+                jobMonitor.ErrorText = "Globalsat device not detected.";
+            }
         }
 
         //Import kept in separate structure, while most other protocols implemented here
@@ -50,60 +59,67 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 return result;
             }
 
-            this.Open();
-            try
+            if (this.Open())
             {
-                foreach (GhPacketBase.Train train in trains)
+                try
                 {
-                    IList<GlobalsatPacket> packets = SendTrackPackets(train);
-
-                    int i = 0;
-                    foreach (GlobalsatPacket packet in packets)
+                    foreach (GhPacketBase.Train train in trains)
                     {
-                        GlobalsatPacket response =  (GlobalsatPacket)this.SendPacket(packet);
- 
-                        if (response != null && response.CommandId != packet.CommandId )
+                        IList<GlobalsatPacket> packets = SendTrackPackets(train);
+
+                        int i = 0;
+                        foreach (GlobalsatPacket packet in packets)
                         {
-                            //Generic codes handled in SendPacket
-                            if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                            GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+
+                            if (response != null && response.CommandId != packet.CommandId)
                             {
-                                // TODO resend
-                                throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                                //Generic codes handled in SendPacket
+                                if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                                {
+                                    // TODO resend
+                                    throw new Exception(Properties.Resources.Device_SendTrack_Error);
+                                }
+                                else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
+                                {
+                                    //Done, all sent
+                                    break;
+                                }
+                                //	 Console.WriteLine("------ send error 4");
+                                throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
                             }
-                            else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
+
+                            i++;
+                            float progress = (float)(packets.Count <= 1 ? 1 : (double)(i) / (double)(packets.Count - 1));
+
+                            jobMonitor.PercentComplete = progress;
+
+                            if (jobMonitor.Cancelled)
                             {
-                                //Done, all sent
-                                break;
+                                return result;
                             }
-							//	 Console.WriteLine("------ send error 4");
-                            throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
                         }
-
-                        i++;
-                        float progress = (float)(packets.Count <= 1 ? 1 : (double)(i) / (double)(packets.Count - 1));
-
-                        jobMonitor.PercentComplete = progress;
-
-                        if (jobMonitor.Cancelled)
-                        {
-                            return result;
-                        }
+                        result++;
                     }
-                    result++;
+                }
+                catch (Exception ex)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        result = 0;
+                    }
+                    throw new Exception(Properties.Resources.Device_SendTrack_Error + ex);
+                }
+                finally
+                {
+                    this.Close();
                 }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
-                return 0;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(Properties.Resources.Device_SendTrack_Error+ex);
-            }
-            finally
-            {
-                this.Close();
+                NoCommunicationError(jobMonitor);
+                result = 0;
             }
             return result;
         }
@@ -164,216 +180,266 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //No need to check if device is connected
             GlobalsatDeviceConfiguration devConfig = new GlobalsatDeviceConfiguration();
 
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.GetSystemConfiguration();
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
-                devConfig.DeviceName = systemInfo.DeviceName;
-                //devConfig.SystemInfoData = response.PacketData;
+                    GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
+                    devConfig.DeviceName = systemInfo.DeviceName;
+                    //devConfig.SystemInfoData = response.PacketData;
 
-                packet = PacketFactory.GetSystemConfiguration2();
-                response = (GlobalsatPacket)this.SendPacket(packet);
+                    packet = PacketFactory.GetSystemConfiguration2();
+                    response = (GlobalsatPacket)this.SendPacket(packet);
 
-                devConfig.SystemConfigData = response.PacketData;
-                return devConfig;
+                    devConfig.SystemConfigData = response.PacketData;
+                    return devConfig;
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error+e);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return null;
         }
 
         public virtual void SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
             //No need to check if device is connected
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigData);
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                //No info in the response
-            }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error+e);
-            }
-            finally
-            {
-                this.Close();
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigData);
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    //No info in the response
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
         }
 
         public virtual IList<GlobalsatWaypoint> GetWaypoints(IJobMonitor jobMonitor)
         {
-            this.Open();
-            try
+            IList<GlobalsatWaypoint> waypoints = null;
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.GetWaypoints();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                IList<GlobalsatWaypoint> waypoints = response.ResponseGetWaypoints();
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.GetWaypoints();
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    waypoints = response.ResponseGetWaypoints();
 
-                return waypoints;
+                }
+                catch (Exception e)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        return null;
+                    }
+                    throw new Exception(Properties.Resources.Device_GetWaypoints_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
-                return null;
+                NoCommunicationError(jobMonitor);
+                waypoints = null;
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_GetWaypoints_Error+e);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return waypoints;
         }
 
         public virtual int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
-            this.Open();
-            try
+            int nrSentWaypoints = 0;
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, waypoints);
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, waypoints);
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                // km500 no out of memory- waypoint overwritten
-                int nrSentWaypoints = response.ResponseSendWaypoints();
+                    // km500 no out of memory- waypoint overwritten
+                    nrSentWaypoints = response.ResponseSendWaypoints();
 
-                return nrSentWaypoints;
+                }
+                catch (Exception e)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        return 0;
+                    }
+                    throw new Exception(Properties.Resources.Device_SendWaypoints_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
-                return 0;
+                NoCommunicationError(jobMonitor);
+                nrSentWaypoints = 0;
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_SendWaypoints_Error+e);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return nrSentWaypoints;
         }
 
-        public virtual void DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames, IJobMonitor jobMonitor)
+        public virtual bool DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames, IJobMonitor jobMonitor)
         {
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.configInfo.MaxNrWaypoints, waypointNames);
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.configInfo.MaxNrWaypoints, waypointNames);
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                }
+                catch (Exception e)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        return false;
+                    }
+                    throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
+                NoCommunicationError(jobMonitor);
+                return false;
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error+e);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return true;
         }
 
 
-        public virtual void DeleteAllWaypoints(IJobMonitor jobMonitor)
+        public virtual bool DeleteAllWaypoints(IJobMonitor jobMonitor)
         {
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.DeleteAllWaypoints();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.DeleteAllWaypoints();
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                }
+                catch (Exception e)
+                {
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        return false;
+                    }
+                    throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
+                NoCommunicationError(jobMonitor);
+                return false;
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error+e);
-            }
-            finally
-            {
-                this.Close();
-            }
+            return true;
         }
 
         public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
         {
             int res = 0;
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet;
-                GlobalsatPacket response;
-                if (this.RouteRequiresWaypoints)
+                try
                 {
-                    packet = PacketFactory.GetWaypoints();
-                    response = (GlobalsatPacket)this.SendPacket(packet);
-                    IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
-
-                    //Routes need waypoints - find those missing
-                    IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
-                    foreach (GlobalsatRoute route in routes)
+                    GlobalsatPacket packet;
+                    GlobalsatPacket response;
+                    if (this.RouteRequiresWaypoints)
                     {
-                        foreach (GlobalsatWaypoint wpt1 in route.wpts)
+                        packet = PacketFactory.GetWaypoints();
+                        response = (GlobalsatPacket)this.SendPacket(packet);
+                        IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
+
+                        //Routes need waypoints - find those missing
+                        IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
+                        foreach (GlobalsatRoute route in routes)
                         {
-                            bool found = false;
-                            foreach (GlobalsatWaypoint wpt2 in wptDev)
+                            foreach (GlobalsatWaypoint wpt1 in route.wpts)
                             {
-                                if (GhPacketBase.ToGlobLatLon(wpt1.Latitude)  == GhPacketBase.ToGlobLatLon(wpt2.Latitude) &&
-                                    GhPacketBase.ToGlobLatLon(wpt1.Longitude) == GhPacketBase.ToGlobLatLon(wpt2.Longitude))
+                                bool found = false;
+                                foreach (GlobalsatWaypoint wpt2 in wptDev)
                                 {
-                                    found = true;
-                                    break;
+                                    if (GhPacketBase.ToGlobLatLon(wpt1.Latitude) == GhPacketBase.ToGlobLatLon(wpt2.Latitude) &&
+                                        GhPacketBase.ToGlobLatLon(wpt1.Longitude) == GhPacketBase.ToGlobLatLon(wpt2.Longitude))
+                                    {
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found)
+                                {
+                                    wptSend.Add(wpt1);
                                 }
                             }
-                            if (!found)
-                            {
-                                wptSend.Add(wpt1);
-                            }
+                        }
+
+                        if (wptSend.Count > 0)
+                        {
+                            //Send with normal protocol, 625XT requires one by one
+                            this.SendWaypoints(wptSend, jobMonitor);
+                            this.Open(); //Reopen
                         }
                     }
 
-                    if (wptSend.Count > 0)
+                    //Finally the routes...
+                    foreach (GlobalsatRoute route in routes)
                     {
-                        //Send with normal protocol, 625XT requires one by one
-                        this.SendWaypoints(wptSend, jobMonitor);
-                        this.Open();
+                        packet = PacketFactory.SendRoute(route);
+                        response = (GlobalsatPacket)this.SendPacket(packet);
+                        res++;
                     }
                 }
-
-                //Finally the routes...
-                foreach (GlobalsatRoute route in routes)
+                catch (Exception e)
                 {
-                    packet = PacketFactory.SendRoute(route);
-                    response = (GlobalsatPacket)this.SendPacket(packet);
-                    res++;
+                    if (!this.DataRecieved)
+                    {
+                        NoCommunicationError(jobMonitor);
+                        return 0;
+                    }
+                    if (e is InsufficientMemoryException)
+                    {
+                        throw e;
+                    }
+                    throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
+                }
+                finally
+                {
+                    this.Close();
                 }
             }
-            catch (TimeoutException)
+            if (!this.DataRecieved)
             {
-                ConnectedNoComm(jobMonitor);
+                NoCommunicationError(jobMonitor);
                 return 0;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
-            }
-            finally
-            {
-                this.Close();
             }
             return res;
         }
@@ -381,21 +447,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual Bitmap GetScreenshot(IJobMonitor jobMonitor)
         {
             //Note: No check for connected here
-            this.Open();
-            try
+            if (this.Open())
             {
-                GlobalsatPacket packet = PacketFactory.GetScreenshot();
-                GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                return response.ResponseGetScreenshot();
+                try
+                {
+                    GlobalsatPacket packet = PacketFactory.GetScreenshot();
+                    GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    return response.ResponseGetScreenshot();
+                }
+                catch (Exception e)
+                {
+                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                }
+                finally
+                {
+                    this.Close();
+                }
             }
-            catch (Exception e)
-            {
-                throw new Exception(Properties.Resources.Device_GetInfo_Error+e); 
-            }
-            finally
-            {
-                this.Close();
-            }
+            return null;
         }
 
         //Barometric devices

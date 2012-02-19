@@ -42,53 +42,64 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 Gh615Device device = (Gh615Device)this.device;
-                device.Open();
-                IList<Gh615Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
-                List<Gh615Packet.TrackFileHeader> fetch = new List<Gh615Packet.TrackFileHeader>();
-
-                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.Open())
                 {
-                    IDictionary<DateTime, IList<Gh615Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<Gh615Packet.TrackFileHeader>>();
-                    foreach (Gh615Packet.TrackFileHeader header in headers)
-                    {
-                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
-                        if (!headersByStart.ContainsKey(start))
-                        {
-                            headersByStart.Add(start, new List<Gh615Packet.TrackFileHeader>());
-                        }
-                        headersByStart[start].Add(header);
-                    }
-                    foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
-                    {
-                        DateTime findTime = activity.StartTime.ToLocalTime();
-                        if (headersByStart.ContainsKey(findTime))
-                        {
-                            headersByStart.Remove(findTime);
-                        }
-                    }
-                    foreach (IList<Gh615Packet.TrackFileHeader> dateHeaders in headersByStart.Values)
-                    {
-                        fetch.AddRange(dateHeaders);
-                    }
-                }
-                else
-                {
-                    fetch.AddRange(headers);
-                }
+                    IList<Gh615Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
+                    List<Gh615Packet.TrackFileHeader> fetch = new List<Gh615Packet.TrackFileHeader>();
 
-                IList<Gh615Packet.TrackFileSection> sections = device.ReadTracks(fetch, monitor);
-                AddActivities(importResults, sections);
-                return true;
+                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    {
+                        IDictionary<DateTime, IList<Gh615Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<Gh615Packet.TrackFileHeader>>();
+                        foreach (Gh615Packet.TrackFileHeader header in headers)
+                        {
+                            DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                            if (!headersByStart.ContainsKey(start))
+                            {
+                                headersByStart.Add(start, new List<Gh615Packet.TrackFileHeader>());
+                            }
+                            headersByStart[start].Add(header);
+                        }
+                        foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
+                        {
+                            DateTime findTime = activity.StartTime.ToLocalTime();
+                            if (headersByStart.ContainsKey(findTime))
+                            {
+                                headersByStart.Remove(findTime);
+                            }
+                        }
+                        foreach (IList<Gh615Packet.TrackFileHeader> dateHeaders in headersByStart.Values)
+                        {
+                            fetch.AddRange(dateHeaders);
+                        }
+                    }
+                    else
+                    {
+                        fetch.AddRange(headers);
+                    }
+
+                    IList<Gh615Packet.TrackFileSection> sections = device.ReadTracks(fetch, monitor);
+                    AddActivities(importResults, sections);
+                }
             }
-            catch (TimeoutException)
+            catch (Exception e)
             {
-                device.ConnectedNoComm(monitor);
-                return false;
+                if (!device.DataRecieved)
+                {
+                    device.NoCommunicationError(monitor);
+                    return false;
+                }
+                throw e;
             }
             finally
             {
                 device.Close();
             }
+            if (!device.DataRecieved)
+            {
+                device.NoCommunicationError(monitor);
+                return false;
+            }
+            return true;
         }
 
 

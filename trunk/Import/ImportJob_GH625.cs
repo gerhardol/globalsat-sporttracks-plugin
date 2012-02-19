@@ -42,53 +42,64 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 Gh625Device device = (Gh625Device)this.device;
-                device.Open();
-                IList<Gh625Packet.TrackFileHeader625M> headers = device.ReadTrackHeaders(monitor);
-                List<Gh625Packet.TrackFileHeader625M> fetch = new List<Gh625Packet.TrackFileHeader625M>();
-
-                if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                if (device.Open())
                 {
-                    IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>>();
-                    foreach (Gh625Packet.TrackFileHeader625M header in headers)
-                    {
-                        DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
-                        if (!headersByStart.ContainsKey(start))
-                        {
-                            headersByStart.Add(start, new List<Gh625Packet.TrackFileHeader625M>());
-                        }
-                        headersByStart[start].Add(header);
-                    }
-                    foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
-                    {
-                        DateTime findTime = activity.StartTime.ToLocalTime();
-                        if (headersByStart.ContainsKey(findTime))
-                        {
-                            headersByStart.Remove(findTime);
-                        }
-                    }
-                    foreach (IList<Gh625Packet.TrackFileHeader625M> dateHeaders in headersByStart.Values)
-                    {
-                        fetch.AddRange(dateHeaders);
-                    }
-                }
-                else
-                {
-                    fetch.AddRange(headers);
-                }
+                    IList<Gh625Packet.TrackFileHeader625M> headers = device.ReadTrackHeaders(monitor);
+                    List<Gh625Packet.TrackFileHeader625M> fetch = new List<Gh625Packet.TrackFileHeader625M>();
 
-                IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
-                AddActivities(importResults, sections);
-                return true;
+                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    {
+                        IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>>();
+                        foreach (Gh625Packet.TrackFileHeader625M header in headers)
+                        {
+                            DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                            if (!headersByStart.ContainsKey(start))
+                            {
+                                headersByStart.Add(start, new List<Gh625Packet.TrackFileHeader625M>());
+                            }
+                            headersByStart[start].Add(header);
+                        }
+                        foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
+                        {
+                            DateTime findTime = activity.StartTime.ToLocalTime();
+                            if (headersByStart.ContainsKey(findTime))
+                            {
+                                headersByStart.Remove(findTime);
+                            }
+                        }
+                        foreach (IList<Gh625Packet.TrackFileHeader625M> dateHeaders in headersByStart.Values)
+                        {
+                            fetch.AddRange(dateHeaders);
+                        }
+                    }
+                    else
+                    {
+                        fetch.AddRange(headers);
+                    }
+
+                    IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
+                    AddActivities(importResults, sections);
+                }
             }
-            catch (TimeoutException)
+            catch (Exception e)
             {
-                device.ConnectedNoComm(monitor);
-                return false;
+                if (!device.DataRecieved)
+                {
+                    device.NoCommunicationError(monitor);
+                    return false;
+                }
+                throw e;
             }
             finally
             {
                 device.Close();
             }
+            if (!device.DataRecieved)
+            {
+                device.NoCommunicationError(monitor);
+                return false;
+            }
+            return true;
         }
 
 

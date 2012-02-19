@@ -58,26 +58,25 @@ namespace GlobalsatDevicePlugin
             return device2.SendWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
-        public static void DeleteWpt(Stream waypoints, IJobMonitor jobMonitor)
+        public static bool DeleteWpt(Stream waypoints, IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
-            if (device2 == null) { return; }
-            device2.DeleteWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
-            jobMonitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
+            if (device2 == null) { return false; }
+            return device2.DeleteWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
-        public static void DeleteAllWpt(IJobMonitor jobMonitor)
+        public static bool DeleteAllWpt(IJobMonitor jobMonitor)
         {
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
-            if (device2 == null) { return; }
-            device2.DeleteAllWaypoints(jobMonitor);
+            if (device2 == null) { return false; }
+            return device2.DeleteAllWaypoints(jobMonitor);
         }
 
         public static Stream ImportRte(IJobMonitor jobMonitor)
         {
-            throw new Exception();
+            throw new GlobalsatProtocol.FeatureNotSupportedException();
             //GenericDevice device = new GenericDevice();
             //GlobalsatProtocol device2 = device.Device(jobMonitor);
             //if (device2 == null) { return null; }
@@ -95,7 +94,7 @@ namespace GlobalsatDevicePlugin
 
         public static void DeleteRte(Stream waypoints, IJobMonitor jobMonitor)
         {
-            throw new Exception();
+            throw new GlobalsatProtocol.FeatureNotSupportedException();
         }
 
         //Get the data in a generic Globalsat format, to separate ST

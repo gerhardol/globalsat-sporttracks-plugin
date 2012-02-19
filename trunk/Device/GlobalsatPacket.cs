@@ -207,7 +207,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Write(offset, (short)nrWaypoints);
             offset += 2;
 
-            for (int i = 0; i < nrWaypoints && nrWaypoints < MaxNrWaypoints; i++)
+            for (int i = 0; i < nrWaypoints && nrWaypoints <= MaxNrWaypoints; i++)
             {
                 string waypointName = waypoints[i].WaypointName;
 

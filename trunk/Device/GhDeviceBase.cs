@@ -68,13 +68,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public abstract GlobalsatPacket PacketFactory { get; }
 
-        public string Open()
+        public bool Open()
         {
             if (port == null)
             {
                 OpenPort(configInfo.ComPorts);
             }
-            return devId;
+            return (port != null);
         }
 
         public void Close()
@@ -98,11 +98,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.devId = b.devId;
         }
 
-        protected string ValidGlobalsatPort(SerialPort port)
+        protected bool ValidGlobalsatPort(SerialPort port)
         {
             GlobalsatPacket packet = PacketFactory.GetWhoAmI();
+            bool res = false;
+            //If "probe" packet fails, this is not a Globalsat port
+            //If some distinction needed (other device?), set some flag here
             GhPacketBase response = SendPacket(packet);
-            string res = "";
             if (response.CommandId == packet.CommandId && response.PacketLength > 1)
             {
                 string devId = response.ByteArr2String(0, 8);
@@ -110,7 +112,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     if (configInfo.AllowedIds == null || configInfo.AllowedIds.Count == 0)
                     {
-                        res = devId;
+                        this.devId = devId;
+                        res = true;
                     }
                     else
                     {
@@ -118,17 +121,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         {
                             if (devId.StartsWith(aId))
                             {
-                                res = devId;
+                                this.devId = devId;
+                                res = true;
                                 break;
                             }
                         }
                     }
                 }
             }
-			/* TODO show "devId" in some sort of error message, if not null and "res" is still "" */
             return res;
         }
 
+        //This routine has a lot of try-catch-rethrow to simplify debugging
         public virtual GhPacketBase SendPacket(GlobalsatPacket packet)
         {
             if (!port.IsOpen)
@@ -175,9 +179,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 received.CommandId = (byte)port.ReadByte();
+                if (packet.CommandId == GhPacketBase.CommandWhoAmI)
+                {
+                    this.DataRecieved = false;
+                }
+                else
+                {
+                    this.DataRecieved = true;
+                } 
                 int hiPacketLen = port.ReadByte();
                 int loPacketLen = port.ReadByte();
-                //Note: The size from the device always seem to be the same (not when sending)
+                //Note: The size from the device always seem to be the same (not so when sending)
                 received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
             }
             catch (Exception e)
@@ -252,13 +264,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
                 {
-                    throw new Exception(Properties.Resources.Device_InsuficientMemory_Error);
+                    throw new InsufficientMemoryException(Properties.Resources.Device_InsuficientMemory_Error);
                 }
                 throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
             }
             return received;
         }
 
+        //Try open the port. Catch all exceptions, let the caller determine if this is an error
         protected virtual void OpenPort(IList<string> comPorts)
         {
             this.devId = "";
@@ -286,7 +299,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
 
-            Exception lastException = null;
             foreach (int baudRate in configInfo.BaudRates)
             {
                 foreach (string comPort in comPorts)
@@ -296,10 +308,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         port = new SerialPort(comPort, baudRate);
                         port.WriteBufferSize = configInfo.MaxPacketPayload;
-                        string id = ValidGlobalsatPort(port);
-                        if (!string.IsNullOrEmpty(id))
+                        if(ValidGlobalsatPort(port))
                         {
-                            this.devId = id;
                             return;
                         }
                         else if (port != null)
@@ -307,35 +317,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             port.Close();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         if (port != null)
                         {
                             port.Close();
                         }
-                        //info about the last exception only
-                        lastException = e;
-                        //ignore last port, it is normally "lastExceptionText = "The port 'COM30' does not exist."
-                        if (baudRate == configInfo.BaudRates[configInfo.BaudRates.Count - 1] &&
-                            comPort == comPorts[comPorts.Count - 1])
-                        {
-                            lastException = null;
-                        }
                     }
                 }
             }
-            //TODO: Filter out cannot open port, so not port30 always comes up?
-            string lastExceptionText = "";
-            if (lastException != null)
-            {
-               lastExceptionText = System.Environment.NewLine + System.Environment.NewLine + lastException.Message;
-            }
-            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError +
-              lastExceptionText);
         }
 
+        //Data received other than identification packet (the fist packet)
+        public bool DataRecieved = false;
+        //The identification reported from the device
         public string devId = "";
-        //The 561 only(?) have little endian size...
+        //The 561 only(?) have little endian size... Set here as it is controlled from the device, when probing
         public virtual bool BigEndianPacketLength { get { return true; } }
         public DeviceConfigurationInfo configInfo;
 
