@@ -88,7 +88,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Insuficient memory.
+        ///   Looks up a localized string similar to Insuficient device memory.
         /// </summary>
         internal static string Device_InsuficientMemory_Error {
             get {
@@ -129,6 +129,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         internal static string Device_SendWaypoints_Error {
             get {
                 return ResourceManager.GetString("Device_SendWaypoints_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} turned on but not connected.
+        /// </summary>
+        internal static string Device_TurnOnNotConnected {
+            get {
+                return ResourceManager.GetString("Device_TurnOnNotConnected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Not supported by this Globalsat device.
+        /// </summary>
+        internal static string Device_Unsupported {
+            get {
+                return ResourceManager.GetString("Device_Unsupported", resourceCulture);
             }
         }
         

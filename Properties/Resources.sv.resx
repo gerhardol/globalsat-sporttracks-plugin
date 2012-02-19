@@ -69,10 +69,10 @@
     <value>Fel när waypoints laddas</value>
   </data>
   <data name="Device_InsuficientMemory_Error" xml:space="preserve">
-    <value>Slut på minne</value>
+    <value>Slut på minne i enheten</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat enhet inte detekterad</value>
+    <value>Globalsat enhet inte hittad</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
     <value>Fel när route skulle skickas</value>
@@ -121,5 +121,11 @@
   </data>
   <data name="DeviceConfigurationDlg_chkImportOnlyNew_Text" xml:space="preserve">
     <value>Importera enbart nya aktiviteter</value>
+  </data>
+  <data name="Device_TurnOnNotConnected" xml:space="preserve">
+    <value>{0} på men inte ansluten</value>
+  </data>
+  <data name="Device_Unsupported" xml:space="preserve">
+    <value>Supportas inte i denna Globalsat enhet</value>
   </data>
 </root>
