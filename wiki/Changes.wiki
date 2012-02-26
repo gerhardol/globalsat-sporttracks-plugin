@@ -8,10 +8,11 @@ This page describes the changes between plugins. See the SVN change log for deta
 3.2.138 2012-02-19
  * When a device is connected and turned on but not prepared to communicate, try to inform the user. Requires updated Waypoints plugin for waypoints/activities/routes.
  * Minor translation update - some added to online spreadsheet
+ * Max 99 (not 100) waypoints could be deleted
 
 3.2.136 2012-02-17
  * Get screenshot for GH-625M
- * Read waypoints for 561
+ * Read/write waypoints for 561
  * Elevation always 0 for waypoints
  
 3.2.125 2012-02-01
