@@ -120,7 +120,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return true;
         }
 
-        protected virtual void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains)
+        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains)
         {
             foreach (GlobalsatPacket.Train train in trains)
             {
