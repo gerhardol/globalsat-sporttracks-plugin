@@ -126,5 +126,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             return trackSections;
         }
+
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            throw new FeatureNotSupportedException();
+        }
     }
 }
