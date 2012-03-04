@@ -170,10 +170,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
+	<!-- Problems?
     <EmbeddedResource Include="Properties\Resources.zh.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
+	-->
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Image_48_GH505.png" />
