@@ -36,6 +36,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.name = "Globalsat";
         }
 
+        protected virtual GlobalsatProtocol Device(string configurationInfo) { return new GenericDevice(configurationInfo); }
+
         public Guid Id
         {
             get { return id; }
@@ -58,7 +60,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Configure(string configurationInfo)
         {
-            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse((new GenericDevice(configurationInfo)).DefaultConfig, configurationInfo);
+            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(Device(configurationInfo).DefaultConfig, configurationInfo);
             DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(configInfo);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -70,20 +72,44 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public virtual bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
+        public bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
-            GenericDevice device = new GenericDevice(configurationInfo);
-            GlobalsatProtocol device2 = device.Device(monitor);
             bool result = false;
-            if (device2 != null)
+            GlobalsatProtocol device0 = Device(configurationInfo);
+            if (device0 is GenericDevice)
             {
-                ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + device.devId,
-                    monitor, importResults);
-                if (job == null)
+                //Determine the device, then dispatch
+                GenericDevice device = (GenericDevice)device0;
+                GlobalsatProtocol device2 = device.Device(monitor);
+                if (device2 != null)
                 {
-                    monitor.ErrorText = "Import not supported for " + device.devId;
-                    return false;
+                    try
+                    {
+                        ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + device.devId,
+                            monitor, importResults);
+
+                        if (job == null)
+                        {
+                            monitor.ErrorText = "Import not supported for " + device.devId;
+                            result = false;
+                        }
+                        else
+                        {
+                            result = job.Import();
+                        }
+                    }
+                    catch (NotImplementedException)
+                    {
+                        result = false;
+                    }
                 }
+            }
+            else
+            {
+                //import for specific device
+                monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+                GlobalsatProtocol device = device0;
+                ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
                 result = job.Import();
             }
             return result;

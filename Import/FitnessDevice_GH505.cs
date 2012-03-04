@@ -36,11 +36,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.name = "Globalsat - GH505";
         }
 
-        public override bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
-        {
-            Gh505Device device = new Gh505Device(configurationInfo);
-            ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
-            return job.Import();
-        }
+        protected override GlobalsatProtocol Device(string configurationInfo) { return new Gh505Device(configurationInfo); }
     }
 }
