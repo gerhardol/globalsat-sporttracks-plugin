@@ -22,6 +22,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
 
+using ZoneFiveSoftware.Common.Visuals;
+
+
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gb580Device : GlobalsatProtocol2
@@ -43,5 +46,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
+
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            throw new FeatureNotSupportedException();
+        }
     }
 }

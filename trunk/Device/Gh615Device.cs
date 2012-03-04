@@ -103,5 +103,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         public override int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor) { throw new FeatureNotSupportedException(); }
+
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            throw new FeatureNotSupportedException();
+        }
     }
 }

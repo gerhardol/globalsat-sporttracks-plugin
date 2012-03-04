@@ -38,7 +38,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
         }
 
-        //Timeout when communicating
+        /// <summary>
+        /// Timeout when communicating, in ms
+        /// </summary>
         public virtual int ReadTimeout
         {
             get
@@ -47,12 +49,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        //Timeout when detecting
+        /// <summary>
+        /// Timeout when detecting, in ms
+        /// </summary>
         public virtual int ReadTimeoutDetect
         {
             get
             {
-                return 500;
+                return 1000;
             }
         }
 
