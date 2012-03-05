@@ -366,6 +366,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
         {
             int res = 0;
+            int totPackets = routes.Count;
             if (this.Open())
             {
                 try
@@ -405,6 +406,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         {
                             //Send with normal protocol, 625XT requires one by one
                             this.SendWaypoints(wptSend, jobMonitor);
+                            totPackets++; res++;
+                            jobMonitor.PercentComplete = (float)res/(float)totPackets;
                             this.Open(); //Reopen
                         }
                     }
@@ -415,6 +418,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         packet = PacketFactory.SendRoute(route);
                         response = (GlobalsatPacket)this.SendPacket(packet);
                         res++;
+                        jobMonitor.PercentComplete = (float)res / (float)totPackets;
                     }
                 }
                 catch (Exception e)
