@@ -6,9 +6,9 @@ This page describes the changes between plugins. See the SVN change log for deta
 ===Changes===
 
 3.2.144 2012-03-04
- * Increase read timeouts for GB-580P
+ * Increase read timeouts for GB-580P, the device hardly worked previously
  * Remove Chinese translation as it seem to create problems for some users. Only one string translated anyway.
- * Device settings wer incorrectly saved. This increase the time to detect when no device were detected as all serial speeds were tried, as well as slower start of import for 625M.
+ * Device settings were incorrectly saved. This increase the time to detect when no device were detected as all serial speeds were tried, as well as slower start of import for 625M.
    Remove all existing Globalsat devices, add them again to update the settings.
  * Popup when ExportActivityAsRoute to GH-625M, GB-580P. (GUI for action is in Waypoints plugin, the popup is initiated in this plugin.)
  
