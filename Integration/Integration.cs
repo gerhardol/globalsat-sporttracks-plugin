@@ -143,7 +143,11 @@ namespace GlobalsatDevicePlugin
                     }
                     else
                     {
+#if ST_2_1
+                        int intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
+#else
                         uint intTime = gpsRoute[j].ElapsedSeconds - gpsRoute[j - 1].ElapsedSeconds;
+#endif
                         float dist = gpsRoute[j].Value.DistanceMetersToPoint(gpsRoute[j - 1].Value);
                         if (intTime > 0)
                         {

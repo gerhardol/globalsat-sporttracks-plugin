@@ -90,7 +90,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+#if ST_2_1
+            MessageDialog.DrawButtonRowBackground(e.Graphics, this.ClientRectangle, theme);
+#else
             MessageDialog.DrawButtonRowBackground(e.Graphics, this, theme);
+#endif
         }
 
         void txtHoursOffset_Validated(object sender, EventArgs e)
