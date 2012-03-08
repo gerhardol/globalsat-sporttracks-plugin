@@ -5,6 +5,10 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.148 2012-03-08
+ * Update images for GH-625XT and GS-Sport
+ * Increase detection timeout for GB-580P even further
+
 3.2.144 2012-03-04
  * Increase read timeouts for GB-580P, the device hardly worked previously
  * Remove Chinese translation as it seem to create problems for some users. Only one string translated anyway.

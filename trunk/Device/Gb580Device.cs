@@ -34,7 +34,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //Slow?
         public override int ReadTimeout { get { return 2000; } }
-        public override int ReadTimeoutDetect { get { return 1000; } }
+        public override int ReadTimeoutDetect { get { return 2000; } }
 
         public override DeviceConfigurationInfo DefaultConfig
         {
