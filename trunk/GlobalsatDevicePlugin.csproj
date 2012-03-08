@@ -170,12 +170,12 @@
       <SubType>Designer</SubType>
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
-	<!-- Problems?
+    <!-- Problems w chinese locale. Should be zh-TW instead?
     <EmbeddedResource Include="Properties\Resources.zh.resx">
       <SubType>Designer</SubType>
       <DependentUpon>Resources.resx</DependentUpon>
     </EmbeddedResource>
-	-->
+    -->
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Image_48_GH505.png" />

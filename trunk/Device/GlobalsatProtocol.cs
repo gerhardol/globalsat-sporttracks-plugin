@@ -367,6 +367,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             int res = 0;
             int totPackets = routes.Count;
+            int extraPackets = 0; //Open, wpt etc
             if (this.Open())
             {
                 try
@@ -378,6 +379,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         packet = PacketFactory.GetWaypoints();
                         response = (GlobalsatPacket)this.SendPacket(packet);
                         IList<GlobalsatWaypoint> wptDev = response.ResponseGetWaypoints();
+                        extraPackets++;
+                        jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
 
                         //Routes need waypoints - find those missing
                         IList<GlobalsatWaypoint> wptSend = new List<GlobalsatWaypoint>();
@@ -406,9 +409,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         {
                             //Send with normal protocol, 625XT requires one by one
                             this.SendWaypoints(wptSend, jobMonitor);
-                            totPackets++; res++;
-                            jobMonitor.PercentComplete = (float)res/(float)totPackets;
+                            extraPackets++;
+                            jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
                             this.Open(); //Reopen
+                            extraPackets++;
+                            jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
                         }
                     }
 
@@ -418,7 +423,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         packet = PacketFactory.SendRoute(route);
                         response = (GlobalsatPacket)this.SendPacket(packet);
                         res++;
-                        jobMonitor.PercentComplete = (float)res / (float)totPackets;
+                        jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
                     }
                 }
                 catch (Exception e)
