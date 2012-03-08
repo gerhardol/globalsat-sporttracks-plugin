@@ -33,7 +33,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GenericDevice(string configInfo) : base(configInfo) { }
 
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
+        public override int ReadTimeoutDetect { get { return 2000; } }
         public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
+
         private bool m_bigEndianPacketLength = true;
         public IList<GlobalsatProtocol> AllowedDevices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
 

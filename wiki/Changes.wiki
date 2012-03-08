@@ -5,7 +5,7 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
-3.2.148 2012-03-08
+3.2.149 2012-03-08
  * Update images for GH-625XT and GS-Sport
  * Increase detection timeout for GB-580P even further
 

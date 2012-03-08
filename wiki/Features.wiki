@@ -2,21 +2,22 @@
 
 <wiki:toc max_depth="3" />
 
-This plugin implements the interface to some Globalsat devices. Primary for importing to SportTracks, but also to handle Waypoints, Routes and Sending activities. The plugin also have some specific features like reading/saving configuration and saving screenshots.
+This plugin implements the interface to some Globalsat devices. Primary for importing activities to SportTracks, but also to handle Waypoints, Routes and Sending activities. The plugin also have some specific features like reading/saving configuration and saving screenshots.
 
 == Supported Devices ==
  * GS-Sport (Generic device) Autodetect the connected device, use the device with ID matching the detected.
  * GH-625XT
- * GH-505 (GH-503 and GH-501 untested) (SendRoute unsupported)
  * GH-625M (SendRoute unsupported)
- * KeyMaze-500, KeyMaze-700 (untested)
- * GB-580 (untested)
- * GH-561 (minor tests) (only waypoint handling) (Only via Generic device)
+ * GB-580P
+ * GH-505 (SendRoute unsupported)
  
 There is very minor difference using the generic GS-Sport device and one of the specific devices, as the generic device use the specific device after auto-detection. Therefore the only difference is that the no device timeout for the 625XT is slightly shorter than the generic and that you can have more than one supported Globalsat device type connected at a time. The GS-Sport device is always used for other than activity import (for instance sending activities).
 
 === Unsupported Devices ===
- * GH-615 (untested and depreciated. Upgrade to GH-625M instead.) (Import via Generic device)
+ * KeyMaze-500, KeyMaze-700 (untested)
+ * Bowflex GPS Tracking Heart Rate Monitor (model GPS-905) (untested)
+ * GH-561 (only waypoint handling implemented, currently not working) (Only via Generic device)
+ * GH-615 activity import implemented but completely untested - upgrade to GH-625M instead. (Import via Generic device)
 
 === Unknown devices ===
 Most Globalsat devices have unique protocols and packet formats. However, there are some devices that have identical protocols, even if they identifies uniquely.
