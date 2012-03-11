@@ -117,7 +117,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         NoCommunicationError(jobMonitor);
                         result = 0;
                     }
-                    throw new Exception(Properties.Resources.Device_SendTrack_Error + ex);
+                    else
+                    {
+                        jobMonitor.ErrorText = Properties.Resources.Device_SendTrack_Error + ex;
+                        throw new Exception(Properties.Resources.Device_SendTrack_Error + ex);
+                    }
                 }
                 finally
                 {
