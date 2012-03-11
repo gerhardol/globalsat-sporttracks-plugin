@@ -230,7 +230,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, 0);
             offset += this.Write(offset, 0);
 
-            this.PacketData[offset++] = 0; //Multisport
+            this.PacketData[offset++] = 0; //cDataType or Multisport
             this.PacketData[offset++] = 0; //pad
 
             return CheckOffset(TrackHeaderLength, offset - startOffset);

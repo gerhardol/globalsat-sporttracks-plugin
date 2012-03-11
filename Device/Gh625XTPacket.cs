@@ -233,10 +233,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += this.Write(offset, (short)noOfLaps);
 
             //unused in some headers, prefill
-            offset += this.Write32(offset, 0);
-            offset += this.Write32(offset, 0);
+            offset += this.Write32(offset, 0); //-9
+            offset += this.Write32(offset, 0); //-5
 
-            this.PacketData[offset++] = 0; //Multisport
+            this.PacketData[offset++] = 0; //cDataType or Multisport
 
             return CheckOffset(TrackHeaderLength, offset);
         }
