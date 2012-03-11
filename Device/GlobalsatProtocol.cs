@@ -60,6 +60,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             if (this.Open())
             {
+                //Something to start the progress...
+                jobMonitor.PercentComplete = 0.01F;
                 try
                 {
                     foreach (GhPacketBase.Train train in trains)
@@ -89,7 +91,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
 
                             i++;
-                            float progress = (float)(packets.Count <= 1 ? 1 : (double)(i) / (double)(packets.Count - 1));
+                            //Handle open packet as one, for each activity
+                            float progress = (result + (1+1+i) / (float)(1+packets.Count))/(float)(trains.Count);
 
                             jobMonitor.PercentComplete = progress;
 
@@ -99,6 +102,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                         }
                         result++;
+
+                        //Globalsat seem to be needing to wait in between activities....
+                        if (trains.Count > 1)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
                     }
                 }
                 catch (Exception ex)
