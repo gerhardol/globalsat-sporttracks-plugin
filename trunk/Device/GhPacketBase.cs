@@ -65,9 +65,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public const byte CommandSendTrackStart = 0x90;
         public const byte CommandSendTrackSection = 0x91;
 
+        //505, 580, 625XT, determines info in the trackpackets at TrainHeaderCTypeOffset
         public const byte HeaderTypeLaps = 0xAA;
         public const byte HeaderTypeTrackPoints = 0x55;
 
+        //Certain appearing responses, likely more exists
         public const byte ResponseInsuficientMemory = 0x95;
         public const byte ResponseResendTrackSection = 0x92;
         public const byte ResponseSendTrackFinish = 0x9A;
