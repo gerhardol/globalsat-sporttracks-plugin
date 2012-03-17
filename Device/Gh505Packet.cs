@@ -60,7 +60,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Train train = new Train();
             ReadHeader(train, 0);
             train.TotalCalories = ReadInt16(24);
-            //train.MaximumSpeed = FromGlobSpeed(ReadInt16(26));
+            train.MaximumSpeed = FromGlobSpeed(ReadInt16(26));
             train.MaximumHeartRate = this.PacketData[28];
             train.AverageHeartRate = this.PacketData[29];
             //TODO: Guesses
@@ -98,6 +98,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lap.MaximumSpeed = FromGlobSpeed(ReadInt16(offset + 14));
                 lap.MaximumHeartRate = this.PacketData[offset + 16];
                 lap.AverageHeartRate = this.PacketData[offset + 17];
+
                 lap.MinimumAltitude = ReadInt16(offset + 18);
                 lap.MaximumAltitude = ReadInt16(offset + 20);
                 lap.AverageCadence = ReadInt16(offset + 22);
@@ -210,7 +211,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             offset += Write(offset, 0); // avg power
             offset += Write(offset, 0); // max power
             this.PacketData[offset++] = (byte)0; // multisport index
-            offset += 1; // pad len=36
+            offset += 1; // pad
 
             // start/end index
             offset += Write(offset, 0);

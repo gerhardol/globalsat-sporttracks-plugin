@@ -64,7 +64,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Train train = new Train();
             ReadHeader(train, 0);
             train.TotalCalories = ReadInt16(29);
-            //train.MaximumSpeed = FromGlobSpeed(ReadInt32(31));
+            train.MaximumSpeed = FromGlobSpeed(ReadInt32(31));
             train.MaximumHeartRate = this.PacketData[35];
             train.AverageHeartRate = this.PacketData[36];
             train.TotalAscend = ReadInt16(37);

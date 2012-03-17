@@ -76,15 +76,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             if (response != null && response.CommandId != packet.CommandId)
                             {
                                 //Generic codes handled in SendPacket
-                                if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
-                                {
-                                    // TODO resend
-                                    throw new Exception(Properties.Resources.Device_SendTrack_Error);
-                                }
-                                else if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
+                                if (response.CommandId == GhPacketBase.ResponseSendTrackFinish)
                                 {
                                     //Done, all sent
                                     break;
+                                }
+                                else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
+                                {
+                                    // TODO resend
+                                    //throw new Exception(Properties.Resources.Device_SendTrack_Error);
                                 }
                                 //	 Console.WriteLine("------ send error 4");
                                 throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
@@ -136,29 +136,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return result;
         }
 
-        public virtual IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train trackFileStart)
+        public virtual IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train trackFile)
         {
             IList<GlobalsatPacket> sendTrackPackets = new List<GlobalsatPacket>();
 
 			//Console.WriteLine("------ SendTrackStart()");
-            GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFileStart);
+            GlobalsatPacket startPacket = PacketFactory.SendTrackStart(trackFile);
             sendTrackPackets.Add(startPacket);
 
             //Some protocols send laps in separate header
             //Use common code instead of overiding this method
-            GlobalsatPacket lapPacket = PacketFactory.SendTrackLaps(trackFileStart);
+            GlobalsatPacket lapPacket = PacketFactory.SendTrackLaps(trackFile);
             if (lapPacket != null)
             {
                 sendTrackPackets.Add(lapPacket);
             }
 
-            int nrPointsPerSection = startPacket.TrackPointsPerSection;
-
-            for (int i = 0; i < trackFileStart.TrackPoints.Count; i += nrPointsPerSection)
+            for (int i = 0; i < trackFile.TrackPoints.Count; i += startPacket.TrackPointsPerSection)
             {
     			//Console.WriteLine("------ SendTrackSection()");
-                GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFileStart, i,
-                    Math.Min(i + nrPointsPerSection - 1, trackFileStart.TrackPoints.Count - 1));
+                GlobalsatPacket pointsPacket = PacketFactory.SendTrackSection(trackFile, i,
+                    Math.Min(i + startPacket.TrackPointsPerSection - 1, trackFile.TrackPoints.Count - 1));
                 sendTrackPackets.Add(pointsPacket);
             }
 
@@ -536,7 +534,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             IList<GlobalsatPacket.Train> trains = new List<GlobalsatPacket.Train>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
-            GlobalsatPacket getNextPacket = PacketFactory.GetNextTrackSection();
             GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
@@ -627,7 +624,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             break;
                         }
                 }
-                response = (GlobalsatPacket2)SendPacket(getNextPacket);
+                //All requests are the same
+                response = (GlobalsatPacket2)SendPacket(PacketFactory.GetNextTrackSection());
             }
 
             monitor.PercentComplete = 1;
