@@ -280,6 +280,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int GetWptOffset { get { return 2; } }
         protected override int SendWptOffset { get { return 2; } }
 
+        protected override int LocationLength { get { return 20; } }
         public override int TrackPointsPerSection { get { return 73; } }
         protected override int TrackHeaderLength { get { return 24; } }
         protected override int TrainDataHeaderLength { get { return 52; } }

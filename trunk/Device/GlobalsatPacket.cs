@@ -110,12 +110,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
             //No reasonable CheckOffset()
-            int nrWaypoints = PacketLength / (LocationLength + GetWptOffset);
+            int nrWaypoints = PacketLength / (LocationLength);
             IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
             
             for (int i = 0; i < nrWaypoints; i++)
             {
-                int index = i * (LocationLength + GetWptOffset);
+                int index = i * LocationLength;
 
                 string waypointName = ByteArr2String(index, 6);
                 int iconNr = (int)PacketData[index + 7];
