@@ -5,9 +5,13 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.157 2012-03-21
+ * Set errortext when failure to upload activity (in Waypoints plugin)
+ * Progressbar when sending activities to Globalsat (in Waypoints plugin)
+
 3.2.149 2012-03-08
  * Update images for GH-625XT and GS-Sport
- * Increase detection timeout for GB-580P even further
+ * Increase detection timeout for GB-580P
 
 3.2.144 2012-03-04
  * Increase read timeouts for GB-580P, the device hardly worked previously
