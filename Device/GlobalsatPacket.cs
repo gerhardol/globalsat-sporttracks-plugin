@@ -110,7 +110,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual IList<GlobalsatWaypoint> ResponseGetWaypoints()
         {
             //No reasonable CheckOffset()
-            int nrWaypoints = PacketLength / (LocationLength);
+            int nrWaypoints = PacketLength / LocationLength;
             IList<GlobalsatWaypoint> waypoints = new List<GlobalsatWaypoint>(nrWaypoints);
             
             for (int i = 0; i < nrWaypoints; i++)
@@ -120,8 +120,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string waypointName = ByteArr2String(index, 6);
                 int iconNr = (int)PacketData[index + 7];
                 short altitude = ReadInt16(index + 8);
-                double latitude = ReadLatLon(index + 10 + GetWptOffset);
-                double longitude = ReadLatLon(index + 14 + GetWptOffset);
+                double latitude = ReadLatLon(index + 10 + WptLatLonOffset);
+                double longitude = ReadLatLon(index + 14 + WptLatLonOffset);
 
                 GlobalsatWaypoint waypoint = new GlobalsatWaypoint(waypointName, iconNr, altitude, latitude, longitude);
                 waypoints.Add(waypoint);
@@ -137,21 +137,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             int nrWaypoints = Math.Min(MaxNrWaypoints, waypoints.Count);
 
-            Int16 totalLength = (Int16)(nrWaypointsLength + SendWptOffset + nrWaypoints * (LocationLength + SendWptOffset));
+            //Same WptLatLonOffset is used when padding - could differ in other devices
+            Int16 totalLength = (Int16)(nrWaypointsLength + WptLatLonOffset + nrWaypoints * LocationLength);
             this.InitPacket(CommandSendWaypoint, totalLength);
 
             int offset = 0;
 
-            this.Write(offset, (short)nrWaypoints);
-            offset += 2;
+            offset += this.Write(offset, (short)nrWaypoints);
 
-            offset += SendWptOffset; //pad -some only?
+            offset += WptLatLonOffset; //pad -some only
 
             int waypOffset = offset;
             for (int i = 0; i < nrWaypoints; i++)
             {
                 GlobalsatWaypoint waypoint = waypoints[i];
-                offset = waypOffset + i * (LocationLength + 2);
+                offset = waypOffset + i * LocationLength;
 
                 //Points to be added requires names
                 if (string.IsNullOrEmpty(waypoint.WaypointName))
@@ -163,11 +163,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 this.PacketData[offset++] = (byte)waypoint.IconNr;
 
-                this.Write(offset, waypoint.Altitude);
-                offset += 2;
+                offset += this.Write(offset, waypoint.Altitude);
 
-                offset += SendWptOffset; //pad?
-
+                offset += WptLatLonOffset; //pad
                 offset += this.Write32(offset, ToGlobLatLon(waypoint.Latitude));
                 offset += this.Write32(offset, ToGlobLatLon(waypoint.Longitude));
             }
@@ -311,9 +309,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected static int sendIdentification=0;
 
     //Packetsizes
-        protected virtual int LocationLength { get { return 18; } }
-        protected virtual int GetWptOffset { get { return 0; } }
-        protected virtual int SendWptOffset { get { return 0; } }
+        protected virtual int LocationLength { get { return 18 + WptLatLonOffset; } }
+        protected virtual int WptLatLonOffset { get { return 0; } }
 
         public virtual int TrackPointsPerSection { get { return 136; } }
         //Unused: public virtual int TrackLapsPerSection { get { return 58; } }

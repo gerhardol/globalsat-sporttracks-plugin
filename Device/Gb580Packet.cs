@@ -283,10 +283,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override bool IsLittleEndian { get { return true; } }
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
 
-        protected override int GetWptOffset { get { return 2; } }
-        protected override int SendWptOffset { get { return 2; } }
+        protected override int WptLatLonOffset { get { return 2; } }
 
-        protected override int LocationLength { get { return 20; } }
         public override int TrackPointsPerSection { get { return 63; } }
         protected override int TrackHeaderLength { get { return 24; } }
         protected override int TrainDataHeaderLength { get { return 56; } }
