@@ -39,7 +39,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.CommandId = CommandId;
             this.PacketLength = PacketLength;
             this.PacketData = new byte[PacketLength];
-            this.PacketData.SetValue(0, 0, PacketLength - 1);
+            for (int i = 0; i < this.PacketData.Length; i++ )
+            {
+                this.PacketData[i] = 0;
+            }
         }
 
         //The Gloabalsat specs does not explicitly write that the format is same for all
