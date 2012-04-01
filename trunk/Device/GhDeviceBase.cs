@@ -148,19 +148,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return res;
         }
 
-        private static bool continueSending = true;
-        protected bool ReportError(string s)
+        private static bool showPopup = false; //Do not show by default
+        protected bool ReportError(string s, bool initial)
         {
-            if (continueSending)
+            if (showPopup && !initial)
             {
-                if (System.Windows.Forms.MessageBox.Show(s, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
+                string s2 = s + string.Format(" To show further popups, press {1}", System.Windows.Forms.DialogResult.Yes);
+                if (System.Windows.Forms.MessageBox.Show(s2, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
                 {
-                    continueSending = false;
+                    showPopup = false;
                 }
             }
-            return continueSending;
+            return showPopup;
         }
+
         //This routine has a lot of try-catch-rethrow to simplify debugging
+        //Globalsat device communication is tricky...
         public virtual GhPacketBase SendPacket(GlobalsatPacket packet)
         {
             //Use packet factory, to make sure the packet matches the device
@@ -206,15 +209,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     catch (Exception e)
                     {
-                        string s = string.Format("Error occurred, sending {0} bytes. To try continuing, press {1}",
-                                sendPayload.Length, System.Windows.Forms.DialogResult.Yes);
-                        if (packet.CommandId == GhPacketBase.CommandWhoAmI || ReportError(s))
-                        {
-                            port.Close();
-                            throw e;
-                        }
+                        string s = string.Format("Error occurred, sending {0} bytes.",
+                                sendPayload.Length);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        port.Close();
+                        throw e;
                     }
-
                     try
                     {
                         received.CommandId = (byte)port.ReadByte();
@@ -233,26 +233,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     catch (Exception e)
                     {
-                        string s = string.Format("Error occurred, receiving {0} bytes({3},{4}). To try continuing, press {5}",
-                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId,
-                                System.Windows.Forms.DialogResult.Yes);
-                        if (!this.DataRecieved || ReportError(s))
-                        {
-                            port.Close();
-                            throw e;
-                        }
+                        string s = string.Format("Error occurred, receiving {0} bytes ({3},{4}).",
+                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        port.Close();
+                        throw e;
                     }
                     if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
                         received.PacketLength > 0x1000)
                     {
-                        string s = string.Format("Error occurred, bad response receiving {0} bytes ({3},{4}). To try continuing, press {5}",
-                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId,
-                                System.Windows.Forms.DialogResult.Yes);
-                        if (!this.DataRecieved || ReportError(s))
-                        {
-                            port.Close();
-                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
-                        }
+                        string s = string.Format("Error occurred, bad response receiving {0} bytes ({3},{4}).",
+                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        port.Close();
+                        throw new Exception(Properties.Resources.Device_OpenDevice_Error);
                     }
                     received.PacketData = new byte[received.PacketLength];
                     byte checksum = 0;
@@ -280,37 +274,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     catch (Exception e)
                     {
-                        string s = string.Format("Error occurred, receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
-                                received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
-                                System.Windows.Forms.DialogResult.Yes);
-                        if (!this.DataRecieved || ReportError(s))
-                        {
-                            port.Close();
-                            throw e;
+                        string s = string.Format("Error occurred, receiving {0}({1}) bytes ({3},{4}).",
+                                received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        port.Close();
+                        throw e;
 
-                            //Debug template, if the device is corrupted
-                            //Ignore the exception, just to get data from the device
-                            //if (!(this is Gh505Device &&
-                            //    (receivedBytes == 2005 && received.PacketLength == 2068 ||
-                            //    receivedBytes == 913 && received.PacketLength == 976)))
-                            //{
-                            //    throw e;
-                            //}
-                            //received.PacketLength = (Int16)receivedBytes;
-                            //checksum = 0;
-                            //overrideException = true;
-                        }
+                        //Debug template, if the device is corrupted
+                        //Should use resend
+                        //Ignore the exception, just to get data from the device
+                        //if (!(this is Gh505Device &&
+                        //    (receivedBytes == 2005 && received.PacketLength == 2068 ||
+                        //    receivedBytes == 913 && received.PacketLength == 976)))
+                        //{
+                        //    throw e;
+                        //}
+                        //received.PacketLength = (Int16)receivedBytes;
+                        //checksum = 0;
+                        //overrideException = true;
                     }
                     if (!received.ValidResponseCrc(checksum) && !overrideException)
                     {
-                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
-                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
-                                         System.Windows.Forms.DialogResult.Yes);
-                        if (!this.DataRecieved || ReportError(s))
-                        {
-                            port.Close();
-                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
-                        }
+                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}).",
+                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        port.Close();
+                        throw new Exception(Properties.Resources.Device_OpenDevice_Error);
                     }
                     if (received.CommandId != packet.CommandId &&
                         //TODO: Cleanup in allowed sender/response allowed (probably overload)
@@ -322,17 +311,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                            packet.CommandId == GhPacketBase.CommandSendTrackSection))
                         )
                     {
-                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
-                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
-                                         System.Windows.Forms.DialogResult.Yes);
-                        if (!this.DataRecieved || ReportError(s))
+                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}).",
+                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
                         {
-                            if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
-                            {
-                                throw new InsufficientMemoryException(Properties.Resources.Device_InsuficientMemory_Error);
-                            }
-                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+                            throw new InsufficientMemoryException(Properties.Resources.Device_InsuficientMemory_Error);
                         }
+                        throw new Exception(Properties.Resources.Device_OpenDevice_Error);
                     }
                     remainingAttempts = 0;
                 }
