@@ -72,6 +72,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public abstract GlobalsatPacket PacketFactory { get; }
 
+        /// open port (if not open), return if open
         public bool Open()
         {
             if (port == null)
@@ -84,11 +85,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public void Close()
         {
             //The actual port is closed after each packet, Close will require a new scan 
-            if (port != null)
+            if (port != null && port.IsOpen)
             {
                 port.Close();
-                port = null;
             }
+            port = null;
         }
 
         private SerialPort Port
@@ -108,8 +109,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             bool res = false;
             //If "probe" packet fails, this is not a Globalsat port
             //If some distinction needed (other device?), set some flag here
-            GhPacketBase response = SendPacket(packet);
-            if (response.CommandId == packet.CommandId && response.PacketLength > 1)
+            GhPacketBase response = null;
+            try
+            {
+                response = SendPacket(packet);
+            }
+            catch (Exception)
+            {
+            }
+            if (response != null && response.CommandId == packet.CommandId && response.PacketLength > 1)
             {
                 string devId = response.ByteArr2String(0, 8);
                 if (!string.IsNullOrEmpty(devId))
@@ -133,144 +141,211 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
             }
+            if (!res)
+            {
+                this.Close();
+            }
             return res;
         }
 
+        private static bool continueSending = true;
+        protected bool ReportError(string s)
+        {
+            if (continueSending)
+            {
+                if (System.Windows.Forms.MessageBox.Show(s, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
+                {
+                    continueSending = false;
+                }
+            }
+            return continueSending;
+        }
         //This routine has a lot of try-catch-rethrow to simplify debugging
         public virtual GhPacketBase SendPacket(GlobalsatPacket packet)
         {
-            if (!port.IsOpen)
-            {
-                //Physical port should be closed
-                port.Open();
-            }
-            if (packet.CommandId == GhPacketBase.CommandWhoAmI)
-            {
-                //Speed-up device detection, keep this as short as possible. 
-                //625XT seem to work with 5ms, 505 needs more than 100
-                port.ReadTimeout = this.ReadTimeoutDetect;
-            }
-            else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
-            {
-                port.ReadTimeout = 5000;
-            }
-            else
-            {
-                port.ReadTimeout = this.ReadTimeout;
-            }
-            try
-            {
-                byte[] sendPayload = packet.ConstructPayload(BigEndianPacketLength);
-/*
-				 * Console.Write("Write:");
-				for(int i = 0; i < sendPayload.Length;i++)
-				{
- 				    Console.Write(" " + sendPayload[i].ToString() );
-				}
-    			Console.WriteLine("");
-*/
-                port.Write(sendPayload, 0, sendPayload.Length);
-            }
-            catch (Exception e)
-            {
-                port.Close();
-                throw e;
-            }
-
             //Use packet factory, to make sure the packet matches the device
             GhPacketBase received = this.PacketFactory;
 
-            try
+            //sending occasionally fails, retry
+            int remainingAttempts = 3;
+            while (remainingAttempts > 0)
             {
-                received.CommandId = (byte)port.ReadByte();
-                if (packet.CommandId == GhPacketBase.CommandWhoAmI)
+                try
                 {
-                    this.DataRecieved = false;
-                }
-                else
-                {
-                    this.DataRecieved = true;
-                } 
-                int hiPacketLen = port.ReadByte();
-                int loPacketLen = port.ReadByte();
-                //Note: The size from the device always seem to be the same (not so when sending)
-                received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
-            }
-            catch (Exception e)
-            {
-                port.Close();
-                throw e;
-            }			
-            if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
-                received.PacketLength > 0x1000)
-            {
-                port.Close();
-                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
-            }
-            received.PacketData = new byte[received.PacketLength];
-            byte checksum = 0;
-            int receivedBytes = 0; //debug timeouts
-            //Some devices behave incorrect, some framework to override and test
-            bool overrideException = false;
-            try
-            {
-                for (Int16 b = 0; b < received.PacketLength; b++)
-                {
-                    received.PacketData[b] = (byte)port.ReadByte();
-                    receivedBytes++;
-                }
-                checksum = (byte)port.ReadByte();
-                receivedBytes++;
-/*				
-			Console.Write("Read: id:" + received.CommandId + " length:" + received.PacketLength);
-			for(int i = 0; i < received.PacketLength;i++)
-			{
- 			    Console.Write(" " + received.PacketData[i].ToString() );
-			}
-    		Console.WriteLine(" checksum:" + checksum);
-*/				
-				
-            }
-            catch(Exception e)
-            {
-                port.Close();
-                throw e;
+                    if (!port.IsOpen)
+                    {
+                        //Physical port should be closed
+                        port.Open();
+                    }
+                    if (packet.CommandId == GhPacketBase.CommandWhoAmI)
+                    {
+                        //Speed-up device detection, keep this as short as possible. 
+                        //625XT seem to work with 5ms, 505 needs more than 100
+                        port.ReadTimeout = this.ReadTimeoutDetect;
+                    }
+                    else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
+                    {
+                        port.ReadTimeout = 5000;
+                    }
+                    else
+                    {
+                        port.ReadTimeout = this.ReadTimeout;
+                    }
+                    byte[] sendPayload = packet.ConstructPayload(BigEndianPacketLength);
+                    try
+                    {
+                        /*
+                                         * Console.Write("Write:");
+                                        for(int i = 0; i < sendPayload.Length;i++)
+                                        {
+                                            Console.Write(" " + sendPayload[i].ToString() );
+                                        }
+                                        Console.WriteLine("");
+                        */
+                        port.Write(sendPayload, 0, sendPayload.Length);
+                    }
+                    catch (Exception e)
+                    {
+                        string s = string.Format("Error occurred, sending {0} bytes. To try continuing, press {1}",
+                                sendPayload.Length, System.Windows.Forms.DialogResult.Yes);
+                        if (packet.CommandId == GhPacketBase.CommandWhoAmI || ReportError(s))
+                        {
+                            port.Close();
+                            throw e;
+                        }
+                    }
 
-                //Debug template, if the device is corrupted
-                //Ignore the exception, just to get data from the device
-                //if (!(this is Gh505Device &&
-                //    (receivedBytes == 2005 && received.PacketLength == 2068 ||
-                //    receivedBytes == 913 && received.PacketLength == 976)))
-                //{
-                //    throw e;
-                //}
-                //received.PacketLength = (Int16)receivedBytes;
-                //checksum = 0;
-                //overrideException = true;
-            }
-            if (!overrideException)
-            {
-                port.Close();
-            }
-            if (!received.ValidResponseCrc(checksum) && !overrideException)
-            {
-                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
-            }
-            if (received.CommandId != packet.CommandId &&
-                //TODO: Cleanup in allowed sender/response allowed (probably overload)
-                !((received.CommandId == GhPacketBase.CommandGetTrackFileSections || 
-			       received.CommandId == GhPacketBase.CommandId_FINISH || 
-			       received.CommandId == GhPacketBase.ResponseSendTrackFinish) &&
-                (packet.CommandId == GhPacketBase.CommandGetNextTrackSection || 
-			       packet.CommandId == GhPacketBase.CommandGetTrackFileSections || 
-			       packet.CommandId == GhPacketBase.CommandSendTrackSection))			    
-			    )
-            {
-                if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
-                {
-                    throw new InsufficientMemoryException(Properties.Resources.Device_InsuficientMemory_Error);
+                    try
+                    {
+                        received.CommandId = (byte)port.ReadByte();
+                        if (packet.CommandId == GhPacketBase.CommandWhoAmI)
+                        {
+                            this.DataRecieved = false;
+                        }
+                        else
+                        {
+                            this.DataRecieved = true;
+                        }
+                        int hiPacketLen = port.ReadByte();
+                        int loPacketLen = port.ReadByte();
+                        //Note: The size from the device always seem to be the same (not so when sending)
+                        received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
+                    }
+                    catch (Exception e)
+                    {
+                        string s = string.Format("Error occurred, receiving {0} bytes({3},{4}). To try continuing, press {5}",
+                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId,
+                                System.Windows.Forms.DialogResult.Yes);
+                        if (!this.DataRecieved || ReportError(s))
+                        {
+                            port.Close();
+                            throw e;
+                        }
+                    }
+                    if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
+                        received.PacketLength > 0x1000)
+                    {
+                        string s = string.Format("Error occurred, bad response receiving {0} bytes ({3},{4}). To try continuing, press {5}",
+                                received.PacketLength, this.DataRecieved, this.DataRecieved, packet.CommandId, received.CommandId,
+                                System.Windows.Forms.DialogResult.Yes);
+                        if (!this.DataRecieved || ReportError(s))
+                        {
+                            port.Close();
+                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+                        }
+                    }
+                    received.PacketData = new byte[received.PacketLength];
+                    byte checksum = 0;
+                    int receivedBytes = 0; //debug timeouts
+                    //Some devices behave incorrect, some framework to override and test
+                    bool overrideException = false;
+                    try
+                    {
+                        for (Int16 b = 0; b < received.PacketLength; b++)
+                        {
+                            received.PacketData[b] = (byte)port.ReadByte();
+                            receivedBytes++;
+                        }
+                        checksum = (byte)port.ReadByte();
+                        receivedBytes++;
+                        /*				
+                                    Console.Write("Read: id:" + received.CommandId + " length:" + received.PacketLength);
+                                    for(int i = 0; i < received.PacketLength;i++)
+                                    {
+                                        Console.Write(" " + received.PacketData[i].ToString() );
+                                    }
+                                    Console.WriteLine(" checksum:" + checksum);
+                        */
+
+                    }
+                    catch (Exception e)
+                    {
+                        string s = string.Format("Error occurred, receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
+                                received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
+                                System.Windows.Forms.DialogResult.Yes);
+                        if (!this.DataRecieved || ReportError(s))
+                        {
+                            port.Close();
+                            throw e;
+
+                            //Debug template, if the device is corrupted
+                            //Ignore the exception, just to get data from the device
+                            //if (!(this is Gh505Device &&
+                            //    (receivedBytes == 2005 && received.PacketLength == 2068 ||
+                            //    receivedBytes == 913 && received.PacketLength == 976)))
+                            //{
+                            //    throw e;
+                            //}
+                            //received.PacketLength = (Int16)receivedBytes;
+                            //checksum = 0;
+                            //overrideException = true;
+                        }
+                    }
+                    if (!received.ValidResponseCrc(checksum) && !overrideException)
+                    {
+                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
+                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
+                                         System.Windows.Forms.DialogResult.Yes);
+                        if (!this.DataRecieved || ReportError(s))
+                        {
+                            port.Close();
+                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+                        }
+                    }
+                    if (received.CommandId != packet.CommandId &&
+                        //TODO: Cleanup in allowed sender/response allowed (probably overload)
+                        !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
+                           received.CommandId == GhPacketBase.CommandId_FINISH ||
+                           received.CommandId == GhPacketBase.ResponseSendTrackFinish) &&
+                        (packet.CommandId == GhPacketBase.CommandGetNextTrackSection ||
+                           packet.CommandId == GhPacketBase.CommandGetTrackFileSections ||
+                           packet.CommandId == GhPacketBase.CommandSendTrackSection))
+                        )
+                    {
+                        string s = string.Format("Error occurred, invalid checksum receiving {0}({1}) bytes ({3},{4}). To try continuing, press {5}",
+                                         received.PacketLength, receivedBytes, this.DataRecieved, packet.CommandId, received.CommandId,
+                                         System.Windows.Forms.DialogResult.Yes);
+                        if (!this.DataRecieved || ReportError(s))
+                        {
+                            if (received.CommandId == GhPacketBase.ResponseInsuficientMemory)
+                            {
+                                throw new InsufficientMemoryException(Properties.Resources.Device_InsuficientMemory_Error);
+                            }
+                            throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+                        }
+                    }
+                    remainingAttempts = 0;
                 }
-                throw new Exception(CommonResources.Text.Devices.ImportJob_Status_ImportError);
+                catch (Exception e)
+                {
+                    remainingAttempts--;
+                    if (packet.CommandId == GhPacketBase.CommandWhoAmI || remainingAttempts <= 0)
+                    {
+                        //No need retry
+                        this.Close();
+                        throw e;
+                    }
+                }
             }
             return received;
         }
@@ -307,26 +382,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 foreach (string comPort in comPorts)
                 {
-                    port = null;
-                    try
+                    this.Close();
+                    port = new SerialPort(comPort, baudRate);
+                    port.WriteBufferSize = configInfo.MaxPacketPayload;
+                    if (ValidGlobalsatPort(port))
                     {
-                        port = new SerialPort(comPort, baudRate);
-                        port.WriteBufferSize = configInfo.MaxPacketPayload;
-                        if(ValidGlobalsatPort(port))
-                        {
-                            return;
-                        }
-                        else if (port != null)
-                        {
-                            port.Close();
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        if (port != null)
-                        {
-                            port.Close();
-                        }
+                        return;
                     }
                 }
             }
