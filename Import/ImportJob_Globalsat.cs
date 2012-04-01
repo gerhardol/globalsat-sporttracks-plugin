@@ -101,12 +101,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (Exception e)
             {
-                if (!device.DataRecieved)
+                if (device.DataRecieved)
                 {
-                    device.NoCommunicationError(monitor);
-                    return false;
+                    throw e;
                 }
-                throw e;
             }
             finally
             {

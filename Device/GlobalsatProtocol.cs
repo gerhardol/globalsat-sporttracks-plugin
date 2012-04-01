@@ -112,12 +112,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception ex)
                 {
-                    if (!this.DataRecieved)
-                    {
-                        NoCommunicationError(jobMonitor);
-                        result = 0;
-                    }
-                    else
+                    if (this.DataRecieved)
                     {
                         jobMonitor.ErrorText = Properties.Resources.Device_SendTrack_Error + ex;
                         throw new Exception(Properties.Resources.Device_SendTrack_Error + ex);
@@ -255,12 +250,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (!this.DataRecieved)
+                    if (this.DataRecieved)
                     {
-                        NoCommunicationError(jobMonitor);
-                        return null;
+                        throw new Exception(Properties.Resources.Device_GetWaypoints_Error + e);
                     }
-                    throw new Exception(Properties.Resources.Device_GetWaypoints_Error + e);
                 }
                 finally
                 {
@@ -291,12 +284,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (!this.DataRecieved)
+                    if (this.DataRecieved)
                     {
-                        NoCommunicationError(jobMonitor);
-                        return 0;
+                        throw new Exception(Properties.Resources.Device_SendWaypoints_Error + e);
                     }
-                    throw new Exception(Properties.Resources.Device_SendWaypoints_Error + e);
                 }
                 finally
                 {
@@ -322,12 +313,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (!this.DataRecieved)
+                    if (this.DataRecieved)
                     {
-                        NoCommunicationError(jobMonitor);
-                        return false;
+                        throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
                     }
-                    throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
                 }
                 finally
                 {
@@ -354,12 +343,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (!this.DataRecieved)
+                    if (this.DataRecieved)
                     {
-                        NoCommunicationError(jobMonitor);
-                        return false;
+                        throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
                     }
-                    throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
                 }
                 finally
                 {
@@ -439,16 +426,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (!this.DataRecieved)
+                    if (this.DataRecieved)
                     {
-                        NoCommunicationError(jobMonitor);
-                        return 0;
+                        if (e is InsufficientMemoryException)
+                        {
+                            throw e;
+                        }
+                        throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
                     }
-                    if (e is InsufficientMemoryException)
-                    {
-                        throw e;
-                    }
-                    throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
                 }
                 finally
                 {
