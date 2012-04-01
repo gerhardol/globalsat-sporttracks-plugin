@@ -62,7 +62,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             //Failed to open, set monitor.ErrorText
             this.NoCommunicationError(monitor);
-            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
+            monitor.StatusText = Properties.Resources.Device_OpenDevice_Error;
             return null;
         }
 
