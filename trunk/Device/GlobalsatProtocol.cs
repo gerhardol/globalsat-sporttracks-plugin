@@ -83,10 +83,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 }
                                 else if (response.CommandId == GhPacketBase.ResponseResendTrackSection)
                                 {
-                                    // TODO resend
+                                    //Handled in SendPacket(), retry there or fail
                                     //throw new Exception(Properties.Resources.Device_SendTrack_Error);
                                 }
-                                //	 Console.WriteLine("------ send error 4");
+                                //Console.WriteLine("------ send error 4");
                                 throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
                             }
 
