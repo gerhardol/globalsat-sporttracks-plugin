@@ -46,9 +46,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if(!this.Open())
             {
                 this.Close();
-                //561 - this could be skipped by default
-                m_bigEndianPacketLength = false;
-                this.Open();
+                //561 - skipped by default, not working
+                if (this.configInfo.AllowedIds != null)
+                {
+                    foreach (string s in this.configInfo.AllowedIds)
+                    {
+                        if (s.StartsWith("GH-561"))
+                        {
+                            m_bigEndianPacketLength = false;
+                            this.Open();
+                            break;
+                        }
+                    }
+                }
             }
             if (!string.IsNullOrEmpty(this.devId))
             {
