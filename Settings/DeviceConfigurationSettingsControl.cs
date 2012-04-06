@@ -38,6 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             buttonImportDeviceConfig.Text = Properties.Resources.UI_Settings_ImportConfigButton_Text;
             buttonExportDeviceConfig.Text = Properties.Resources.UI_Settings_ExportConfigButton_Text;
+            labelStatus.Text = "";
 
             groupBoxDeviceConfig.Text = Properties.Resources.UI_Settings_DeviceConfiguration_Title;
         }
@@ -69,6 +70,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private void buttonImportDeviceConfig_Click(object sender, EventArgs e)
         {
 
+            labelStatus.Text = "";
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 GlobalsatDeviceConfiguration importedDeviceConfig = null;
@@ -95,24 +97,29 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         if (importedDeviceConfig != null && importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
                         {
                             device2.SetSystemConfiguration2(importedDeviceConfig, jobMonitor);
+                            labelStatus.Text = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
                         }
                         else
                         {
-                            MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            return;
+                            labelStatus.Text = Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration;
+                            //MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
+                    }
+                    else
+                    {
+                        labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
                     }
                 }
                 catch (Exception ex)
                 {
                     MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
                 }
             }
         }
 
         private void buttonExportDeviceConfig_Click(object sender, EventArgs e)
         {
+            labelStatus.Text = "";
             try
             {
                 IJobMonitor jobMonitor = new JobMonitor();
@@ -126,8 +133,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         currentDeviceConfig.Save(saveFileDialog1.FileName);
 
+                        labelStatus.Text = CommonResources.Text.MessageExportComplete;
                         //MessageDialog.Show(CommonResources.Text.MessageExportComplete, Properties.Resources.UI_Settings_ExportConfigButton_Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
+                }
+                else
+                {
+                    labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
                 }
             }
             catch (Exception ex)

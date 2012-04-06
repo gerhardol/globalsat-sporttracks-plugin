@@ -38,7 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             this.labelName.AutoSize = true;
             this.labelName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelName.Location = new System.Drawing.Point(39, 17);
+            this.labelName.Location = new System.Drawing.Point(13, 16);
             this.labelName.Name = "labelName";
             this.labelName.Size = new System.Drawing.Size(143, 13);
             this.labelName.TabIndex = 15;
@@ -48,7 +48,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             this.labelLicense.AutoSize = true;
             this.labelLicense.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelLicense.Location = new System.Drawing.Point(39, 89);
+            this.labelLicense.Location = new System.Drawing.Point(13, 88);
             this.labelLicense.Name = "labelLicense";
             this.labelLicense.Size = new System.Drawing.Size(40, 13);
             this.labelLicense.TabIndex = 17;
@@ -56,7 +56,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // labelDetect
             // 
-            this.labelDetect.Location = new System.Drawing.Point(105, 46);
+            this.labelDetect.Location = new System.Drawing.Point(41, 43);
             this.labelDetect.Name = "labelDetect";
             this.labelDetect.Size = new System.Drawing.Size(193, 19);
             this.labelDetect.TabIndex = 19;
@@ -64,7 +64,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // buttonDetect
             // 
-            this.buttonDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDetect.BackColor = System.Drawing.Color.Transparent;
             this.buttonDetect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
             this.buttonDetect.CenterImage = null;
@@ -72,11 +71,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.HyperlinkStyle = false;
             this.buttonDetect.ImageMargin = 2;
             this.buttonDetect.LeftImage = null;
-            this.buttonDetect.Location = new System.Drawing.Point(3, 43);
+            this.buttonDetect.Location = new System.Drawing.Point(16, 43);
             this.buttonDetect.Name = "buttonDetect";
             this.buttonDetect.PushStyle = true;
             this.buttonDetect.RightImage = null;
-            this.buttonDetect.Size = new System.Drawing.Size(75, 23);
+            this.buttonDetect.Size = new System.Drawing.Size(19, 19);
             this.buttonDetect.TabIndex = 18;
             this.buttonDetect.Text = "Refresh";
             this.buttonDetect.TextAlign = System.Drawing.StringAlignment.Center;

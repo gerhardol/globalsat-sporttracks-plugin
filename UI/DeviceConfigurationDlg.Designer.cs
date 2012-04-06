@@ -176,11 +176,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.HyperlinkStyle = false;
             this.buttonDetect.ImageMargin = 2;
             this.buttonDetect.LeftImage = null;
-            this.buttonDetect.Location = new System.Drawing.Point(12, 62);
+            this.buttonDetect.Location = new System.Drawing.Point(12, 65);
             this.buttonDetect.Name = "buttonDetect";
             this.buttonDetect.PushStyle = true;
             this.buttonDetect.RightImage = null;
-            this.buttonDetect.Size = new System.Drawing.Size(75, 23);
+            this.buttonDetect.Size = new System.Drawing.Size(19, 15);
             this.buttonDetect.TabIndex = 7;
             this.buttonDetect.Text = "Refresh";
             this.buttonDetect.TextAlign = System.Drawing.StringAlignment.Center;

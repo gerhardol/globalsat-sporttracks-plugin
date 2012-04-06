@@ -55,9 +55,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             chkImportOnlyNew.Checked = configInfo.ImportOnlyNew;
             this.txtHoursOffset.Text = configInfo.HoursAdjustment.ToString();
             this.textBoxComPort.Text = configInfo.ComPortsText;
+            //COM Ports only configurable in xml
             this.textBoxComPort.Visible = false;
             this.labelComPort.Visible = false;
-            this.buttonDetect.Text = ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
+            this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
+            this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
             this.labelDetect.Text = "";
         }
 
