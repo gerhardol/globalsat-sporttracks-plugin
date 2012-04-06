@@ -37,7 +37,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             InitializeComponent();
 
-            this.buttonDetect.Text = ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
+            this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
+            this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.labelDetect.Text = "";
 
             if (Plugin.Instance.Application != null)

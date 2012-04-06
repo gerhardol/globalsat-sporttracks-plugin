@@ -50,6 +50,7 @@ rem DEL %tempfile%
 :endversion
 
 set stPlgFile=%ProjectDir%%ProjectName%-%PluginVersion%.st%StPluginVersion%plugin
+IF NOT "%ConfigurationType%"=="Release" set stPlgFile="%ProjectDir%%ProjectName%-%PluginVersion%-%ConfigurationType%.st%StPluginVersion%plugin"
 REM To move a .stplugin to common area, create environment variable (or set it below)
 REM set stPlgoutdir=g:\Users\go\dev\web
 
@@ -70,23 +71,23 @@ REM generate the plugin.xml file
 ECHO ^<?xml version="1.0" encoding="utf-8" ?^> >  "%TargetDir%plugin.xml"
 ECHO ^<plugin id="%guid%" minimumCommonVersion="%StVersion%" /^> >> "%TargetDir%plugin.xml"
 
-rem IF NOT "%ConfigurationType%"=="Release" GOTO DebugPluginPackage
-
 DEL "%stPlgFile%"
 IF NOT EXIST "%programfiles%\7-zip\7z.exe" GOTO END
+
+REM Include pdb for now also in release builds - helpful.
+REM IF NOT "%ConfigurationType%"=="Release" GOTO DebugPluginPackage
+
+:DebugPluginPackage
+REM Create debug package, with pdb
 "%programfiles%\7-zip\7z" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%ProjectName%.xml
-rem "%programfiles%\7-zip\7z" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.pdb -x!*.locked -x!%ProjectName%.xml
+GOTO end
+
+:ReleasePluginPackage
+"%programfiles%\7-zip\7z" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%ProjectName%.xml -x!*.pdb
 
 IF "%stPlgoutdir%"=="" GOTO END
 IF not EXIST "%stPlgoutdir%" GOTO END
 COPY "%stPlgFile%" "%stPlgoutdir%"
 GOTO end
-
-:DebugPluginPackage
-GOTO end
-REM Create debug package
-DEL "%stPlgFile%"
-IF NOT EXIST "%programfiles%\7-zip\7z.exe" GOTO END
-"%programfiles%\7-zip\7z" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%ProjectName%.xml
 
 :END
