@@ -5,9 +5,10 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
-3.2.163 2012-04-04
+3.2.166 2012-04-06
  * Resend packets at no response from device, to be able to send packets to GB-580
  * GH-561 has no support. Speed up detection of device by only query for 561 if 561 is configured: Add GS_Sport import device, stop ST, add GH-561 to AllowedId (comma separated string of all allowed ids)
+ * Minor layout updates in Settings, use status line when export/import configuration to device.
 
 3.2.157 2012-03-21
  * Set errortext when failure to upload activity (in Waypoints plugin)
