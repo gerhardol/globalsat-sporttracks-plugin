@@ -5,6 +5,9 @@ This page describes the changes between plugins. See the SVN change log for deta
 
 ===Changes===
 
+3.2.167 2012-04-30
+ * Prepare for plugin catalog
+
 3.2.166 2012-04-06
  * Resend packets at no response from device, to be able to send packets to GB-580
  * GH-561 has no support. Speed up detection of device by only query for 561 if 561 is configured: Add GS_Sport import device, stop ST, add GH-561 to AllowedId (comma separated string of all allowed ids)
