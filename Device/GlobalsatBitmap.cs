@@ -18,15 +18,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class GlobalsatBitmap
     {
-        public static Bitmap GetBitmap(int bpp, System.Drawing.Size size, bool screenRowCol, byte[] binData)
+        public static Bitmap GetBitmap(int bpp, System.Drawing.Size size, bool screenRowCol, RotateFlipType rotateFlip, byte[] binData)
         {
+            Bitmap bmp;
             if (bpp == 1)
             {
-                return GetBitmapBpp0(size.Width, size.Height, screenRowCol, binData);
+                bmp = GetBitmapBpp0(size.Width, size.Height, screenRowCol, binData);
             }
             else{
-                return GetBitmapBpp2(size.Width, size.Height, screenRowCol, binData);
+                bmp = GetBitmapBpp2(size.Width, size.Height, screenRowCol, binData);
             }
+            if (rotateFlip != RotateFlipType.RotateNoneFlipNone)
+            {
+                bmp.RotateFlip(RotateFlipType.Rotate270FlipNone);
+            }
+            return bmp;
         }
 
         protected static Bitmap GetBitmapBpp0(int width, int height, bool screenRowCol, byte[] binData)
