@@ -37,23 +37,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         switch (parts[0])
                         {
-                            case "newonly":
-                                configInfo.ImportOnlyNew = parts[1] == "1";
+                            case xmlTags.ImportOnlyNew:
+                                configInfo.ImportOnlyNew = (parts[1] == "1");
                                 break;
-                            case "hr":
+                            case xmlTags.HoursAdjustment:
                                 configInfo.HoursAdjustment = float.Parse(parts[1]);
                                 break;
-                            case "SecondsAlwaysImport":
+                            case xmlTags.SecondsAlwaysImport:
                                 configInfo.SecondsAlwaysImport = int.Parse(parts[1]);
                                 break;
-                            case "comports":
+                            case xmlTags.ComPortsText:
                                 configInfo.ComPortsText = parts[1];
                                 break;
-                            case "baudrates":
+                            case xmlTags.BaudRatesText:
                                 configInfo.BaudRatesText = parts[1];
                                 break;
-                            case "allowedids":
+                            case xmlTags.AllowedIdsText:
                                 configInfo.AllowedIdsText = parts[1];
+                                break;
+                            case xmlTags.ImportSpeedTrack:
+                                configInfo.ImportSpeedTrack = (parts[1] == "1");
+                                break;
+                            default:
                                 break;
                         }
                     }
@@ -70,20 +75,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override string ToString()
         {
-            return "newonly=" + (ImportOnlyNew ? "1" : "0") +
-                ";hr=" + HoursAdjustment.ToString() +
-                ";SecondsAlwaysImport=" + SecondsAlwaysImport.ToString() +
-                ";comports=" + this.ComPortsText +
-                ";baudrates=" + this.BaudRatesText +
-                ";allowedids=" + this.AllowedIdsText;
+            return xmlTags.ImportOnlyNew + "=" + (ImportOnlyNew ? "1" : "0") +
+                ";" + xmlTags.HoursAdjustment + "=" + HoursAdjustment.ToString() +
+                ";" + xmlTags.SecondsAlwaysImport + "=" + SecondsAlwaysImport.ToString() +
+                ";" + xmlTags.ComPortsText + "=" + this.ComPortsText +
+                ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
+                ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
+            ";" + xmlTags.ImportSpeedTrack + "=" + this.ImportSpeedTrack;
         }
 
+        private static class xmlTags
+        {
+            public const string ImportOnlyNew = "newonly";
+            public const string HoursAdjustment = "hr";
+            public const string SecondsAlwaysImport = "SecondsAlwaysImport";
+            public const string ComPortsText = "comports";
+            public const string BaudRatesText = "baudrates";
+            public const string AllowedIdsText = "allowedids";
+            public const string ImportSpeedTrack = "ImportSpeedTrack";
+        }
         public int MaxPacketPayload = 2500;
         public int MaxNrWaypoints = 100;
         public IList<int> BaudRates = new List<int>();
         //Also used for naming families - first should be readable (null is Globalsat)
         public IList<string> AllowedIds = new List<string>();
         public bool ImportOnlyNew = true;
+        public bool ImportSpeedTrack = false;
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
