@@ -69,7 +69,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                     }
                 }
-                catch() {}
+                catch {}
             }
             return configInfo;
         }
@@ -113,7 +113,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
-        public int Verbose = 1;
+        public int Verbose = 10;
 
         public string ComPortsText
         {

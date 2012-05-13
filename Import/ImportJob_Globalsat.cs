@@ -96,7 +96,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
 
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                    AddActivities(importResults, trains);
+                    AddActivities(importResults, trains, device.configInfo.ImportSpeedTrack, device.configInfo.Verbose);
                 }
             }
             catch (Exception e)
@@ -118,7 +118,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return true;
         }
 
-        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains)
+        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, int verbose)
         {
             foreach (GlobalsatPacket.Train train in trains)
             {
@@ -251,10 +251,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 activity.TimerPauses.Add(new ValueRange<DateTime>(
                                     pointTime.AddMilliseconds(-pointTime.Millisecond),
                                     pointTime2.AddMilliseconds(-pointTime2.Millisecond)));
-                                //TODO: Remove remark when stable
-                                activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
-                                    pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time, perc, info) +
-                                    System.Environment.NewLine;
+                                if (verbose >= 10)
+                                {
+                                    //TODO: Remove remark when stable
+                                    activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
+                                        pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time, perc, info) +
+                                        System.Environment.NewLine;
+                                }
                                 pointTime = pointTime2;
                             }
                         }
@@ -309,13 +312,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         lap.AveragePowerWatts = lapPacket.AveragePower;
                     }
-                    //TODO: Localise outputs?
-                    lap.Notes = string.Format("MaxSpeed:{0:0.##}m/s MaxHr:{1} MinAlt:{2}m MaxAlt:{3}m",
-                        lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude);
-                    //Not adding Power/Cadence - not available
-                    //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",
-                    //    lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude, lapPacket.MaximumCadence, lapPacket.MaximumPower);
-                    
+                    if (verbose >= 5)
+                    {
+                        //TODO: Localise outputs?
+                        lap.Notes = string.Format("MaxSpeed:{0:0.##}m/s MaxHr:{1} MinAlt:{2}m MaxAlt:{3}m",
+                            lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude);
+                        //Not adding Power/Cadence - not available
+                        //lap.Notes = string.Format("MaxSpeed={0} MaxHr={1} MinAlt={2} MaxAlt={3} MaxCadence={4} MaxPower={5}",
+                        //    lapPacket.MaximumSpeed, lapPacket.MaximumHeartRate, lapPacket.MinimumAltitude, lapPacket.MaximumAltitude, lapPacket.MaximumCadence, lapPacket.MaximumPower);
+                    }
                     //Add distance markers from Globalsat. Will for sure be incorrect after pause insertion
                     totalDistance += lapPacket.LapDistanceMeters;
                     activity.DistanceMarkersMeters.Add(totalDistance);
@@ -326,7 +331,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
-                if (pointDist == 0) activity.DistanceMetersTrack = null;
+                if (pointDist == 0 || !importSpeedTrackAsDistance) activity.DistanceMetersTrack = null;
             }
         }
     }
