@@ -291,5 +291,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int TrackLapLength { get { return 40; } }
         protected override int TrackPointLength { get { return 32; } }
         protected override int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 2; } }
+        protected override System.Drawing.RotateFlipType RotateFlip { get { return System.Drawing.RotateFlipType.RotateNoneFlipNone; } }
     }
 }
