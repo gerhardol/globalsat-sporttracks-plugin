@@ -29,40 +29,47 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (configurationInfo != null)
             {
-                string[] configurationParams = configurationInfo.Split(';');
-                foreach (string configurationParam in configurationParams)
+                try
                 {
-                    string[] parts = configurationParam.Split('=');
-                    if (parts.Length == 2)
+                    string[] configurationParams = configurationInfo.Split(';');
+                    foreach (string configurationParam in configurationParams)
                     {
-                        switch (parts[0])
+                        string[] parts = configurationParam.Split('=');
+                        if (parts.Length == 2)
                         {
-                            case xmlTags.ImportOnlyNew:
-                                configInfo.ImportOnlyNew = (parts[1] == "1");
-                                break;
-                            case xmlTags.HoursAdjustment:
-                                configInfo.HoursAdjustment = float.Parse(parts[1]);
-                                break;
-                            case xmlTags.SecondsAlwaysImport:
-                                configInfo.SecondsAlwaysImport = int.Parse(parts[1]);
-                                break;
-                            case xmlTags.ComPortsText:
-                                configInfo.ComPortsText = parts[1];
-                                break;
-                            case xmlTags.BaudRatesText:
-                                configInfo.BaudRatesText = parts[1];
-                                break;
-                            case xmlTags.AllowedIdsText:
-                                configInfo.AllowedIdsText = parts[1];
-                                break;
-                            case xmlTags.ImportSpeedTrack:
-                                configInfo.ImportSpeedTrack = (parts[1] == "1");
-                                break;
-                            default:
-                                break;
+                            switch (parts[0])
+                            {
+                                case xmlTags.ImportOnlyNew:
+                                    configInfo.ImportOnlyNew = (parts[1] == "1");
+                                    break;
+                                case xmlTags.HoursAdjustment:
+                                    configInfo.HoursAdjustment = float.Parse(parts[1]);
+                                    break;
+                                case xmlTags.SecondsAlwaysImport:
+                                    configInfo.SecondsAlwaysImport = int.Parse(parts[1]);
+                                    break;
+                                case xmlTags.ComPortsText:
+                                    configInfo.ComPortsText = parts[1];
+                                    break;
+                                case xmlTags.BaudRatesText:
+                                    configInfo.BaudRatesText = parts[1];
+                                    break;
+                                case xmlTags.AllowedIdsText:
+                                    configInfo.AllowedIdsText = parts[1];
+                                    break;
+                                case xmlTags.ImportSpeedTrack:
+                                    configInfo.ImportSpeedTrack = (parts[1] == "1");
+                                    break;
+                                case xmlTags.Verbose:
+                                    configInfo.Verbose = int.Parse(parts[1]);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                     }
                 }
+                catch() {}
             }
             return configInfo;
         }
@@ -81,7 +88,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.ComPortsText + "=" + this.ComPortsText +
                 ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
                 ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
-            ";" + xmlTags.ImportSpeedTrack + "=" + this.ImportSpeedTrack;
+            ";" + xmlTags.ImportSpeedTrack + "=" + this.ImportSpeedTrack +
+           ";" + xmlTags.Verbose + "=" + this.Verbose;
         }
 
         private static class xmlTags
@@ -93,6 +101,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string BaudRatesText = "baudrates";
             public const string AllowedIdsText = "allowedids";
             public const string ImportSpeedTrack = "ImportSpeedTrack";
+            public const string Verbose = "Verbose";
         }
         public int MaxPacketPayload = 2500;
         public int MaxNrWaypoints = 100;
@@ -104,6 +113,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
+        public int Verbose = 1;
 
         public string ComPortsText
         {
