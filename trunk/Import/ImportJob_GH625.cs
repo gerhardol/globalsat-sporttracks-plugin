@@ -78,7 +78,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
 
                     IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
-                    AddActivities(importResults, sections);
+                    AddActivities(importResults, sections, device.configInfo.ImportSpeedTrack);
                 }
             }
             catch (Exception e)
@@ -101,7 +101,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        private void AddActivities(IImportResults importResults, IList<Gh625Packet.TrackFileSection625M> trackSections)
+        private void AddActivities(IImportResults importResults, IList<Gh625Packet.TrackFileSection625M> trackSections, bool importSpeedTrackAsDistance)
         {
             DateTime pointTime = DateTime.MinValue;
             IActivity activity = null;
@@ -177,7 +177,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             foreach (IActivity hrActivity in allActivities)
             {
-                if (hrActivity.DistanceMetersTrack.Max <= 0)
+                if (hrActivity.DistanceMetersTrack.Max <= 0 || !importSpeedTrackAsDistance)
                 {
                     hrActivity.DistanceMetersTrack = null;
                 }
