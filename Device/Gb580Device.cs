@@ -51,5 +51,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             throw new FeatureNotSupportedException();
         }
+        //The GB-580B has no barometer, unsure if 580F is ever reported
+        public override bool HasElevationTrack { get { if (this.devId == "GB-580P" || this.devId == "GB-580F") { return true; } else { return false; } } }
     }
 }
