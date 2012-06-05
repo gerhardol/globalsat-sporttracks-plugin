@@ -103,7 +103,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.Filter = "Bitmap (*.bmp)|*.bmp|JPEG (*.jpg)|*.jpg|PNG (*.png)|*.png";
+            this.saveFileDialog1.Filter = "Bitmap (*.bmp)|*.bmp";
             // 
             // ScreenCaptureControl
             // 

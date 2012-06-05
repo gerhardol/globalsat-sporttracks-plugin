@@ -97,6 +97,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
+            this.saveFileDialog1.Filter = "Bitmap (*.bmp)|*.bmp|JPEG (*.jpg)|*.jpg|PNG (*.png)|*.png";
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try

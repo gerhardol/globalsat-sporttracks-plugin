@@ -96,7 +96,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
 
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                    AddActivities(importResults, trains, device.configInfo.ImportSpeedTrack, device.configInfo.Verbose);
+                    AddActivities(importResults, trains, device.configInfo.ImportSpeedDistanceTrack, device.configInfo.DetectPausesFromSpeedTrack, device.configInfo.Verbose);
                 }
             }
             catch (Exception e)
@@ -118,7 +118,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return true;
         }
 
-        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, int verbose)
+        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, bool detectPausesFromSpeed, int verbose)
         {
             foreach (GlobalsatPacket.Train train in trains)
             {
@@ -169,6 +169,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
                     //Share setting with global split
                     if (ZoneFiveSoftware.SportTracks.Device.Globalsat.Plugin.Instance.Application.SystemPreferences.ImportSettings.SplitActivity &&
+                        detectPausesFromSpeed &&
                         (foundGPSPoint && activity.GPSRoute.Count > 0 ||
                         activity.HeartRatePerMinuteTrack.Count > 0))
                     {
@@ -363,6 +364,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         activity.DistanceMetersTrack = null;
                     }
+                }
+#else
+                if (!importSpeedTrackAsDistance)
+                {
+                    activity.DistanceMetersTrack = null;
                 }
 #endif
             }
