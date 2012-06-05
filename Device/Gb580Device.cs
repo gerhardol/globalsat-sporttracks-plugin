@@ -40,7 +40,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580" }, new List<int> { 115200 });
+                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P" }, new List<int> { 115200 });
                 return info;
             }
         }
@@ -54,5 +54,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //The GB-580B has no barometer, unsure if 580F is ever reported
         //Do not use preferences here, it may have changed since recording
         public override bool HasElevationTrack { get { if (this.devId == "GB-580P" || this.devId == "GB-580F") { return true; } else { return false; } } }
+        public override bool CanRotateScreen { get { return true; } }
     }
 }
