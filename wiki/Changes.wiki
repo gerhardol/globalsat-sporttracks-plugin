@@ -5,6 +5,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.178 2012-06-05
  * Handle non-GPS activities better. This especially applies to GB-580, that could have Elevation and Speed data also if no GPS.
  * Import Distance track (as before 3.2.173).
  * Auto-rotate screenshot for GB-580, based on current setting.

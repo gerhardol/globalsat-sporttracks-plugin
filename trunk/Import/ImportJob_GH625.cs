@@ -78,7 +78,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
 
                     IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
-                    AddActivities(importResults, sections, device.configInfo.ImportSpeedTrack);
+                    AddActivities(importResults, sections, device.configInfo.ImportSpeedDistanceTrack);
                 }
             }
             catch (Exception e)

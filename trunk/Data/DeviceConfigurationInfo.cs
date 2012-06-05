@@ -57,8 +57,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 case xmlTags.AllowedIdsText:
                                     configInfo.AllowedIdsText = parts[1];
                                     break;
-                                case xmlTags.ImportSpeedTrack:
-                                    configInfo.ImportSpeedTrack = (parts[1] == "1");
+                                case xmlTags.ImportSpeedDistanceTrack:
+                                    configInfo.ImportSpeedDistanceTrack = (parts[1] == "1");
+                                    break;
+                                case xmlTags.DetectPausesFromSpeedTrack:
+                                    configInfo.DetectPausesFromSpeedTrack = (parts[1] == "1");
                                     break;
                                 case xmlTags.Verbose:
                                     configInfo.Verbose = int.Parse(parts[1]);
@@ -88,8 +91,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.ComPortsText + "=" + this.ComPortsText +
                 ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
                 ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
-            ";" + xmlTags.ImportSpeedTrack + "=" + this.ImportSpeedTrack +
-           ";" + xmlTags.Verbose + "=" + this.Verbose;
+                ";" + xmlTags.ImportSpeedDistanceTrack + "=" + this.ImportSpeedDistanceTrack +
+                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + this.DetectPausesFromSpeedTrack +
+                ";" + xmlTags.Verbose + "=" + this.Verbose;
         }
 
         private static class xmlTags
@@ -100,7 +104,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string ComPortsText = "comports";
             public const string BaudRatesText = "baudrates";
             public const string AllowedIdsText = "allowedids";
-            public const string ImportSpeedTrack = "ImportSpeedTrack";
+            public const string ImportSpeedDistanceTrack = "ImportSpeedDistanceTrack";
+            public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack";
             public const string Verbose = "Verbose";
         }
         public int MaxPacketPayload = 2500;
@@ -109,7 +114,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Also used for naming families - first should be readable (null is Globalsat)
         public IList<string> AllowedIds = new List<string>();
         public bool ImportOnlyNew = true;
-        public bool ImportSpeedTrack = false;
+        public bool ImportSpeedDistanceTrack = true;
+        public bool DetectPausesFromSpeedTrack = true;
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
