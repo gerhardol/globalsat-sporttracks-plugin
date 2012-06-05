@@ -99,9 +99,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
     }
 
-    //Currenly unused
-    //public class GlobalsatSystemConfiguration2
-    //{
+    //Partly used
+    public class GlobalsatSystemConfiguration2
+    {
     //    public string UserName;
     //    public bool IsFemale;
     //    public int Age;
@@ -110,6 +110,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     //    public int HeightInches;
     //    public int HeightCm;
     //    public DateTime BirthDate;
+        public byte ScreenOrientation = 0;
 
     //    public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
     //        string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,
@@ -124,6 +125,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     //        this.HeightCm = heightCm;
     //        this.BirthDate = birthDate;
     //    }
-    //}
+    }
 
 }

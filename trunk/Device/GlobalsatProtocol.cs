@@ -457,7 +457,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     GlobalsatPacket packet = PacketFactory.GetScreenshot();
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
-                    return response.ResponseGetScreenshot();
+
+                    System.Drawing.RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
+                    if (this.CanRotateScreen)
+                    {
+                        //try getting screen orientaion
+                        try
+                        {
+                            packet = PacketFactory.GetSystemConfiguration2();
+                            GlobalsatPacket response2 = (GlobalsatPacket)this.SendPacket(packet);
+                            GlobalsatSystemConfiguration2 systemInfo = response2.ResponseGetSystemConfiguration2();
+                            if (systemInfo.ScreenOrientation == 1)
+                            {
+                                rotate = RotateFlipType.Rotate90FlipNone;
+                            }
+                        }
+                        catch{}
+                    }
+                    return response.ResponseGetScreenshot(rotate);
                 }
                 catch (Exception e)
                 {
@@ -473,6 +490,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //Barometric devices
         public virtual bool HasElevationTrack { get { return false; } }
+        public virtual bool CanRotateScreen { get { return false; } }
         //625XT (but other?) do not require waypoints in routes
         public virtual bool RouteRequiresWaypoints { get { return true; } }
     }

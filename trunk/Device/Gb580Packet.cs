@@ -280,6 +280,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackPointLength, offset - startOffset);
         }
 
+        public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
+        {
+            //No reasonable check for CheckOffset()
+            GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
+            systemInfo.ScreenOrientation = this.PacketData[394];
+
+            return systemInfo;
+        }
+
         protected override bool IsLittleEndian { get { return true; } }
         protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
 
@@ -291,6 +300,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override int TrackLapLength { get { return 40; } }
         protected override int TrackPointLength { get { return 32; } }
         protected override int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 2; } }
-        protected override System.Drawing.RotateFlipType RotateFlip { get { return System.Drawing.RotateFlipType.RotateNoneFlipNone; } }
     }
 }
