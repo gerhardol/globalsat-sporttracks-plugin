@@ -268,11 +268,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         activity.GPSRoute.Add(pointTime, gpsPoint);
                     }
-                    else if (device.HasElevationTrack && !float.IsNaN(point.Altitude))
+                    if (device.HasElevationTrack && !float.IsNaN(point.Altitude))
                     {
                         activity.ElevationMetersTrack.Add(pointTime, point.Altitude);
                     }
-                    if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude || point.Altitude != train.TrackPoints[0].Altitude) foundGPSPoint = true;
+                    //Ignore altitude when checking if there is a GPS track, no need to check HasElevationTrack
+                    if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude)
+                    {
+                        foundGPSPoint = true;
+                    }
 
                     activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
                     if (point.HeartRate > 0) foundHrPoint = true;
@@ -326,12 +330,41 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     activity.DistanceMarkersMeters.Add(totalDistance);
                 }
 
-                if (!foundGPSPoint) activity.GPSRoute = null;
+                if (!foundGPSPoint)
+                {
+                    if (activity.GPSRoute.Count > 0)
+                    {
+                        activity.Notes += string.Format("No GPS. Last known latitude:{0}, longitude:{1}", activity.GPSRoute[0].Value.LatitudeDegrees, activity.GPSRoute[0].Value.LongitudeDegrees);
+                    }
+                    activity.GPSRoute = null;
+                }
+                //Keep elevation only if the device (may) record elevation separately from GPS
+                //It may be used also if the user drops GPS if points have been recorded.
+                //(ST may have partial use of elevation together with GPS on other parts in the future?)
                 if (!device.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null; 
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
-                if (pointDist == 0 || !importSpeedTrackAsDistance) activity.DistanceMetersTrack = null;
+                if (pointDist == 0)
+                {
+                    activity.DistanceMetersTrack = null;
+                }
+#if DISTANCETRACK_FIX
+                //attempt to fix import of distance track in 3.1.4515 - to be updated when rereleased
+                //for now import distance track, to keep compatibility(?)
+                try
+                {
+                    activity.CalcSpeedFromDistanceTrack = importSpeedTrackAsDistance;
+                }
+                catch
+                {
+                    //older than 3.1.4515, disable
+                    if (!importSpeedTrackAsDistance && !foundGPSPoint)
+                    {
+                        activity.DistanceMetersTrack = null;
+                    }
+                }
+#endif
             }
         }
     }
