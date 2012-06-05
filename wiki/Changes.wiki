@@ -8,6 +8,7 @@ This page describes the changes between plugin releases. See the SVN change log 
  * Handle non-GPS activities better. This especially applies to GB-580, that could have Elevation and Speed data also if no GPS.
  * Import Distance track (as before 3.2.173).
  * Auto-rotate screenshot for GB-580, based on current setting.
+ * Screenshot save image format is selectable
  
 3.2.173 2012-05-13
  * Distance track (calculated from Speed) is no longer imported. This data was not used (by default) before ST 3.1.4515, but the data is since then used by default. the Globalsat Distance track has lower accuracy than the GPS Distance track.

@@ -103,7 +103,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     if (pictureBox1.Image != null)
                     {
-                        pictureBox1.Image.Save(saveFileDialog1.FileName);
+                        System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                        if (saveFileDialog1.FilterIndex == 1)
+                        {
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                        }
+                        else if (saveFileDialog1.FilterIndex == 2)
+                        {
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                        }
+                        pictureBox1.Image.Save(saveFileDialog1.FileName, format);
                     }
                 }
                 catch (Exception ex)
