@@ -107,6 +107,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             else
             {
                 //import for specific device - Importjob must be implemented
+                monitor.PercentComplete = 0;
                 monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
                 GlobalsatProtocol device = device0;
                 ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
