@@ -42,6 +42,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /* Autodetect device, it is up to the caller to cache the device */
         public GlobalsatProtocol Device(IJobMonitor monitor)
         {
+            monitor.PercentComplete = 0;
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
             if(!this.Open())
             {

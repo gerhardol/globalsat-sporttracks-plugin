@@ -51,6 +51,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public IList<Gh615Packet.TrackFileHeader> ReadTrackHeaders(IJobMonitor monitor)
         {
+            monitor.PercentComplete = 0;
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
 
             Int16[] tracks = new Int16[2];
