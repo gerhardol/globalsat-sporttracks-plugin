@@ -91,8 +91,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.ComPortsText + "=" + this.ComPortsText +
                 ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
                 ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
-                ";" + xmlTags.ImportSpeedDistanceTrack + "=" + this.ImportSpeedDistanceTrack +
-                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + this.DetectPausesFromSpeedTrack +
+                ";" + xmlTags.ImportSpeedDistanceTrack + "=" + (this.ImportSpeedDistanceTrack ? "1" : "0") +
+                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + (this.DetectPausesFromSpeedTrack ? "1" : "0")+
                 ";" + xmlTags.Verbose + "=" + this.Verbose;
         }
 
