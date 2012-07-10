@@ -37,6 +37,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.device = device;
             this.sourceDescription = sourceDescription.Replace(Environment.NewLine, " ");
             this.monitor = monitor;
+            this.monitor.PercentComplete = 0;
             this.importResults = importResults;
         }
 
@@ -330,12 +331,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     totalDistance += lapPacket.LapDistanceMeters;
                     activity.DistanceMarkersMeters.Add(totalDistance);
                 }
-
-                if (!foundGPSPoint)
+                
+                if (!foundGPSPoint && activity.GPSRoute.Count > 1)
                 {
                     if (activity.GPSRoute.Count > 0)
                     {
-                        activity.Notes += string.Format("No GPS. Last known latitude:{0}, longitude:{1}", activity.GPSRoute[0].Value.LatitudeDegrees, activity.GPSRoute[0].Value.LongitudeDegrees);
+                        activity.Notes += string.Format("No GPS. Last known latitude:{0}, longitude:{1}", 
+                            activity.GPSRoute[0].Value.LatitudeDegrees, activity.GPSRoute[0].Value.LongitudeDegrees);
                     }
                     activity.GPSRoute = null;
                 }
