@@ -153,19 +153,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 double pointElapsed = 0;
                 float pointDist = 0;
 
-                //Fix for alberts 16s recording problem
-                int? fixInterval = null;
-                if (train.TotalTime.TotalSeconds / train.TrackPointCount > 15)
+                //Fix for (GB-580 only?) recording problem with interval 10 or larger
+                double? fixInterval = null;
+                if (train.TrackPoints.Count > 1)
                 {
-                    fixInterval = (int)(train.TotalTime.TotalSeconds / train.TrackPointCount);
+                    //All points except last has 0.1s interval
+                    double testIntervall = (train.TotalTime.TotalSeconds - train.TrackPoints[train.TrackPoints.Count - 1].IntervalTime) / (train.TrackPointCount - 1 - 1);
+                    if (testIntervall > 9.6)
+                    {
+                        fixInterval = testIntervall;
+                    }
                 }
 
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     double time = point.IntervalTime;
-                    if (fixInterval != null)
+                    if (time < 0.11 && fixInterval != null)
                     {
-                        time = (int)fixInterval;
+                        time = (double)fixInterval;
                     }
                     float dist = (float)(point.Speed * time);
                     // TODO: How are GPS points indicated in indoor activities?
