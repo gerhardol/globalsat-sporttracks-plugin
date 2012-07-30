@@ -153,9 +153,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 double pointElapsed = 0;
                 float pointDist = 0;
 
+                //Fix for alberts 16s recording problem
+                int? fixInterval = null;
+                if (train.TotalTime.TotalSeconds / train.TrackPointCount > 15)
+                {
+                    fixInterval = (int)(train.TotalTime.TotalSeconds / train.TrackPointCount);
+                }
+
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     double time = point.IntervalTime;
+                    if (fixInterval != null)
+                    {
+                        time = (int)fixInterval;
+                    }
                     float dist = (float)(point.Speed * time);
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
