@@ -135,7 +135,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.MaximumPowerWattsEntered = train.MaximumPower;
                 activity.AveragePowerWattsEntered = train.AveragePower;
                 activity.TotalAscendMetersEntered = train.TotalAscend;
-                activity.TotalDescendMetersEntered = train.TotalDescend;
+                activity.TotalDescendMetersEntered = -train.TotalDescend;
 
                 bool foundGPSPoint = false;
                 bool foundHrPoint = false;
