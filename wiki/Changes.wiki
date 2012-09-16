@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.185 2012-07-09
+ * GB-580 recording fix
+
 3.2.181 2012-07-09
  * Update for import Distance track
 

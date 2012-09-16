@@ -153,7 +153,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 double pointElapsed = 0;
                 float pointDist = 0;
 
-                //Fix for (GB-580 only?) recording problem with interval 10 or larger
+                //Fix for (GB-580 only?) recording problem with interval 10 or larger (in fw before 2012-09)
                 double? fixInterval = null;
                 if (train.TrackPoints.Count > 1)
                 {
