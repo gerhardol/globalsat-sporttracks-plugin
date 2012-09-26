@@ -149,11 +149,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         private static bool showPopup = false; //Do not show by default
-        protected bool ReportError(string s, bool initial)
+        internal static bool ReportError(string s, bool initial, Exception e)
+        {
+            if (e != null)
+            {
+                s += " exc:" + e.ToString();
+            }
+            return ReportError(s, initial);
+        }
+        internal static bool ReportError(string s, bool initial)
         {
             if (showPopup && !initial)
             {
-                string s2 = s + string.Format(" To show further popups, press {1}", System.Windows.Forms.DialogResult.Yes);
+                System.Diagnostics.StackTrace st = new System.Diagnostics.StackTrace(true);
+                System.Diagnostics.StackFrame[] stFrames = st.GetFrames();
+                string trace = "";
+                for (int i = 1; i < stFrames.Length && i < 6; i++)
+                {
+                    //TODO: Nicer formatting
+                    trace += stFrames[i].ToString() + System.Environment.NewLine;
+                }
+
+                string s2 = s + " " + trace + string.Format(" To show further popups, press {0}", System.Windows.Forms.DialogResult.Yes);
                 if (System.Windows.Forms.MessageBox.Show(s2, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
                 {
                     showPopup = false;
@@ -180,6 +197,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         //Physical port should be closed
                         port.Open();
                     }
+
                     if (packet.CommandId == GhPacketBase.CommandWhoAmI)
                     {
                         //Speed-up device detection, keep this as short as possible. 
@@ -194,6 +212,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         port.ReadTimeout = this.ReadTimeout;
                     }
+
                     byte[] sendPayload = packet.ConstructPayload(BigEndianPacketLength);
                     try
                     {
@@ -211,14 +230,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         string s = string.Format("Error occurred, sending {0} bytes.",
                                 sendPayload.Length);
-                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
                         throw e;
                     }
 
                     try
                     {
-                        received.CommandId = (byte)port.ReadByte();
+                        int data = port.ReadByte();
+                        received.CommandId = (byte)data;
+                        if (data < 0 || data > 255)
+                        {
+                            //Special handling for first byte -1 is stream closed
+                            throw new TimeoutException(string.Format("No data received for {0},{1}", packet.CommandId,data));
+                        }
                         if (packet.CommandId == GhPacketBase.CommandWhoAmI)
                         {
                             this.DataRecieved = false;
@@ -229,17 +254,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         int hiPacketLen = port.ReadByte();
                         int loPacketLen = port.ReadByte();
-                        //Note: The size from the device always seem to be the same (not so when sending)
+                        //Note: The endian for size (except for 561) from the device always seem to be the same (not so when sending)
                         received.PacketLength = (Int16)((hiPacketLen << 8) + loPacketLen);
                     }
                     catch (Exception e)
                     {
                         string s = string.Format("Error occurred, receiving {0} bytes ({2},{3}).",
                                 received.PacketLength, this.DataRecieved, packet.CommandId, received.CommandId);
-                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
                         throw e;
                     }
+
                     if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
                         received.PacketLength > 0x1000)
                     {
@@ -249,6 +275,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         port.Close();
                         throw new Exception(Properties.Resources.Device_OpenDevice_Error);
                     }
+
                     received.PacketData = new byte[received.PacketLength];
                     byte checksum = 0;
                     int receivedBytes = 0; //debug timeouts
@@ -257,7 +284,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         for (Int16 b = 0; b < received.PacketLength; b++)
                         {
-                            received.PacketData[b] = (byte)port.ReadByte();
+                            int data = port.ReadByte();
+                            if (data < 0 || data > 255)
+                            {
+                                //-1 is stream closed
+                                throw new TimeoutException(string.Format("All data not received for {0}({4},{1}) bytes ({2},{3}).",
+                                received.PacketLength, receivedBytes, packet.CommandId, received.CommandId, data));
+                            }
+                            received.PacketData[b] = (byte)data;
                             receivedBytes++;
                         }
                         checksum = (byte)port.ReadByte();
@@ -276,7 +310,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         string s = string.Format("Error occurred, receiving {0}({1}) bytes ({2},{3}).",
                                 received.PacketLength, receivedBytes, packet.CommandId, received.CommandId);
-                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
+                        ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
                         throw e;
 
@@ -312,7 +346,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         !((received.CommandId == GhPacketBase.CommandGetTrackFileSections ||
                            received.CommandId == GhPacketBase.CommandId_FINISH ||
                            received.CommandId == GhPacketBase.ResponseSendTrackFinish) &&
-                        (packet.CommandId == GhPacketBase.CommandGetNextTrackSection ||
+                          (packet.CommandId == GhPacketBase.CommandGetNextTrackSection ||
                            packet.CommandId == GhPacketBase.CommandGetTrackFileSections ||
                            packet.CommandId == GhPacketBase.CommandSendTrackSection))
                         )
@@ -332,6 +366,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         remainingAttempts = 0;
                     }
                 }
+
                 catch (Exception e)
                 {
                     remainingAttempts--;

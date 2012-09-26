@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.186 2012-09-26
+ * Some refined messages at import errors
+
 3.2.185 2012-07-09
  * GB-580 recording fix
 
