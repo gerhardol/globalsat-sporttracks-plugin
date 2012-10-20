@@ -128,6 +128,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             result = devId + " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
                         }
                     }
+                    result += " on " + device2.LastValidComPort;
                 }
                 else
                 {

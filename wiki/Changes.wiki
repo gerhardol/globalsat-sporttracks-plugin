@@ -5,7 +5,11 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
-3.2.186 2012-09-26 (Plugin Catalog)
+3.2.188 2012-10-20
+ * Cache last used COM port used
+ * Increase 625M communication timeouts
+
+ 3.2.186 2012-09-26 (Plugin Catalog)
  * Some refined messages at import errors
 
 3.2.185 2012-07-09

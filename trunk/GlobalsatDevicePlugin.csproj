@@ -13,6 +13,7 @@
     <Compile Include="Data\DeviceConfigurationInfo.cs" />
     <Compile Include="Data\GlobalsatRoute.cs" />
     <Compile Include="Data\GlobalsatWaypoint.cs" />
+    <Compile Include="Data\Settings.cs" />
     <Compile Include="Device\Gh561Device.cs" />
     <Compile Include="Device\Gh561Packet.cs" />
     <Compile Include="Device\GenericDevice.cs" />

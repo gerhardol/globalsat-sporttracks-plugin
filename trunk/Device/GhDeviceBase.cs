@@ -38,6 +38,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
         }
 
+        public string LastValidComPort
+        {
+            get
+            {
+                return Settings.GetLastValidComPorts(Name);
+            }
+        }
+
+        private string Name
+        {
+            get
+            {
+                string name = "Generic";
+                if (this.configInfo != null && this.configInfo.AllowedIds != null && this.configInfo.AllowedIds.Count > 0)
+                {
+                    name = this.configInfo.AllowedIds[0];
+                }
+                return name;
+            }
+        }
+
         /// <summary>
         /// Timeout when communicating, in ms
         /// </summary>
@@ -381,19 +402,35 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return received;
         }
 
+        private bool comPortsAdd(IList<string> comPorts, string s)
+        {
+            bool res = false;
+            if (!string.IsNullOrEmpty(s))
+            {
+                if (!comPorts.Contains(s))
+                {
+                    comPorts.Add(s);
+                    res = true;
+                }
+            }
+            return res;
+        }
+
         //Try open the port. Catch all exceptions, let the caller determine if this is an error
         protected virtual void OpenPort(IList<string> comPorts)
         {
             this.devId = "";
+
             if (comPorts == null || comPorts.Count == 0)
             {
                 comPorts = new List<string>();
 
+                this.comPortsAdd(comPorts, this.LastValidComPort);
                 if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     for (int i = 1; i <= 30; i++)
                     {
-                        comPorts.Add("COM" + i);
+                        this.comPortsAdd(comPorts, "COM" + i);
                     }
                 }
                 else if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -402,9 +439,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 					/* TODO Check if file exists, well maybe this is fast enough and a check is not needed atleast in Linux */
                     for (int i = 0; i <= 30; i++)
                     {
-                        comPorts.Add("/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
-                        comPorts.Add("/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
-                        comPorts.Add("/dev/tty.usbserial" + i); /* OSX */
+                        this.comPortsAdd(comPorts, "/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
+                        this.comPortsAdd(comPorts, "/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
+                        this.comPortsAdd(comPorts, "/dev/tty.usbserial" + i); /* OSX */
                     }
                 }
             }
@@ -418,6 +455,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     port.WriteBufferSize = configInfo.MaxPacketPayload;
                     if (ValidGlobalsatPort(port))
                     {
+                        Settings.SetLastValidComPorts(Name, comPort);
                         return;
                     }
                 }
@@ -431,7 +469,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //The 561 only(?) have little endian size... Set here as it is controlled from the device, when probing
         public virtual bool BigEndianPacketLength { get { return true; } }
         public DeviceConfigurationInfo configInfo;
-
         private SerialPort port = null;
     }
 }
