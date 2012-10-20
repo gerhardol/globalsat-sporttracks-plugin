@@ -56,10 +56,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void ReadOptions(XmlDocument xmlDoc, XmlNamespaceManager nsmgr, XmlElement pluginNode)
         {
+            Settings.ReadOptions(xmlDoc, nsmgr, pluginNode);
         }
 
         public void WriteOptions(XmlDocument xmlDoc, XmlElement pluginNode)
         {
+            Settings.WriteOptions(xmlDoc, pluginNode);
         }
 
         #endregion
