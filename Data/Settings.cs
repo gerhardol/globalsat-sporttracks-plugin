@@ -53,7 +53,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     lastValidComPorts[Name].Remove(val);
                 }
                 lastValidComPorts[Name].Insert(0, val);
-                if (Name.Equals(""))
+                if (!Name.Equals(""))
                 {
                     SetLastValidComPort("", val);
                 }
@@ -112,7 +112,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     s += string.Format("{0},", port);
                 }
-                s += ";";
+                s += ';';
             }
             pluginNode.SetAttribute(xmlTags.LastValidComPorts, s);
         }
