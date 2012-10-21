@@ -26,22 +26,37 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 	static class Settings
     {
         //Device specific information, but plugin cannot update saved info spontaneous easily
-        private static IDictionary<string, string> lastValidComPorts = null;
+        private static IDictionary<string, IList<string>> lastValidComPorts = null;
+        //Set a easy to read name for preferences
+        private const string GenericDeviceName = "Generic";
 
-        public static string GetLastValidComPorts(string Name)
+        public static IList<string> GetLastValidComPorts(string Name)
         {
-            if (lastValidComPorts != null && lastValidComPorts.ContainsKey(Name) && !string.IsNullOrEmpty(lastValidComPorts[Name]))
+            if (lastValidComPorts != null && lastValidComPorts.ContainsKey(Name) && lastValidComPorts[Name] != null && lastValidComPorts[Name].Count > 0)
             {
                 return lastValidComPorts[Name];
             }
-            return "";
+            return new List<string>();
         }
 
-        public static void SetLastValidComPorts(string Name, string val)
+        public static void SetLastValidComPort(string Name, string val)
         {
             if (lastValidComPorts != null)
             {
-                lastValidComPorts[Name] = val;
+                if (!lastValidComPorts.ContainsKey(Name) || lastValidComPorts[Name] == null)
+                {
+                    lastValidComPorts[Name] = new List<string>();
+                }
+                if (lastValidComPorts[Name].Contains(val))
+                {
+                    //Make sure the most recent is first only
+                    lastValidComPorts[Name].Remove(val);
+                }
+                lastValidComPorts[Name].Insert(0, val);
+                if (Name.Equals(""))
+                {
+                    SetLastValidComPort("", val);
+                }
             }
         }
 
@@ -51,7 +66,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 String attr;
                 attr = pluginNode.GetAttribute(xmlTags.LastValidComPorts);
-                lastValidComPorts = new Dictionary<string, string>();
+                lastValidComPorts = new Dictionary<string, IList<string>>();
                 if (attr.Length > 0)
                 {
                     String[] values = attr.Split(';');
@@ -60,7 +75,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         String[] keypairs = column.Split('=');
                         if (keypairs.Length >= 2)
                         {
-                            lastValidComPorts[keypairs[0]] = keypairs[1];
+                            string name = keypairs[0];
+                            if (GenericDeviceName.Equals(name))
+                            {
+                                //Use empty name in the plugin
+                                name = "";
+                            }
+                            lastValidComPorts[name] = new List<string>();
+                            String[] ports = keypairs[1].Split(',');
+                            foreach (string port in ports)
+                            {
+                                if (!string.IsNullOrEmpty(port))
+                                {
+                                    lastValidComPorts[name].Add(port);
+                                }
+                            }
                         }
                     }
                 }
@@ -71,9 +100,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public static void WriteOptions(XmlDocument xmlDoc, XmlElement pluginNode)
         {
             string s = "";
-            foreach (KeyValuePair<string, string> kv in lastValidComPorts)
+            foreach (KeyValuePair<string, IList<string>> kv in lastValidComPorts)
             {
-                s += string.Format("{0}={1};", kv.Key, kv.Value);
+                string name = kv.Key;
+                if (string.IsNullOrEmpty(name))
+                {
+                    name = GenericDeviceName;
+                }
+                s += string.Format("{0}=", name);
+                foreach (string port in kv.Value)
+                {
+                    s += string.Format("{0},", port);
+                }
+                s += ";";
             }
             pluginNode.SetAttribute(xmlTags.LastValidComPorts, s);
         }

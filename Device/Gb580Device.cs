@@ -32,9 +32,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public Gb580Device() : base() { }
         public Gb580Device(string configInfo) : base(configInfo) { }
 
-        //Device seem slower to respond than other
-        public override int ReadTimeout { get { return 2000; } }
-        public override int ReadTimeoutDetect { get { return 2000; } }
+        //Note: Device seem slower to respond than other, also 625M
 
         public override DeviceConfigurationInfo DefaultConfig
         {

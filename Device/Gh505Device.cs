@@ -29,8 +29,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public Gh505Device() : base() { }
         public Gh505Device(string configInfo) : base(configInfo) { }
 
-        //Slow?
-        public override int ReadTimeout { get { return 2000; } }
+        //Note: seem to be alittle slow, used to have longer timeout than 625M
 
         public override DeviceConfigurationInfo DefaultConfig
         {
