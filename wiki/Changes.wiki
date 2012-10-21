@@ -5,7 +5,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
-3.2.189 2012-10-21
+3.2.190 2012-10-21
  * Cache last used COM port used, to speed up device detection
  * Increase communication timeouts (from 1s to 4s by default), to avoid occasional communication failures seen on 625M (580P had 2s before). The first import on a certain COM port(and waypoint handling) will be slower, subsequent imports will be slightly faster due to caching.
 
