@@ -132,8 +132,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             throw new FeatureNotSupportedException();
         }
-        //temporary increasing the timeout
-        public override int ReadTimeout { get { return 9000; } }
-        public override int ReadTimeoutDetect { get { return 9000; } }
     }
 }

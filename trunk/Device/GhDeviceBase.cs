@@ -38,24 +38,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
         }
 
-        public string LastValidComPort
-        {
-            get
-            {
-                return Settings.GetLastValidComPorts(Name);
-            }
-        }
-
         private string Name
         {
             get
             {
-                string name = "Generic";
+                string name = ""; //No "Generic" name set here
                 if (this.configInfo != null && this.configInfo.AllowedIds != null && this.configInfo.AllowedIds.Count > 0)
                 {
                     name = this.configInfo.AllowedIds[0];
                 }
                 return name;
+            }
+        }
+
+        public string LastValidComPort
+        {
+            get
+            {
+                IList<string> ports = Settings.GetLastValidComPorts(Name);
+                string s = "";
+                if (ports.Count > 0)
+                {
+                    s = ports[0];
+                }
+                return s;
             }
         }
 
@@ -66,7 +72,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                return 1000;
+                return 4000;
             }
         }
 
@@ -77,7 +83,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                return 1000;
+                return 4000;
             }
         }
 
@@ -425,7 +431,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 comPorts = new List<string>();
 
-                this.comPortsAdd(comPorts, this.LastValidComPort);
+                foreach(string port in Settings.GetLastValidComPorts(Name))
+                {
+                    this.comPortsAdd(comPorts, port);
+                }
+                
                 if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
                 {
                     for (int i = 1; i <= 30; i++)
@@ -455,7 +465,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     port.WriteBufferSize = configInfo.MaxPacketPayload;
                     if (ValidGlobalsatPort(port))
                     {
-                        Settings.SetLastValidComPorts(Name, comPort);
+                        Settings.SetLastValidComPort(Name, comPort);
                         return;
                     }
                 }

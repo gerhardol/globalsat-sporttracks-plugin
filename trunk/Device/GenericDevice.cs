@@ -33,7 +33,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public GenericDevice(string configInfo) : base(configInfo) { }
 
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(); } }
-        public override int ReadTimeoutDetect { get { return 2000; } }
         public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
 
         private bool m_bigEndianPacketLength = true;

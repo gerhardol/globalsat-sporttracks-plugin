@@ -5,9 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
-3.2.188 2012-10-20
- * Cache last used COM port used
- * Increase 625M communication timeouts
+3.2.189 2012-10-21
+ * Cache last used COM port used, to speed up device detection
+ * Increase communication timeouts (from 1s to 4s by default), to avoid occasional communication failures seen on 625M (580P had 2s before). The first import on a certain COM port(and waypoint handling) will be slower, subsequent imports will be slightly faster due to caching.
 
  3.2.186 2012-09-26 (Plugin Catalog)
  * Some refined messages at import errors
@@ -21,7 +21,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 3.2.178 2012-06-05
  * Handle non-GPS activities better. This especially applies to GB-580, that could have Elevation and Speed data also if no GPS.
  * Import Distance track (as before 3.2.173).
- * Auto-rotate screenshot for GB-580, based on current setting.
+ * Auto-rotate screenshot for GB-580, based on current setting
  * Screenshot save image format is selectable
  
 3.2.173 2012-05-13
