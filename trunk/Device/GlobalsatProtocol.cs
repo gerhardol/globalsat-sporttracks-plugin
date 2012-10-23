@@ -590,9 +590,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             GlobalsatPacket.Train train = response.UnpackTrainHeader();
                             if (train != null)
                             {
-                                trains.Add(train);
                                 trainLapsToRead = train.LapCount;
                                 pointsToRead = train.TrackPointCount;
+                                trains.Add(train);
                             }
                             readMode = ReadMode.Laps;
                             break;
@@ -616,7 +616,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             foreach (GlobalsatPacket.TrackPoint point in points) currentTrain.TrackPoints.Add(point);
                             pointsToRead -= points.Count;
                             totalPointsRead += points.Count;
-                            DateTime startTime = currentTrain.StartTime.ToLocalTime();
+                            DateTime startTime = currentTrain.StartTime.ToLocalTime().AddHours(configInfo.HoursAdjustment);
                             string statusProgress = startTime.ToShortDateString() + " " + startTime.ToShortTimeString();
                             monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
                             monitor.PercentComplete = totalPointsRead / totalPoints;
