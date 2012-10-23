@@ -98,7 +98,7 @@ namespace GlobalsatDevicePlugin
         }
 
         //Get the data in a generic Globalsat format, to separate ST
-        public static IList<GhPacketBase.Train> ToGlobTrack(IList<IActivity> activities)
+        public static IList<GhPacketBase.Train> ToGlobTrack(GlobalsatProtocol device, IList<IActivity> activities)
         {
             IList<GhPacketBase.Train> result = new List<GhPacketBase.Train>();
 
@@ -106,7 +106,7 @@ namespace GlobalsatDevicePlugin
             {
                 IGPSRoute gpsRoute = activity.GPSRoute;
                 GhPacketBase.Train train = new GhPacketBase.Train();
-                train.StartTime = activity.StartTime;
+                train.StartTime = activity.StartTime.AddHours(device.configInfo.HoursAdjustment);
                 train.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
                 train.TotalDistanceMeters = (Int32)Math.Round(gpsRoute.TotalDistanceMeters);
                 train.LapCount = 1;
@@ -176,7 +176,7 @@ namespace GlobalsatDevicePlugin
             GenericDevice device = new GenericDevice();
             GlobalsatProtocol device2 = device.Device(jobMonitor);
             if (device2 == null) { return 0; }
-            return device2.SendTrack(ToGlobTrack(activities), jobMonitor);
+            return device2.SendTrack(ToGlobTrack(device2, activities), jobMonitor);
         }
     }
 }

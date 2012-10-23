@@ -61,7 +61,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                         {
-                            DateTime findTime = activity.StartTime.ToLocalTime();
+                            DateTime findTime = activity.StartTime;
                             if (headersByStart.ContainsKey(findTime))
                             {
                                 headersByStart.Remove(findTime);
