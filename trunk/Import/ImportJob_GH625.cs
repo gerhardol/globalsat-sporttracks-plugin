@@ -52,7 +52,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>>();
                         foreach (Gh625Packet.TrackFileHeader625M header in headers)
                         {
-                            DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                            DateTime start = header.StartTime;
                             if (!headersByStart.ContainsKey(start))
                             {
                                 headersByStart.Add(start, new List<Gh625Packet.TrackFileHeader625M>());
@@ -120,7 +120,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     if (section.StartPointIndex == 0)
                     {
-                        pointTime = section.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                        pointTime = section.StartTime;
                         activity = importResults.AddActivity(pointTime);
                         allActivities.Add(activity);
                         activity.Metadata.Source = string.Format(CommonResources.Text.Devices.ImportJob_ActivityImportSource, sourceDescription);

@@ -43,7 +43,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(this); } }
 
         public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
         {
@@ -53,5 +53,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Do not use preferences here, it may have changed since recording
         public override bool HasElevationTrack { get { if (this.devId == "GB-580P" || this.devId == "GB-580F") { return true; } else { return false; } } }
         public override bool CanRotateScreen { get { return true; } }
+        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
     }
 }

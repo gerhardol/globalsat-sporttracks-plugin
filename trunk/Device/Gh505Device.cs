@@ -40,6 +40,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(this); } }
+        public override int ScreenBpp { get { return 1; } }
+        public override bool ScreenRowCol { get { return false; } }
     }
 }
