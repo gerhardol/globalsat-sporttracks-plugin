@@ -40,7 +40,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Unknown protocol
         public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
 
-        public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(this); } }
         public override bool BigEndianPacketLength { get { return false; } }
     }
 }

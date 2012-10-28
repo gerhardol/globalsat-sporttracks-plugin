@@ -42,7 +42,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public override GlobalsatPacket PacketFactory { get { return new Gh615Packet(); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gh615Packet(this); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -109,5 +109,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             throw new FeatureNotSupportedException();
         }
+
+        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
+        public override int ScreenBpp { get { return 1; } }
     }
 }

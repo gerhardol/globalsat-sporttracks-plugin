@@ -493,6 +493,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual bool CanRotateScreen { get { return false; } }
         //625XT (but other?) do not require waypoints in routes
         public virtual bool RouteRequiresWaypoints { get { return true; } }
+        //Some device related settings - affecting packets
+        public virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
+        public virtual int ScreenBpp { get { return 2; } }
+        public virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
     }
 
 
@@ -616,7 +620,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             foreach (GlobalsatPacket.TrackPoint point in points) currentTrain.TrackPoints.Add(point);
                             pointsToRead -= points.Count;
                             totalPointsRead += points.Count;
-                            DateTime startTime = currentTrain.StartTime.ToLocalTime().AddHours(configInfo.HoursAdjustment);
+                            DateTime startTime = currentTrain.StartTime.ToLocalTime();
                             string statusProgress = startTime.ToShortDateString() + " " + startTime.ToShortTimeString();
                             monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
                             monitor.PercentComplete = totalPointsRead / totalPoints;

@@ -25,9 +25,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Packet : GlobalsatPacket2
     {
+        public Gh505Packet(GlobalsatProtocol device) : base(device) { }
+
         private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(offset).ToUniversalTime();
+            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.Device.configInfo.HoursAdjustment);
             header.TrackPointCount = ReadInt16(offset + 6);
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 8)));
             header.TotalDistanceMeters = ReadInt32(offset + 12);
@@ -224,7 +226,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private int WriteTrackHeader(int offset, int noOfLaps, Header trackFile)
         {
             int startOffset = offset;
-            offset += this.Write(offset, trackFile.StartTime.ToLocalTime());
+            offset += this.Write(offset, trackFile.StartTime.ToLocalTime().AddHours(-this.Device.configInfo.HoursAdjustment));
 
             offset += this.Write(offset, (Int16)trackFile.TrackPointCount);
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
@@ -273,9 +275,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         protected override bool IsLittleEndian { get { return true; } }
-
-        protected override int ScreenBpp { get { return 1; } }
-        protected override bool ScreenRowCol { get { return false; } }
 
         protected override int WptLatLonOffset { get { return 2; } }
 

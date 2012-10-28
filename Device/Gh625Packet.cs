@@ -25,6 +25,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class Gh625Packet : GlobalsatPacket
     {
+        public Gh625Packet(GlobalsatProtocol device) : base(device) { }
+
         public class Header625M : GhPacketBase.Header
         {
             public Int16 TotalCalories;
@@ -120,7 +122,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void ReadHeader(Header625M header, int offset)
         {
-            header.StartTime = ReadDateTime(offset).ToUniversalTime();
+            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.Device.configInfo.HoursAdjustment);
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 7)));
             header.TotalDistanceMeters = ReadInt32(offset + 11);
             header.TotalCalories = ReadInt16(offset + 15);
@@ -161,7 +163,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private int WriteTrackHeader(int offset, int noOfLaps, Train trackFile)
         {
             int startOffset = offset;
-            offset += this.Write(offset, trackFile.StartTime.ToLocalTime());
+            offset += this.Write(offset, trackFile.StartTime.ToLocalTime().AddHours(-this.Device.configInfo.HoursAdjustment));
 
             this.PacketData[offset++] = (byte)noOfLaps;
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);
@@ -327,8 +329,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //    return systemInfo;
         //}
 
-        protected override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(120, 80); } }
-        protected override int ScreenBpp { get { return 1; } }
         protected override int TrackHeaderLength { get { return 31; } }
         protected override int TrainDataHeaderLength { get { return TrackHeaderLength; } }
         protected override int TrackPointLength { get { return 15; } }

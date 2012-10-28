@@ -40,7 +40,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(this); } }
 
         //Timeout when detecting - 625XT seem to be faster than other models (used to be 100ms)
         public override int ReadTimeoutDetect { get { return 1000; } }

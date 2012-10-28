@@ -71,7 +71,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         foreach (GlobalsatPacket.TrackFileHeader header in headers)
                         {
                             //Adjust time in headers
-                            DateTime start = header.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                            DateTime start = header.StartTime;
                             if (!headersByStart.ContainsKey(start))
                             {
                                 headersByStart.Add(start, new List<GlobalsatPacket.TrackFileHeader>());
@@ -124,7 +124,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             foreach (GlobalsatPacket.Train train in trains)
             {
-                DateTime pointTime = train.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                DateTime pointTime = train.StartTime;
                 IActivity activity = importResults.AddActivity(pointTime);
                 activity.Metadata.Source = string.Format(CommonResources.Text.Devices.ImportJob_ActivityImportSource, sourceDescription);
                 activity.TotalTimeEntered = train.TotalTime;

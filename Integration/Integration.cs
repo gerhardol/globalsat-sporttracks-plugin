@@ -106,7 +106,7 @@ namespace GlobalsatDevicePlugin
             {
                 IGPSRoute gpsRoute = activity.GPSRoute;
                 GhPacketBase.Train train = new GhPacketBase.Train();
-                train.StartTime = activity.StartTime.AddHours(device.configInfo.HoursAdjustment);
+                train.StartTime = activity.StartTime;
                 train.TotalTime = TimeSpan.FromSeconds(gpsRoute.TotalElapsedSeconds);
                 train.TotalDistanceMeters = (Int32)Math.Round(gpsRoute.TotalDistanceMeters);
                 train.LapCount = 1;
