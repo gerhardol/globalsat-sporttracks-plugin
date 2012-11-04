@@ -26,7 +26,7 @@ using ZoneFiveSoftware.Common.Visuals;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public abstract class GhDeviceBase
+    public abstract class GhDeviceBase : IDisposable
     {
         public GhDeviceBase()
         {
@@ -480,5 +480,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual bool BigEndianPacketLength { get { return true; } }
         public DeviceConfigurationInfo configInfo;
         private SerialPort port = null;
+
+        public void Dispose()
+        {
+            this.port.Dispose();
+        }
     }
 }
