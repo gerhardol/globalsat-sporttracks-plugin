@@ -16,7 +16,7 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class SettingsPage : ISettingsPage
+    class SettingsPage : ISettingsPage, IDisposable
     {
         #region ISettingsPage Members
 
@@ -100,10 +100,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private SettingsControl control = null;
         #endregion
 
+
+        public void Dispose()
+        {
+            this.control.Dispose();
+        }
     }
 
 
-    class DeviceConfigurationSettingsPage : ISettingsPage
+    class DeviceConfigurationSettingsPage : ISettingsPage, IDisposable
     {
         #region ISettingsPage Members
 
@@ -186,10 +191,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private DeviceConfigurationSettingsControl control = null;
         #endregion
 
+
+        public void Dispose()
+        {
+            this.control.Dispose();
+        }
     }
 
 
-    class ScreenCapturePage : ISettingsPage
+    class ScreenCapturePage : ISettingsPage, IDisposable
     {
         #region ISettingsPage Members
 
@@ -270,6 +280,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private ScreenCaptureControl control = null;
         #endregion
 
+
+        public void Dispose()
+        {
+            this.control.Dispose();
+        }
     }
 
 
