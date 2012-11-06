@@ -100,19 +100,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public static void WriteOptions(XmlDocument xmlDoc, XmlElement pluginNode)
         {
             string s = "";
-            foreach (KeyValuePair<string, IList<string>> kv in lastValidComPorts)
+            if (lastValidComPorts != null)
             {
-                string name = kv.Key;
-                if (string.IsNullOrEmpty(name))
+                foreach (KeyValuePair<string, IList<string>> kv in lastValidComPorts)
                 {
-                    name = GenericDeviceName;
+                    string name = kv.Key;
+                    if (string.IsNullOrEmpty(name))
+                    {
+                        name = GenericDeviceName;
+                    }
+                    s += string.Format("{0}=", name);
+                    foreach (string port in kv.Value)
+                    {
+                        s += string.Format("{0},", port);
+                    }
+                    s += ';';
                 }
-                s += string.Format("{0}=", name);
-                foreach (string port in kv.Value)
-                {
-                    s += string.Format("{0},", port);
-                }
-                s += ';';
             }
             pluginNode.SetAttribute(xmlTags.LastValidComPorts, s);
         }
