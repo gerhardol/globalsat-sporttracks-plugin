@@ -54,5 +54,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override bool HasElevationTrack { get { if (this.devId == "GB-580P" || this.devId == "GB-580F") { return true; } else { return false; } } }
         public override bool CanRotateScreen { get { return true; } }
         public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
+        public override int TotalPoints { get { return 52416; } }
     }
 }

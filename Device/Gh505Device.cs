@@ -29,7 +29,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public Gh505Device() : base() { }
         public Gh505Device(string configInfo) : base(configInfo) { }
 
-        //Note: seem to be alittle slow, used to have longer timeout than 625M
+        //Note: seem to be a little slow, used to have longer timeout than 625M
 
         public override DeviceConfigurationInfo DefaultConfig
         {
@@ -43,5 +43,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(this); } }
         public override int ScreenBpp { get { return 1; } }
         public override bool ScreenRowCol { get { return false; } }
+        public override int TotalPoints { get { return 52416; } }
     }
 }
