@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+ * If the estimated recording time is less than 3h, show a popup.
+ * If no Globalsat device connected after installing 3.2.190, ST Preferences were not stored.
+ 
 3.2.191 2012-10-22
  * If HoursOffset was set for GH-625XT, GB-580P, GH-505, the activity offset was not used. (HourOffset can be used if the device time zone is different from the PC.)
  * GH-625M and GH-615 tracks were always imported, regardless if "Import new data only" was checked

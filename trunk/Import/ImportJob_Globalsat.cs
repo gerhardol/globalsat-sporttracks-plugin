@@ -97,6 +97,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         fetch.AddRange(headers);
                     }
 
+                    //Find recording time in device
+                    int totalUsedPoints = 0;
+                    TimeSpan totalTime = TimeSpan.Zero;
+                    foreach (GlobalsatPacket.TrackFileHeader header in headers)
+                    {
+                        totalUsedPoints += header.TrackPointCount;
+                        totalTime += header.TotalTime;
+                    }
+                    int recordingInterval = 1; //Is in config, will not be correct when interval is changed
+                    if (totalUsedPoints > headers.Count * 2)
+                    {
+                        recordingInterval = (int)Math.Round(totalTime.TotalSeconds / totalUsedPoints);
+                    }
+                    //Capacity seem to be slightly lower than nominal, for 505 60000, for 580 51000
+                    TimeSpan remainTime = TimeSpan.FromSeconds((device.TotalPoints - totalUsedPoints) * recordingInterval);
+                    if (remainTime < TimeSpan.FromHours(3))
+                    {
+                        string msg = string.Format("Remaining recording time about {0}", remainTime.ToString());
+                        System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    }
+
+                    //Read the complete activities from the device
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
                     AddActivities(importResults, trains, device.configInfo.ImportSpeedDistanceTrack, device.configInfo.DetectPausesFromSpeedTrack, device.configInfo.Verbose);
                 }
