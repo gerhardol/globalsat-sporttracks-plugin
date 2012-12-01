@@ -87,11 +87,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 try
                 {
-                    IJobMonitor jobMonitor = new JobMonitor();
-                    GenericDevice device = new GenericDevice();
-                    GlobalsatProtocol device2 = device.Device(jobMonitor);
+                    FitnessDevice_GsSport device = new FitnessDevice_GsSport();
+                    GlobalsatProtocol device2 = device.Device();
                     if (device2 != null)
                     {
+                        IJobMonitor jobMonitor = new JobMonitor();
                         GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
 
                         if (importedDeviceConfig != null && importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
@@ -122,11 +122,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             labelStatus.Text = "";
             try
             {
-                IJobMonitor jobMonitor = new JobMonitor();
-                GenericDevice device = new GenericDevice();
-                GlobalsatProtocol device2 = device.Device(jobMonitor);
+                FitnessDevice_GsSport device = new FitnessDevice_GsSport();
+                GlobalsatProtocol device2 = device.Device();
                 if (device2 != null)
                 {
+                    IJobMonitor jobMonitor = new JobMonitor();
                     GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
                     saveFileDialog1.FileName = currentDeviceConfig.DeviceName;
                     if (saveFileDialog1.ShowDialog() == DialogResult.OK)

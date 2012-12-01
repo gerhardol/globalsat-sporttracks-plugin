@@ -47,7 +47,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     IList<Gh625Packet.TrackFileHeader625M> headers = device.ReadTrackHeaders(monitor);
                     List<Gh625Packet.TrackFileHeader625M> fetch = new List<Gh625Packet.TrackFileHeader625M>();
 
-                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    if (device.FitnessDevice.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                     {
                         IDictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>> headersByStart = new Dictionary<DateTime, IList<Gh625Packet.TrackFileHeader625M>>();
                         foreach (Gh625Packet.TrackFileHeader625M header in headers)
@@ -78,7 +78,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
 
                     IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
-                    AddActivities(importResults, sections, device.configInfo.ImportSpeedDistanceTrack);
+                    AddActivities(importResults, sections, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack);
                 }
             }
             catch (Exception e)

@@ -65,7 +65,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     IList<GlobalsatPacket.TrackFileHeader> headers = ((GlobalsatProtocol2)device).ReadTrackHeaders(monitor);
                     List<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
 
-                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    if (device.FitnessDevice.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                     {
                         IDictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<GlobalsatPacket.TrackFileHeader>>();
                         foreach (GlobalsatPacket.TrackFileHeader header in headers)
@@ -82,7 +82,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                         {
                             DateTime findTime = activity.StartTime;
-                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.configInfo.SecondsAlwaysImport)
+                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.FitnessDevice.configInfo.SecondsAlwaysImport)
                             {
                                 headersByStart.Remove(findTime);
                             }
@@ -111,7 +111,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         recordingInterval = (int)Math.Round(totalTime.TotalSeconds / totalUsedPoints);
                     }
                     //Capacity seem to be slightly lower than nominal, for 505 60000, for 580 51000
-                    TimeSpan remainTime = TimeSpan.FromSeconds((device.TotalPoints - totalUsedPoints) * recordingInterval);
+                    TimeSpan remainTime = TimeSpan.FromSeconds((device.FitnessDevice.TotalPoints - totalUsedPoints) * recordingInterval);
                     if (remainTime < TimeSpan.FromHours(3))
                     {
                         string msg = string.Format("Remaining recording time about {0}", remainTime.ToString());
@@ -120,7 +120,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     //Read the complete activities from the device
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                    AddActivities(importResults, trains, device.configInfo.ImportSpeedDistanceTrack, device.configInfo.DetectPausesFromSpeedTrack, device.configInfo.Verbose);
+                    AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPausesFromSpeedTrack, device.FitnessDevice.configInfo.Verbose);
                 }
             }
             catch (Exception e)
@@ -282,7 +282,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 {
                                     activity.GPSRoute.Add(pointTime, newPoint);
                                 }
-                                else if (device.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                else if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
                                 {
                                     activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
                                 }
@@ -309,7 +309,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         activity.GPSRoute.Add(pointTime, gpsPoint);
                     }
-                    if (device.HasElevationTrack && !float.IsNaN(point.Altitude))
+                    if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(point.Altitude))
                     {
                         activity.ElevationMetersTrack.Add(pointTime, point.Altitude);
                     }
@@ -383,7 +383,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //Keep elevation only if the device (may) record elevation separately from GPS
                 //It may be used also if the user drops GPS if points have been recorded.
                 //(ST may have partial use of elevation together with GPS on other parts in the future?)
-                if (!device.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null; 
+                if (!device.FitnessDevice.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null; 
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;

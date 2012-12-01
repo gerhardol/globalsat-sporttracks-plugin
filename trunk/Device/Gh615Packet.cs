@@ -25,7 +25,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh615Packet : GlobalsatPacket
     {
-        public Gh615Packet(GlobalsatProtocol device) : base(device) { }
+        public Gh615Packet(FitnessDevice_Globalsat device) : base(device) { }
 
         public new class Header : GhPacketBase.Header
         {
@@ -94,7 +94,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.Device.configInfo.HoursAdjustment);
+            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.FitnessDevice.configInfo.HoursAdjustment);
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 6)));
             header.TotalDistanceMeters = ReadInt32(offset + 10);
             header.TotalCalories = ReadInt16(offset + 14);

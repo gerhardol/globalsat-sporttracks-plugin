@@ -23,14 +23,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public abstract class GlobalsatProtocol : GhDeviceBase
     {
-        public GlobalsatProtocol() : base() { }
-        public GlobalsatProtocol(string configInfo) : base(configInfo) { }
+        public GlobalsatProtocol(FitnessDevice_Globalsat fitnessDevice)
+            : base(fitnessDevice)
+        {
+        }
 
         public class FeatureNotSupportedException : NotImplementedException
         {
             //This info should be handled by callers
             public FeatureNotSupportedException() : base(Properties.Resources.Device_Unsupported) { }
         }
+
         //Standard error text when a device is detected but "second protocol" times out
         public void NoCommunicationError(IJobMonitor jobMonitor)
         {
@@ -275,7 +278,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 try
                 {
-                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, waypoints);
+                    GlobalsatPacket packet = PacketFactory.SendWaypoints(this.FitnessDevice.configInfo.MaxNrWaypoints, waypoints);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                     // km500 no out of memory- waypoint overwritten
@@ -308,7 +311,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 try
                 {
-                    GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.configInfo.MaxNrWaypoints, waypointNames);
+                    GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.FitnessDevice.configInfo.MaxNrWaypoints, waypointNames);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                 }
                 catch (Exception e)
@@ -372,7 +375,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     GlobalsatPacket packet;
                     GlobalsatPacket response;
-                    if (this.RouteRequiresWaypoints)
+                    if (this.FitnessDevice.RouteRequiresWaypoints)
                     {
                         packet = PacketFactory.GetWaypoints();
                         response = (GlobalsatPacket)this.SendPacket(packet);
@@ -459,7 +462,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                     System.Drawing.RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
-                    if (this.CanRotateScreen)
+                    if (this.FitnessDevice.CanRotateScreen)
                     {
                         //try getting screen orientaion
                         try
@@ -487,24 +490,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             return null;
         }
-
-        //Barometric devices
-        public virtual bool HasElevationTrack { get { return false; } }
-        public virtual bool CanRotateScreen { get { return false; } }
-        //625XT (but other?) do not require waypoints in routes
-        public virtual bool RouteRequiresWaypoints { get { return true; } }
-        //Some device related settings - affecting packets
-        public virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
-        public virtual int ScreenBpp { get { return 2; } }
-        public virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
-        public virtual int TotalPoints { get { return 60000; } }
     }
 
 
     public abstract class GlobalsatProtocol2 : GlobalsatProtocol
     {
-        public GlobalsatProtocol2() : base() { }
-        public GlobalsatProtocol2(string configInfo) : base(configInfo) { }
+        public GlobalsatProtocol2(FitnessDevice_Globalsat fitnessDevice) : base(fitnessDevice) { }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {

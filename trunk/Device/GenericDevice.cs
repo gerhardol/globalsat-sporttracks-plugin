@@ -27,122 +27,109 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     //A generic device that should resolve to the actual device
     //There should be no overridden methods in this class, all should use Device()
-    class GenericDevice : GlobalsatProtocol
+    public class GenericDevice : GlobalsatProtocol
     {
-        public GenericDevice() : base() { }
-        public GenericDevice(string configInfo) : base(configInfo) { }
-
-        public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(this); } }
-        public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
-
-        private bool m_bigEndianPacketLength = true;
-        public IList<GlobalsatProtocol> AllowedDevices = new List<GlobalsatProtocol> { new Gh625XTDevice(), new Gh625Device(), new Gb580Device(), new Gh505Device(), new Gh615Device(), new Gh561Device() };
-
-        /* Autodetect device, it is up to the caller to cache the device */
-        public GlobalsatProtocol Device(IJobMonitor monitor)
+        public GenericDevice(FitnessDevice_GsSport fitnessDevice)
+            : base(fitnessDevice)
         {
-            monitor.PercentComplete = 0;
-            monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
-            if(!this.Open())
-            {
-                this.Close();
-                //561 - skipped by default, not working
-                if (this.configInfo.AllowedIds != null)
-                {
-                    foreach (string s in this.configInfo.AllowedIds)
-                    {
-                        if (s.StartsWith("GH-561"))
-                        {
-                            m_bigEndianPacketLength = false;
-                            this.Open();
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!string.IsNullOrEmpty(this.devId))
-            {
-                GlobalsatProtocol g = checkValidId(this.devId, AllowedDevices);
-                if (g != null)
-                {
-                    //No need to translate, will just flash by
-                    monitor.StatusText = this.devId + " detected";
-                    return g;
-                }
-            }
-            //Failed to open, set monitor.ErrorText
-            this.NoCommunicationError(monitor);
-            monitor.StatusText = Properties.Resources.Device_OpenDevice_Error;
-            return null;
+            //genericDevice = fitnessDevice;
         }
+        //private FitnessDevice_GsSport genericDevice;
 
-        private GlobalsatProtocol checkValidId(string devId, IList<GlobalsatProtocol> Devices)
-        {
-            foreach (GlobalsatProtocol g in Devices)
-            {
-                if (g.DefaultConfig.AllowedIds != null)
-                {
-                    foreach (string s in g.DefaultConfig.AllowedIds)
-                    {
-                        if (devId.StartsWith(s))
-                        {
-                            g.CopyPort(this);
-                            //Copy settings from generic
-                            g.configInfo.HoursAdjustment = this.configInfo.HoursAdjustment;
-                            g.configInfo.ImportOnlyNew = this.configInfo.ImportOnlyNew;
-                            return g;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
+        /* Autodetect specific device, it is up to the caller to cache the device */
+        //public bool Open(IJobMonitor monitor)
+        //{
+        //    monitor.PercentComplete = 0;
+        //    monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+        //    bool res = this.Open();
 
-        public string Detect()
-        {
-            string result = "Error";
-            try
-            {
-                this.Open();
-                GlobalsatProtocol device2 = this.Device(new JobMonitor());
-                if (device2 != null)
-                {
-                    if (device2.configInfo.AllowedIds == null || device2.configInfo.AllowedIds.Count == 0)
-                    {
-                        result = this.devId + " (Globalsat Generic)";
-                    }
-                    else
-                    {
-                        bool found = false;
-                        foreach (string s in device2.DefaultConfig.AllowedIds)
-                        {
-                            if (this.devId.Equals(s))
-                            {
-                                found = true;
-                                result = devId;
-                            }
-                        }
-                        if (!found)
-                        {
-                            result = devId + " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
-                        }
-                    }
-                    result += " on " + device2.LastValidComPort;
-                }
-                else
-                {
-                    result = devId + " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
-                }
-            }
-            catch (Exception)
-            {
-                result = Properties.Resources.Device_OpenDevice_Error;
-            }
-            finally
-            {
-                this.Close();
-            }
-            return result;
-        }
+        //    if (!string.IsNullOrEmpty(this.devId))
+        //    {
+        //        //No need to translate, will just flash by
+        //        monitor.StatusText = this.devId + " detected";
+        //    }
+        //    else
+        //    {
+        //        //Failed to open, set monitor.ErrorText
+        //        this.NoCommunicationError(monitor);
+        //        monitor.StatusText = Properties.Resources.Device_OpenDevice_Error;
+        //    }
+        //    return res;
+        //}
+
+        //public FitnessDevice_Globalsat xxxDevice(IJobMonitor monitor)//xxx
+        //{
+        //    monitor.PercentComplete = 0;
+        //    monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+        //    if (!this.Open())
+        //    {
+        //        this.Close();
+        //        //if (genericDevice.TryLittleEndian)
+        //        {
+        //            this.Open();
+        //        }
+        //    }
+
+        //    FitnessDevice_Globalsat g = new FitnessDevice_GsSport();//xxx this.FitnessDevice.SpecificDevice;
+        //    if (g != null)
+        //    {
+        //        //No need to translate, will just flash by
+        //        monitor.StatusText = this.devId + " detected";
+        //    }
+        //    else
+        //    {
+        //        //Failed to open, set monitor.ErrorText
+        //        this.NoCommunicationError(monitor);
+        //        monitor.StatusText = Properties.Resources.Device_OpenDevice_Error;
+        //    }
+        //    return g;
+        //}
+
+        //public string xxxDetect()
+        //{
+        //    string identification = "Error";
+        //    try
+        //    {
+        //        this.Open();
+        //        FitnessDevice_Globalsat device2 = this.FitnessDevice;//xxx .Device(new JobMonitor());
+        //        if (device2 != null)
+        //        {
+        //            if (device2.configInfo.AllowedIds == null || device2.configInfo.AllowedIds.Count == 0)
+        //            {
+        //                identification = this.devId + " (Globalsat Generic)";
+        //            }
+        //            else
+        //            {
+        //                bool found = false;
+        //                foreach (string s in device2.configInfo.AllowedIds)
+        //                {
+        //                    if (this.devId.Equals(s))
+        //                    {
+        //                        found = true;
+        //                        identification = this.devId;
+        //                    }
+        //                }
+        //                if (!found)
+        //                {
+        //                    identification = this.devId + " (" + device2.configInfo.AllowedIds[0] + " Compatible)";
+        //                }
+        //            }
+        //            identification += " on " + device2.LastValidComPort;
+        //        }
+        //        else
+        //        {
+        //            identification = this.devId + " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
+        //        }
+        //    }
+        //    catch (Exception)
+        //    {
+        //        identification = Properties.Resources.Device_OpenDevice_Error;
+        //    }
+        //    finally
+        //    {
+        //        this.Close();
+        //    }
+        //    return identification;
+        //}
     }
 }

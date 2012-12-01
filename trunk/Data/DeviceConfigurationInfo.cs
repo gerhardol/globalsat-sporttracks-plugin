@@ -83,6 +83,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             AllowedIds = allowedIds;
         }
 
+        public void Copy(DeviceConfigurationInfo c)
+        {
+            this.HoursAdjustment = c.HoursAdjustment;
+            this.ImportOnlyNew = c.ImportOnlyNew;
+        }
+
         public override string ToString()
         {
             return xmlTags.ImportOnlyNew + "=" + (ImportOnlyNew ? "1" : "0") +

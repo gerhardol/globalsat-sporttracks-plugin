@@ -28,14 +28,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public abstract class GhDeviceBase : IDisposable
     {
-        public GhDeviceBase()
+        public GhDeviceBase(FitnessDevice_Globalsat fitnessDevice)
         {
-            this.configInfo = DefaultConfig;
-        }
-
-        public GhDeviceBase(string configurationInfo)
-        {
-            this.configInfo = DeviceConfigurationInfo.Parse(DefaultConfig, configurationInfo);
+            this.FitnessDevice = fitnessDevice;
         }
 
         private string Name
@@ -43,68 +38,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             get
             {
                 string name = ""; //No "Generic" name set here
-                if (this.configInfo != null && this.configInfo.AllowedIds != null && this.configInfo.AllowedIds.Count > 0)
+                if (this.FitnessDevice.configInfo != null && this.FitnessDevice.configInfo.AllowedIds != null && this.FitnessDevice.configInfo.AllowedIds.Count > 0)
                 {
-                    name = this.configInfo.AllowedIds[0];
+                    name = this.FitnessDevice.configInfo.AllowedIds[0];
                 }
                 return name;
             }
         }
 
-        public string LastValidComPort
-        {
-            get
-            {
-                IList<string> ports = Settings.GetLastValidComPorts(Name);
-                string s = "";
-                if (ports.Count > 0)
-                {
-                    s = ports[0];
-                }
-                return s;
-            }
-        }
-
-        /// <summary>
-        /// Timeout when communicating, in ms
-        /// </summary>
-        public virtual int ReadTimeout
-        {
-            get
-            {
-                return 4000;
-            }
-        }
-
-        /// <summary>
-        /// Timeout when detecting, in ms
-        /// </summary>
-        public virtual int ReadTimeoutDetect
-        {
-            get
-            {
-                return 4000;
-            }
-        }
-
-        public virtual DeviceConfigurationInfo DefaultConfig
-        {
-            get
-            {
-                //Must handle all possible devices
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string>(), new List<int> { 115200, 57600 });
-                return info;
-            }
-        }
-
-        public abstract GlobalsatPacket PacketFactory { get; }
+        public GlobalsatPacket PacketFactory { get { return this.PacketFactory; } }
 
         /// open port (if not open), return if open
         public bool Open()
         {
             if (port == null)
             {
-                OpenPort(configInfo.ComPorts);
+                OpenPort(this.FitnessDevice.configInfo.ComPorts);
             }
             return (port != null);
         }
@@ -149,14 +98,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string devId = response.ByteArr2String(0, 8);
                 if (!string.IsNullOrEmpty(devId))
                 {
-                    if (configInfo.AllowedIds == null || configInfo.AllowedIds.Count == 0)
+                    lastDevId = devId;
+                    if (this.FitnessDevice.configInfo.AllowedIds == null || this.FitnessDevice.configInfo.AllowedIds.Count == 0)
                     {
                         this.devId = devId;
                         res = true;
                     }
                     else
                     {
-                        foreach (string aId in configInfo.AllowedIds)
+                        foreach (string aId in this.FitnessDevice.configInfo.AllowedIds)
                         {
                             if (devId.StartsWith(aId))
                             {
@@ -176,6 +126,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         private static bool showPopup = false; //Do not show by default
+
         internal static bool ReportError(string s, bool initial, Exception e)
         {
             if (e != null)
@@ -184,6 +135,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             return ReportError(s, initial);
         }
+
         internal static bool ReportError(string s, bool initial)
         {
             if (showPopup && !initial)
@@ -229,7 +181,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         //Speed-up device detection, keep this as short as possible. 
                         //625XT seem to work with 5ms, 505 needs more than 100
-                        port.ReadTimeout = this.ReadTimeoutDetect;
+                        port.ReadTimeout = this.FitnessDevice.ReadTimeoutDetect;
                     }
                     else if (packet.CommandId == GhPacketBase.CommandGetScreenshot)
                     {
@@ -237,10 +189,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     else
                     {
-                        port.ReadTimeout = this.ReadTimeout;
+                        port.ReadTimeout = this.FitnessDevice.ReadTimeout;
                     }
 
-                    byte[] sendPayload = packet.ConstructPayload(BigEndianPacketLength);
+                    byte[] sendPayload = packet.ConstructPayload(this.FitnessDevice.BigEndianPacketLength);
                     try
                     {
                         /*
@@ -293,7 +245,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         throw e;
                     }
 
-                    if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > configInfo.MaxPacketPayload ||
+                    if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > this.FitnessDevice.configInfo.MaxPacketPayload ||
                         received.PacketLength > 0x1000)
                     {
                         string s = string.Format("Error occurred, bad response receiving {0} bytes ({2},{3}).",
@@ -456,13 +408,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
             }
 
-            foreach (int baudRate in configInfo.BaudRates)
+            foreach (int baudRate in this.FitnessDevice.configInfo.BaudRates)
             {
                 foreach (string comPort in comPorts)
                 {
                     this.Close();
                     port = new SerialPort(comPort, baudRate);
-                    port.WriteBufferSize = configInfo.MaxPacketPayload;
+                    port.WriteBufferSize = this.FitnessDevice.configInfo.MaxPacketPayload;
                     if (ValidGlobalsatPort(port))
                     {
                         Settings.SetLastValidComPort(Name, comPort);
@@ -472,13 +424,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        //Data received other than identification packet (the fist packet)
-        public bool DataRecieved = false;
         //The identification reported from the device
         public string devId = "";
-        //The 561 only(?) have little endian size... Set here as it is controlled from the device, when probing
-        public virtual bool BigEndianPacketLength { get { return true; } }
-        public DeviceConfigurationInfo configInfo;
+        public string lastDevId = "";
+        //Data received other than identification packet (the fist packet)
+        public bool DataRecieved = false;
+
+        public FitnessDevice_Globalsat FitnessDevice;
         private SerialPort port = null;
 
         public void Dispose()

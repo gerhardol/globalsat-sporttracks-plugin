@@ -25,12 +25,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTPacket : GlobalsatPacket2
     {
-        public Gh625XTPacket(GlobalsatProtocol device) : base(device) { }
+        public Gh625XTPacket(FitnessDevice_Globalsat device) : base(device) { }
 
         //Both for DB_TRAINHEADER and DB_TRAIN
         private void ReadHeader(Header header, int offset)
         {
-            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.Device.configInfo.HoursAdjustment);
+            header.StartTime = ReadDateTime(offset).ToUniversalTime().AddHours(this.FitnessDevice.configInfo.HoursAdjustment);
             header.TrackPointCount = ReadInt32(offset + 6);
             header.TotalTime = TimeSpan.FromSeconds(FromGlobTime(ReadInt32(offset + 10)));
             header.TotalDistanceMeters = ReadInt32(offset + 14);
@@ -226,7 +226,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //TrackStart/TrackLap/TrackPoint share a common header
         private int WriteTrackHeader(int offset, int noOfLaps, Header trackFile)
         {
-            offset += this.Write(offset, trackFile.StartTime.ToLocalTime().AddHours(-this.Device.configInfo.HoursAdjustment));
+            offset += this.Write(offset, trackFile.StartTime.ToLocalTime().AddHours(-this.FitnessDevice.configInfo.HoursAdjustment));
 
             offset += this.Write32(offset, trackFile.TrackPointCount);
             int totalTimeSecondsTimes10 = ToGlobTime(trackFile.TotalTime.TotalSeconds);

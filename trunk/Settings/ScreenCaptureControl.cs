@@ -71,8 +71,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 IJobMonitor jobMonitor = new JobMonitor();
-                GenericDevice device = new GenericDevice();
-                GlobalsatProtocol device2 = device.Device(jobMonitor);
+                FitnessDevice_GsSport device = new FitnessDevice_GsSport();
+                GlobalsatProtocol device2 = device.Device();
                 if (device2 != null)
                 {
                     Bitmap screenshot = device2.GetScreenshot(jobMonitor);

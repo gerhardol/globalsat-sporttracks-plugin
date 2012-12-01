@@ -30,12 +30,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     class FitnessDevice_GH625 : FitnessDevice_Globalsat
     {
         public FitnessDevice_GH625()
+            : base()
         {
             this.id = new Guid("34625543-d453-4117-965a-866b47078c27");
             this.image = Properties.Resources.Image_48_GH625;
             this.name = "Globalsat - GH625";
+            this.device = new Gh625Device(this);
+            //TODO: Find valid Id for KeyMaze
+            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GH-625M", "GH-625B", "KM" }, new List<int> { 57600 });
         }
 
-        protected override GlobalsatProtocol Device(string configurationInfo) { return new Gh625Device(configurationInfo); }
+        public override GlobalsatPacket PacketFactory { get { return new Gh625Packet(this); } }
+
+        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(120, 80); } }
+        public override int ScreenBpp { get { return 1; } }
     }
 }
