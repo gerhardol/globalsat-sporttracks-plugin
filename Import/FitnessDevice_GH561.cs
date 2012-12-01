@@ -30,12 +30,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     class FitnessDevice_GH561 : FitnessDevice_Globalsat
     {
         public FitnessDevice_GH561()
+            : base()
         {
             this.id = new Guid("99021a40-f9ba-11e0-be50-0800200c9a66");
             this.image = Properties.Resources.Image_48_GSSPORT;
             this.name = "Globalsat - GH561";
+            this.device = new Gh561Device(this);
+            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GH-561" }, new List<int> { 115200 });
         }
 
-        protected override GlobalsatProtocol Device(string configurationInfo) { return new Gh561Device(configurationInfo); }
+        public override GlobalsatPacket PacketFactory { get { return new Gh561Packet(this); } }
+
+        public override bool BigEndianPacketLength { get { return false; } }
     }
 }

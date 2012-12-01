@@ -28,23 +28,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh625XTDevice : GlobalsatProtocol2
     {
-        public Gh625XTDevice() : base() { }
-        public Gh625XTDevice(string configInfo) : base(configInfo) { }
-
-        public override DeviceConfigurationInfo DefaultConfig
+        public Gh625XTDevice(FitnessDevice_GH625XT fitnessDevice) : base(fitnessDevice)
         {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-625XT" }, new List<int> { 115200 });
-                return info;
-            }
         }
-
-        public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(this); } }
-
-        //Timeout when detecting - 625XT seem to be faster than other models (used to be 100ms)
-        public override int ReadTimeoutDetect { get { return 1000; } }
-        public override int TotalPoints { get { return 120000; } }
 
         public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
         {
@@ -55,7 +41,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     foreach (GlobalsatWaypoint g in waypoints)
                     {
-                        GlobalsatPacket packet = PacketFactory.SendWaypoints(this.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
+                        GlobalsatPacket packet = PacketFactory.SendWaypoints(this.FitnessDevice.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
                         GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
                         nrSentWaypoints += response.ResponseSendWaypoints();
@@ -81,6 +67,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             return nrSentWaypoints;
         }
-        public override bool RouteRequiresWaypoints { get { return false; } }
     }
 }

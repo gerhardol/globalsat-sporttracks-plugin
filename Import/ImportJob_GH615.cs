@@ -47,7 +47,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     IList<Gh615Packet.TrackFileHeader> headers = device.ReadTrackHeaders(monitor);
                     List<Gh615Packet.TrackFileHeader> fetch = new List<Gh615Packet.TrackFileHeader>();
 
-                    if (device.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
+                    if (device.FitnessDevice.configInfo.ImportOnlyNew && Plugin.Instance.Application != null && Plugin.Instance.Application.Logbook != null)
                     {
                         IDictionary<DateTime, IList<Gh615Packet.TrackFileHeader>> headersByStart = new Dictionary<DateTime, IList<Gh615Packet.TrackFileHeader>>();
                         foreach (Gh615Packet.TrackFileHeader header in headers)

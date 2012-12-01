@@ -14,6 +14,7 @@
     <Compile Include="Data\GlobalsatRoute.cs" />
     <Compile Include="Data\GlobalsatWaypoint.cs" />
     <Compile Include="Data\Settings.cs" />
+    <Compile Include="Device\GhConfig.cs" />
     <Compile Include="Device\Gh561Device.cs" />
     <Compile Include="Device\Gh561Packet.cs" />
     <Compile Include="Device\GenericDevice.cs" />
@@ -21,6 +22,7 @@
     <Compile Include="Device\GlobalsatDeviceConfiguration.cs" />
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
+    <Compile Include="Import\FitnessDevice_GsSport.cs" />
     <Compile Include="Import\FitnessDevice_GH561.cs" />
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
     <Compile Include="Import\ImportJob_Globalsat.cs" />

@@ -30,12 +30,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     class FitnessDevice_GH625XT : FitnessDevice_Globalsat
     {
         public FitnessDevice_GH625XT()
+            : base()
         {
             this.id = new Guid("53b374a0-f35e-11e0-be50-0800200c9a66");
             this.image = Properties.Resources.Image_48_GH625XT;
             this.name = "Globalsat - GH625XT";
+            this.device = new Gh625XTDevice(this);
+            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GH-625XT" }, new List<int> { 115200 });
         }
 
-        protected override GlobalsatProtocol Device(string configurationInfo) { return new Gh625XTDevice(configurationInfo); }
+        public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(this); } }
+
+        //Timeout when detecting - 625XT seem to be faster than other models (used to be 100ms)
+        public override int ReadTimeoutDetect { get { return 1000; } }
+        public override int TotalPoints { get { return 120000; } }
+
+        public override bool RouteRequiresWaypoints { get { return false; } }
     }
 }

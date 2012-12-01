@@ -29,31 +29,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gb580Device : GlobalsatProtocol2
     {
-        public Gb580Device() : base() { }
-        public Gb580Device(string configInfo) : base(configInfo) { }
-
-        //Note: Device seem slower to respond than other, also 625M
-
-        public override DeviceConfigurationInfo DefaultConfig
+        public Gb580Device(FitnessDevice_GB580 fitnessDevice)
+            : base(fitnessDevice)
         {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P" }, new List<int> { 115200 });
-                return info;
-            }
         }
-
-        public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(this); } }
 
         public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
         {
             throw new FeatureNotSupportedException();
         }
-        //The GB-580B has no barometer, unsure if 580F is ever reported
-        //Do not use preferences here, it may have changed since recording
-        public override bool HasElevationTrack { get { if (this.devId == "GB-580P" || this.devId == "GB-580F") { return true; } else { return false; } } }
-        public override bool CanRotateScreen { get { return true; } }
-        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
-        public override int TotalPoints { get { return 52416; } }
     }
 }

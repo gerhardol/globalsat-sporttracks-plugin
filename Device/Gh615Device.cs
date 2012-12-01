@@ -30,19 +30,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh615Device : GlobalsatProtocol
     {
-        public Gh615Device() : base() { }
-        public Gh615Device(string configInfo) : base(configInfo) { }
-        
-        public override DeviceConfigurationInfo DefaultConfig
+        public Gh615Device(FitnessDevice_GH615 fitnessDevice)
+            : base(fitnessDevice)
         {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-615" }, new List<int> { 57600 });
-                return info;
-            }
         }
-
-        public override GlobalsatPacket PacketFactory { get { return new Gh615Packet(this); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -109,8 +100,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             throw new FeatureNotSupportedException();
         }
-
-        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 80); } }
-        public override int ScreenBpp { get { return 1; } }
     }
 }

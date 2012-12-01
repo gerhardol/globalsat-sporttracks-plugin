@@ -27,16 +27,11 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class FitnessDevice_Globalsat : IFitnessDevice
+    public abstract class FitnessDevice_Globalsat : GhConfig, IFitnessDevice
     {
-        public FitnessDevice_Globalsat()
-        {
-            this.id = new Guid("16a23ea0-f5cc-11e0-be50-0800200c9a66");
-            this.image = Properties.Resources.Image_48_GSSPORT;
-            this.name = "Globalsat";
-        }
+        public virtual GlobalsatProtocol Device() { return this.device; }
 
-        protected virtual GlobalsatProtocol Device(string configurationInfo) { return new GenericDevice(configurationInfo); }
+        public abstract GlobalsatPacket PacketFactory { get; }
 
         public Guid Id
         {
@@ -60,7 +55,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Configure(string configurationInfo)
         {
-            DeviceConfigurationInfo configInfo = DeviceConfigurationInfo.Parse(Device(configurationInfo).DefaultConfig, configurationInfo);
+            this.configInfo = DeviceConfigurationInfo.Parse(this.configInfo, configurationInfo);
             DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(configInfo);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -75,43 +70,68 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
             bool result = false;
-            GlobalsatProtocol device0 = Device(configurationInfo);
-            if (device0 is GenericDevice)
-            {
-                //Determine the device, then dispatch
-                GenericDevice device = (GenericDevice)device0;
-                GlobalsatProtocol device2 = device.Device(monitor);
-                if (device2 != null)
-                {
-                    try
-                    {
-                        ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + device.devId,
-                            monitor, importResults);
+            this.configInfo = DeviceConfigurationInfo.Parse(this.configInfo, configurationInfo);
+            //GlobalsatProtocol device0 = this.Device();
+            bool generic = this is FitnessDevice_Globalsat;
+            //if (device0 is GenericDevice)
+            //{
+            //    //Determine the device, then dispatch
+            //    GlobalsatProtocol device2 = device.Device(monitor).Device();
+            //    if (device2 != null)
+            //    {
+            //        try
+            //        {
+            //            ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + this.Device().devId,
+            //                monitor, importResults);
 
-                        if (job == null)
-                        {
-                            monitor.ErrorText = "Import not supported for " + device.devId;
-                            result = false;
-                        }
-                        else
-                        {
-                            result = job.Import();
-                        }
-                    }
-                    catch (NotImplementedException)
-                    {
-                        result = false;
-                    }
-                }
-            }
-            else
+            //            if (job == null)
+            //            {
+            //                monitor.ErrorText = "Import not supported for " + this.Device().devId;
+            //                result = false;
+            //            }
+            //            else
+            //            {
+            //                result = job.Import();
+            //            }
+            //        }
+            //        catch (NotImplementedException)
+            //        {
+            //            result = false;
+            //        }
+            //    }
+            //}
+            //else
             {
                 //import for specific device - Importjob must be implemented
                 monitor.PercentComplete = 0;
-                monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
-                GlobalsatProtocol device = device0;
-                ImportJob job = device.ImportJob(ConfiguredDescription(configurationInfo), monitor, importResults);
-                result = job.Import();
+                string str = ConfiguredDescription(configurationInfo);
+                if (!generic)
+                {
+                    monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
+                }
+                ///GlobalsatProtocol device = device0;
+                try
+                {
+                    string cfgDesc = ConfiguredDescription(configurationInfo);
+                    if (generic)
+                    {
+                        cfgDesc += " - " + this.Device().devId;
+                    }
+                    ImportJob job = this.Device().ImportJob(cfgDesc, monitor, importResults);
+                    if (job == null)
+                    {
+                        monitor.ErrorText = "Import not supported for " + this.Device().devId;
+                        result = false;
+                    }
+                    else
+                    {
+                        result = job.Import();
+                    }
+                }
+                catch (NotImplementedException)
+                {
+                    result = false;
+                }
             }
             if (!result)
             {
@@ -120,7 +140,55 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return result;
         }
 
+        public string Detect()
+        {
+            string identification = "Error";
+            try
+            {
+                this.Device().Open();
+                //FitnessDevice_Globalsat device2 = this.FitnessDevice;//xxx .Device(new JobMonitor());
+                if (this.Device().Open())
+                {
+                    if (this.configInfo.AllowedIds == null || this.configInfo.AllowedIds.Count == 0)
+                    {
+                        identification = this.Device().devId + " (Globalsat Generic)";
+                    }
+                    else
+                    {
+                        bool found = false;
+                        foreach (string s in this.configInfo.AllowedIds)
+                        {
+                            if (this.Device().devId.Equals(s))
+                            {
+                                found = true;
+                                identification = this.Device().devId;
+                            }
+                        }
+                        if (!found)
+                        {
+                            identification = this.Device().devId + " (" + this.configInfo.AllowedIds[0] + " Compatible)";
+                        }
+                    }
+                    identification += " on " + this.LastValidComPort;
+                }
+                else
+                {
+                    identification = this.Device().lastDevId + " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
+                }
+            }
+            catch (Exception)
+            {
+                identification = Properties.Resources.Device_OpenDevice_Error;
+            }
+            finally
+            {
+                this.Device().Close();
+            }
+            return identification;
+        }
+
         #region Private members
+        protected GlobalsatProtocol device;
         protected Guid id;
         protected Image image;
         protected string name;

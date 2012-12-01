@@ -27,22 +27,12 @@ using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    public class Gh625Device : GlobalsatProtocol
+    class Gh625Device : GlobalsatProtocol
     {
-        public Gh625Device() : base() { }
-        public Gh625Device(string configInfo) : base(configInfo) { }
-
-        public override DeviceConfigurationInfo DefaultConfig
+        public Gh625Device(FitnessDevice_GH625 fitnessDevice)
+            : base(fitnessDevice)
         {
-            get
-            {
-                //TODO: Find valid Id for KeyMaze
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-625M", "GH-625B", "KM" }, new List<int> { 57600 });
-                return info;
-            }
         }
-
-        public override GlobalsatPacket PacketFactory { get { return new Gh625Packet(this); } }
 
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
@@ -132,7 +122,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             throw new FeatureNotSupportedException();
         }
-        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(120, 80); } }
-        public override int ScreenBpp { get { return 1; } }
     }
 }

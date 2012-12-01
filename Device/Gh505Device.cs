@@ -26,23 +26,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gh505Device : GlobalsatProtocol2
     {
-        public Gh505Device() : base() { }
-        public Gh505Device(string configInfo) : base(configInfo) { }
-
-        //Note: seem to be a little slow, used to have longer timeout than 625M
-
-        public override DeviceConfigurationInfo DefaultConfig
+        public Gh505Device(FitnessDevice_GH505 fitnessDevice)
+            : base(fitnessDevice)
         {
-            get
-            {
-                DeviceConfigurationInfo info = new DeviceConfigurationInfo(new List<string> { "GH-505", "GH-50" }, new List<int> { 115200 });
-                return info;
-            }
         }
-
-        public override GlobalsatPacket PacketFactory { get { return new Gh505Packet(this); } }
-        public override int ScreenBpp { get { return 1; } }
-        public override bool ScreenRowCol { get { return false; } }
-        public override int TotalPoints { get { return 52416; } }
     }
 }
