@@ -57,7 +57,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public string Configure(string configurationInfo)
         {
             this.configInfo.Parse(configurationInfo);
-            DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(configInfo);
+            DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(this);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 return dialog.ConfigurationInfo.ToString();
@@ -96,7 +96,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             else { }
         }
 
-        internal void SetConfigurationString()
+        //Save dynamic information (currently lastPort)
+        internal void SetDynamicConfigurationString()
         {
             if (configuredDevice == null)
             {
@@ -104,10 +105,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 Plugin.Instance.Application.SystemPreferences.FitnessDevices.Add(configuredDevice);
             }
 
-            string s = configInfo.ToString();
-            if (!s.Equals(configuredDevice.Configuration))
+            if (configInfo.DynamicInfoChanged(configuredDevice.Configuration))
             {
-                configuredDevice.Configuration = s;
+                //Only save if dynamic information changed
+                configuredDevice.Configuration = configInfo.ToString();
             }
         }
 
@@ -182,10 +183,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             identification = this.Device().devId + " (" + this.configInfo.AllowedIds[0] + " Compatible)";
                         }
                     }
-                    IList<string> s = this.configInfo.GetLastValidComPorts();
-                    if (s != null && s.Count > 0)
+                    IList<string> s2 = this.configInfo.GetLastValidComPorts();
+                    if (s2 != null && s2.Count > 0)
                     {
-                        identification += " on " + s[0];
+                        identification += " on " + s2[0];
                     }
                 }
                 else

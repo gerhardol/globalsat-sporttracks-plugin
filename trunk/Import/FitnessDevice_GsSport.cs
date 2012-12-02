@@ -63,19 +63,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (DetectionAttempted == false)
                 {
                     DetectionAttempted = true;
+                    IList<FitnessDevice_Globalsat> fds = new List<FitnessDevice_Globalsat> {
+                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GH505(), new FitnessDevice_GH615()/*, new Gh561Device()*/ };
+
                     if (!this.device.Open())
                     {
                         this.device.Close();
-                        if (this.TryLittleEndian)
+                        //Support GH-561 - skipped by default, not working
+                        foreach (FitnessDevice_Globalsat g in fds)
                         {
-                            this.device.Open();
+                            if (g.configInfo.AllowedIds != null)
+                            {
+                                foreach (string s in g.configInfo.AllowedIds)
+                                {
+                                    if (s.StartsWith("GH-561"))
+                                    {
+                                        this.m_bigEndianPacketLength = false;
+                                        this.device.Open();
+                                    }
+                                }
+                            }
                         }
                     }
 
                     if (!string.IsNullOrEmpty(this.device.devId))
                     {
-                        foreach (FitnessDevice_Globalsat g in new List<FitnessDevice_Globalsat> {
-                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GH505(), new FitnessDevice_GH615()/*, new Gh561Device()*/ })
+                        foreach (FitnessDevice_Globalsat g in fds)
                         {
                             if (g.configInfo.AllowedIds != null)
                             {
@@ -96,26 +109,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     this.device.Close();
                 }
                 return m_FitnessDevice;
-            }
-        }
-
-        private bool TryLittleEndian
-        {
-            get
-            {
-                //561 - skipped by default, not working
-                if (this.configInfo.AllowedIds != null)
-                {
-                    foreach (string s in this.configInfo.AllowedIds)
-                    {
-                        if (s.StartsWith("GH-561"))
-                        {
-                            this.m_bigEndianPacketLength = false;
-                            return true;
-                        }
-                    }
-                }
-                return false;
             }
         }
 
