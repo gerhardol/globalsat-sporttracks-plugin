@@ -69,6 +69,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public const byte CommandSendTrackStart = 0x90;
         public const byte CommandSendTrackSection = 0x91;
 
+        public const byte CommandDeleteTracks = 0x79;
+
         //505, 580, 625XT, determines info in the trackpackets at TrainHeaderCTypeOffset
         public const byte HeaderTypeLaps = 0xAA;
         public const byte HeaderTypeTrackPoints = 0x55;
@@ -338,8 +340,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         /// </summary>
         protected int Write(int offset, Int16 i)
         {
+            return Write(offset, i, this.IsLittleEndian);
+        }
+
+        protected int Write(int offset, Int16 i, bool isLittleEndian)
+        {
             byte[] b = BitConverter.GetBytes(i);
-            if (!IsLittleEndian)
+            if (!isLittleEndian)
             {
                 this.PacketData[offset + 0] = b[1];
                 this.PacketData[offset + 1] = b[0];

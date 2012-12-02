@@ -53,6 +53,27 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             throw new FeatureNotSupportedException();
         }
 
+        public TimeSpan RemainingTime(IList<GlobalsatPacket.TrackFileHeader> headers)
+        {
+            //Find recording time in device
+            int totalUsedPoints = 0;
+            TimeSpan totalTime = TimeSpan.Zero;
+            foreach (GlobalsatPacket.TrackFileHeader header in headers)
+            {
+                totalUsedPoints += header.TrackPointCount;
+                totalTime += header.TotalTime;
+            }
+            int recordingInterval = 1; //Is in config, will not be correct when interval is changed
+            if (totalUsedPoints > headers.Count * 2)
+            {
+                recordingInterval = (int)Math.Round(totalTime.TotalSeconds / totalUsedPoints);
+            }
+
+            TimeSpan remainTime = TimeSpan.FromSeconds((this.FitnessDevice.TotalPoints - totalUsedPoints) * recordingInterval);
+
+            return remainTime;
+        }
+
         public virtual int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor)
         {
             int result = 0;
@@ -531,12 +552,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             float totalPointsRead = 0;
 
-            IList<GlobalsatPacket.Train> trains = new List<GlobalsatPacket.Train>();
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
             GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getFilesPacket);
 
             monitor.PercentComplete = 0;
 
+            IList<GlobalsatPacket.Train> trains = new List<GlobalsatPacket.Train>();
             ReadMode readMode = ReadMode.Header;
             int trainLapsToRead = 0;
             int pointsToRead = 0;
@@ -630,6 +651,89 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             monitor.PercentComplete = 1;
             monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
             return trains;
+        }
+
+        public virtual void DeleteAllTracks()
+        {
+            try
+            {
+                IJobMonitor jobMonitor = new JobMonitor();
+                if (this.Open())
+                {
+                    //IList<GlobalsatPacket.TrackFileHeader> headers = ((GlobalsatProtocol2)device).ReadTrackHeaders(jobMonitor);
+                    //List<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
+                    GlobalsatPacket getDeleteAllTracks = PacketFactory.GetDeleteAllTracks();
+                    GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getDeleteAllTracks);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+            }
+            finally
+            {
+                this.Close();
+            }
+        }
+
+        //not working, deletes all...
+        public virtual int DeleteTracks(DateTime oldest)
+        {
+            int res = -1;
+            try
+            {
+                IJobMonitor jobMonitor = new JobMonitor();
+                if (this.Open())
+                {
+                    IList<GlobalsatPacket.TrackFileHeader> headers = this.ReadTrackHeaders(jobMonitor);
+                    IList<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
+                    foreach (GlobalsatPacket.TrackFileHeader t in headers)
+                    {
+                        if (t.StartTime < oldest)
+                        {
+                            fetch.Add(t);
+                        }
+                    }
+                    res = fetch.Count;
+                    if (fetch.Count > 0)
+                    {
+                        GlobalsatPacket getDeleteTracks = PacketFactory.GetDeleteTracks(fetch);
+                        GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getDeleteTracks);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+            }
+            finally
+            {
+                this.Close();
+            }
+            return res;
+        }
+
+        public TimeSpan GetRemainingTime()
+        {
+            TimeSpan res = TimeSpan.MinValue;
+            try
+            {
+                IJobMonitor jobMonitor = new JobMonitor();
+                if (this.Open())
+                {
+                    IList<GlobalsatPacket.TrackFileHeader> headers = this.ReadTrackHeaders(jobMonitor);
+                    res = this.RemainingTime(headers);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+            }
+            finally
+            {
+                this.Close();
+            }
+            return res;
         }
     }
 }
