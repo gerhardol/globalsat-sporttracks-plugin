@@ -296,7 +296,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             if (this.lastValidComPorts == null)
             {
-                res = true;
+                if (d.lastValidComPorts != null)
+                {
+                    res = true;
+                }
             }
             else if (d.lastValidComPorts == null)
             {
