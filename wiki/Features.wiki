@@ -21,7 +21,7 @@ There is very minor difference using the generic GS-Sport device and one of the 
 
 === Unknown devices ===
 Most Globalsat devices have unique protocols and packet formats. However, there are some devices that have identical protocols, even if they identifies uniquely.
- * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh.
+ * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh button.
  * Take a note of the device identifier listed.
   * If the name of the device is listed only, the device is supported
   * If the device name is suffixed with "({{{<device>}}} Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
@@ -35,7 +35,7 @@ While the plugin requires that identifiers are explicitly added, it is possible 
 
 == Import ==
 Import from Globalsat devices.
- * Generic Device support: For all devices, selecting protocols from the device identification. (This generic device is used for Waypoints and routes).
+ * Generic Device support: For all devices, selecting protocols from the device identification. (This generic device is used for Waypoints and routes, added automatically at first use).
  * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
  * Each device configuration dialog has a "Refresh" button to find if a device is connected.
 

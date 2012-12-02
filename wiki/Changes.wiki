@@ -5,6 +5,10 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.208 2012-12-02
+ * Major internal redesign to show Device Configuration and Screen Capture for Globalsat devices in Import Device Configuration instead of in Settings subpages.
+ * Show aproximate remaining recording time in device configuration dialog
+ * Possibility to the delete activities in the device from the device configuration dialog
  * If the estimated recording time is less than 3h, show a popup.
  * If no Globalsat device connected after installing 3.2.190, ST Preferences were not stored.
  
