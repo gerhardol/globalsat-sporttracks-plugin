@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+using ZoneFiveSoftware.Common.Data.Fitness;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
 
@@ -55,7 +56,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Configure(string configurationInfo)
         {
-            this.configInfo = DeviceConfigurationInfo.Parse(this.configInfo, configurationInfo);
+            this.configInfo.Parse(configurationInfo);
             DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(configInfo);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -67,40 +68,54 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
+        protected IConfiguredDevice ConfigurationDevice
+        {
+            get
+            {
+                if (configuredDevice == null)
+                {
+                    foreach (IConfiguredDevice d in Plugin.Instance.Application.SystemPreferences.FitnessDevices)
+                    {
+                        if (this.id.Equals(d.Id))
+                        {
+                            configuredDevice = d;
+                        }
+                    }
+                }
+                return configuredDevice;
+            }
+        }
+
+        protected void GetConfigurationString()
+        {
+            IConfiguredDevice d = this.ConfigurationDevice;
+            if (d != null)
+            {
+                this.configInfo.Parse(d.Configuration);
+            }
+            else { }
+        }
+
+        internal void SetConfigurationString()
+        {
+            if (configuredDevice == null)
+            {
+                configuredDevice = new GSConfiguredDevice(this.configInfo.ToString(), this.id);
+                Plugin.Instance.Application.SystemPreferences.FitnessDevices.Add(configuredDevice);
+            }
+
+            string s = configInfo.ToString();
+            if (!s.Equals(configuredDevice.Configuration))
+            {
+                configuredDevice.Configuration = s;
+            }
+        }
+
         public bool Import(string configurationInfo, IJobMonitor monitor, IImportResults importResults)
         {
             bool result = false;
-            this.configInfo = DeviceConfigurationInfo.Parse(this.configInfo, configurationInfo);
-            //GlobalsatProtocol device0 = this.Device();
+            this.configInfo.Parse(configurationInfo);
             bool generic = this is FitnessDevice_Globalsat;
-            //if (device0 is GenericDevice)
-            //{
-            //    //Determine the device, then dispatch
-            //    GlobalsatProtocol device2 = device.Device(monitor).Device();
-            //    if (device2 != null)
-            //    {
-            //        try
-            //        {
-            //            ImportJob job = device2.ImportJob(ConfiguredDescription(configurationInfo) + " - " + this.Device().devId,
-            //                monitor, importResults);
-
-            //            if (job == null)
-            //            {
-            //                monitor.ErrorText = "Import not supported for " + this.Device().devId;
-            //                result = false;
-            //            }
-            //            else
-            //            {
-            //                result = job.Import();
-            //            }
-            //        }
-            //        catch (NotImplementedException)
-            //        {
-            //            result = false;
-            //        }
-            //    }
-            //}
-            //else
             {
                 //import for specific device - Importjob must be implemented
                 monitor.PercentComplete = 0;
@@ -109,7 +124,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
                 }
-                ///GlobalsatProtocol device = device0;
+
                 try
                 {
                     string cfgDesc = ConfiguredDescription(configurationInfo);
@@ -145,8 +160,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             string identification = "Error";
             try
             {
-                this.Device().Open();
-                //FitnessDevice_Globalsat device2 = this.FitnessDevice;//xxx .Device(new JobMonitor());
                 if (this.Device().Open())
                 {
                     if (this.configInfo.AllowedIds == null || this.configInfo.AllowedIds.Count == 0)
@@ -169,7 +182,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             identification = this.Device().devId + " (" + this.configInfo.AllowedIds[0] + " Compatible)";
                         }
                     }
-                    identification += " on " + this.LastValidComPort;
+                    IList<string> s = this.configInfo.GetLastValidComPorts();
+                    if (s != null && s.Count > 0)
+                    {
+                        identification += " on " + s[0];
+                    }
                 }
                 else
                 {
@@ -189,9 +206,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         #region Private members
         protected GlobalsatProtocol device;
+        protected IConfiguredDevice configuredDevice;
         protected Guid id;
         protected Image image;
         protected string name;
         #endregion
     }
+
+    public class GSConfiguredDevice : IConfiguredDevice
+    {
+        public GSConfiguredDevice(string cfg, Guid id)
+        {
+            this.cfg = cfg;
+            this.id = id;
+        }
+
+        public string Configuration
+        {
+            get { return cfg; }
+            set { cfg = value; }
+        }
+        public Guid Id { get { return id; } }
+
+        private string cfg;
+        private Guid id;
+    }
+
 }

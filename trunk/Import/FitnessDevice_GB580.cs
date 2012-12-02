@@ -37,6 +37,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.name = "Globalsat - GB-580";
             this.device = new Gb580Device(this);
             this.configInfo = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P" }, new List<int> { 115200 });
+            this.GetConfigurationString(); //Set configuration from Preferences
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(this); } }

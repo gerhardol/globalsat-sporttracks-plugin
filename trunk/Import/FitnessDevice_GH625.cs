@@ -38,6 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.device = new Gh625Device(this);
             //TODO: Find valid Id for KeyMaze
             this.configInfo = new DeviceConfigurationInfo(new List<string> { "GH-625M", "GH-625B", "KM" }, new List<int> { 57600 });
+            this.GetConfigurationString(); //Set configuration from Preferences
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh625Packet(this); } }
