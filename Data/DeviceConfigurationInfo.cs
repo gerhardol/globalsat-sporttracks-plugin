@@ -236,12 +236,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             set
             {
-                this.AllowedIds = new List<string>();
-                string[] ids = value.Split(',');
-                if (ids.Length > 0)
+                if (this.AllowedIds == null)
                 {
                     this.AllowedIds = new List<string>();
                 }
+                string[] ids = value.Split(',');
                 foreach (string port in ids)
                 {
                     string port2 = port.Trim();
@@ -287,6 +286,38 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lastValidComPorts.Remove(val);
             }
             lastValidComPorts.Insert(0, val);
+        }
+
+        public bool DynamicInfoChanged(string s)
+        {
+            bool res = false;
+            DeviceConfigurationInfo d = new DeviceConfigurationInfo(new List<string>(), new List<int>());
+            d.Parse(s);
+
+            if (this.lastValidComPorts == null)
+            {
+                res = true;
+            }
+            else if (d.lastValidComPorts == null)
+            {
+                res = false;
+            }
+            else if (this.lastValidComPorts.Count != d.lastValidComPorts.Count)
+            {
+                res = true;
+            }
+            else
+            {
+                for (int i = 0; i < this.lastValidComPorts.Count; i++)
+                {
+                    if(!this.lastValidComPorts[i].Equals(d.lastValidComPorts[i]))
+                    {
+                        res = true;
+                        break;
+                    }
+                }
+            }
+            return res;
         }
     }
 }

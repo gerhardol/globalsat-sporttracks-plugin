@@ -50,7 +50,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //The actual port is closed after each packet, Close will require a new scan 
             if (this.port != null && this.port.IsOpen)
             {
-                this.FitnessDevice.SetConfigurationString();
+                this.FitnessDevice.SetDynamicConfigurationString();
                 this.port.Close();
             }
             this.port = null;
@@ -63,8 +63,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void CopyPort(GhDeviceBase b)
         {
-            this.FitnessDevice.SetConfigurationString();
-            b.FitnessDevice.SetConfigurationString();
+            this.FitnessDevice.SetDynamicConfigurationString();
+            b.FitnessDevice.SetDynamicConfigurationString();
             this.port = b.port;
             this.devId = b.devId;
         }

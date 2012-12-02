@@ -32,11 +32,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public partial class DeviceConfigurationDlg : Form
     {
-        public DeviceConfigurationDlg(DeviceConfigurationInfo configInfo)
+        public DeviceConfigurationDlg(FitnessDevice_Globalsat fitnessDevice)
         {
             InitializeComponent();
 
-            this.configInfo = configInfo;
+            this.fitnessDevice = fitnessDevice;
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
@@ -52,9 +52,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             txtHoursOffset.Validated += new EventHandler(txtHoursOffset_Validated);
             btnOk.Click += new EventHandler(btnOk_Click);
             btnCancel.Click += new EventHandler(btnCancel_Click);
-            chkImportOnlyNew.Checked = configInfo.ImportOnlyNew;
-            this.txtHoursOffset.Text = configInfo.HoursAdjustment.ToString();
-            this.textBoxComPort.Text = configInfo.ComPortsText;
+            chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
+            this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
+            this.textBoxComPort.Text = this.fitnessDevice.configInfo.ComPortsText;
             //COM Ports only configurable in xml
             this.textBoxComPort.Visible = false;
             this.labelComPort.Visible = false;
@@ -69,9 +69,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
-                configInfo.ComPortsText = textBoxComPort.Text;
-                return configInfo;
+                this.fitnessDevice.configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
+                this.fitnessDevice.configInfo.ComPortsText = textBoxComPort.Text;
+                return this.fitnessDevice.configInfo;
             }
         }
         #endregion
@@ -105,15 +105,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 if (txtHoursOffset.Text.Trim().Length == 0)
                 {
-                    configInfo.HoursAdjustment = 0;
+                    this.fitnessDevice.configInfo.HoursAdjustment = 0;
                 }
                 else
                 {
-                    configInfo.HoursAdjustment = (int)double.Parse(txtHoursOffset.Text);
+                    this.fitnessDevice.configInfo.HoursAdjustment = (int)double.Parse(txtHoursOffset.Text);
                 }
             }
             catch { }
-            txtHoursOffset.Text = configInfo.HoursAdjustment.ToString();
+            txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
         }
 
         void btnOk_Click(object sender, EventArgs e)
@@ -136,15 +136,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         #region Private members
         private ITheme theme;
-        private DeviceConfigurationInfo configInfo;
+        private FitnessDevice_Globalsat fitnessDevice;
         #endregion
 
         private void buttonDetect_Click(object sender, EventArgs e)
         {
-            FitnessDevice_GsSport fitnessDevice = new FitnessDevice_GsSport();
-            //fitnessDevice.configInfo = this.ConfigurationInfo;
-            //this.labelDetect.Text = fitnessDevice.GetGenericDevice().Detect();
-            this.labelDetect.Text = fitnessDevice.Detect();
+            this.labelDetect.Text = this.fitnessDevice.Detect();
         }
     }
 }
