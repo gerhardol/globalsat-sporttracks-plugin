@@ -34,20 +34,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         #region Configuration
-        public string LastValidComPort
-        {
-            get
-            {
-                //xxx IList<string> ports = Settings.GetLastValidComPorts(fitnessDeviceName);
-                string s = "";
-                //if (ports.Count > 0)
-                {
-                    //s = ports[0];
-                }
-                return s;
-            }
-        }
-
         /// <summary>
         /// Timeout when communicating, in ms
         /// </summary>

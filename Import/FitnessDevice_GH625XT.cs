@@ -37,6 +37,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.name = "Globalsat - GH625XT";
             this.device = new Gh625XTDevice(this);
             this.configInfo = new DeviceConfigurationInfo(new List<string> { "GH-625XT" }, new List<int> { 115200 });
+            this.GetConfigurationString(); //Set configuration from Preferences
         }
 
         public override GlobalsatPacket PacketFactory { get { return new Gh625XTPacket(this); } }

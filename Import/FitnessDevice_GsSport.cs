@@ -38,6 +38,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.device = new GenericDevice(this);
             //Must handle all possible devices
             this.configInfo = new DeviceConfigurationInfo(new List<string>(), new List<int> { 115200, 57600 });
+            this.GetConfigurationString(); //Set configuration from Preferences
             m_FitnessDevice = null;
         }
 
@@ -54,8 +55,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return gdevice;
         }
         
-        public GenericDevice GetGenericDevice() { return (GenericDevice)this.device; }
-
         //Detect the actual Globalsat Device
         public FitnessDevice_Globalsat SpecificDevice
         {
@@ -94,6 +93,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                         }
                     }
+                    this.device.Close();
                 }
                 return m_FitnessDevice;
             }

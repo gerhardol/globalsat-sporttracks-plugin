@@ -33,20 +33,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.FitnessDevice = fitnessDevice;
         }
 
-        private string Name
-        {
-            get
-            {
-                string name = ""; //No "Generic" name set here
-                if (this.FitnessDevice.configInfo != null && this.FitnessDevice.configInfo.AllowedIds != null && this.FitnessDevice.configInfo.AllowedIds.Count > 0)
-                {
-                    name = this.FitnessDevice.configInfo.AllowedIds[0];
-                }
-                return name;
-            }
-        }
-
-        public GlobalsatPacket PacketFactory { get { return this.PacketFactory; } }
+        public GlobalsatPacket PacketFactory { get { return this.FitnessDevice.PacketFactory; } }
 
         /// open port (if not open), return if open
         public bool Open()
@@ -55,26 +42,29 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 OpenPort(this.FitnessDevice.configInfo.ComPorts);
             }
-            return (port != null);
+            return (this.port != null);
         }
 
         public void Close()
         {
             //The actual port is closed after each packet, Close will require a new scan 
-            if (port != null && port.IsOpen)
+            if (this.port != null && this.port.IsOpen)
             {
-                port.Close();
+                this.FitnessDevice.SetConfigurationString();
+                this.port.Close();
             }
-            port = null;
+            this.port = null;
         }
 
         private SerialPort Port
         {
-            get { return port; }
+            get { return this.port; }
         }
 
         public void CopyPort(GhDeviceBase b)
         {
+            this.FitnessDevice.SetConfigurationString();
+            b.FitnessDevice.SetConfigurationString();
             this.port = b.port;
             this.devId = b.devId;
         }
@@ -383,7 +373,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 comPorts = new List<string>();
 
-                foreach(string port in Settings.GetLastValidComPorts(Name))
+                foreach(string port in this.FitnessDevice.configInfo.GetLastValidComPorts())
                 {
                     this.comPortsAdd(comPorts, port);
                 }
@@ -417,7 +407,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     port.WriteBufferSize = this.FitnessDevice.configInfo.MaxPacketPayload;
                     if (ValidGlobalsatPort(port))
                     {
-                        Settings.SetLastValidComPort(Name, comPort);
+                        this.FitnessDevice.configInfo.SetLastValidComPort(comPort);
                         return;
                     }
                 }
@@ -435,6 +425,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void Dispose()
         {
+            this.Close();
             this.port.Dispose();
         }
     }

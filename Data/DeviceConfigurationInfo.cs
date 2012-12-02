@@ -25,7 +25,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class DeviceConfigurationInfo
     {
-        public static DeviceConfigurationInfo Parse(DeviceConfigurationInfo configInfo, string configurationInfo)
+        //Parse string overlay default configuration
+        public void Parse(string configurationInfo)
         {
             if (configurationInfo != null)
             {
@@ -40,31 +41,42 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             switch (parts[0])
                             {
                                 case xmlTags.ImportOnlyNew:
-                                    configInfo.ImportOnlyNew = (parts[1] == "1");
+                                    this.ImportOnlyNew = (parts[1] == "1");
                                     break;
                                 case xmlTags.HoursAdjustment:
-                                    configInfo.HoursAdjustment = float.Parse(parts[1]);
+                                    this.HoursAdjustment = float.Parse(parts[1]);
                                     break;
                                 case xmlTags.SecondsAlwaysImport:
-                                    configInfo.SecondsAlwaysImport = int.Parse(parts[1]);
+                                    this.SecondsAlwaysImport = int.Parse(parts[1]);
                                     break;
                                 case xmlTags.ComPortsText:
-                                    configInfo.ComPortsText = parts[1];
+                                    this.ComPortsText = parts[1];
                                     break;
                                 case xmlTags.BaudRatesText:
-                                    configInfo.BaudRatesText = parts[1];
+                                    this.BaudRatesText = parts[1];
                                     break;
                                 case xmlTags.AllowedIdsText:
-                                    configInfo.AllowedIdsText = parts[1];
+                                    this.AllowedIdsText = parts[1];
                                     break;
                                 case xmlTags.ImportSpeedDistanceTrack:
-                                    configInfo.ImportSpeedDistanceTrack = (parts[1] == "1");
+                                    this.ImportSpeedDistanceTrack = (parts[1] == "1");
                                     break;
                                 case xmlTags.DetectPausesFromSpeedTrack:
-                                    configInfo.DetectPausesFromSpeedTrack = (parts[1] == "1");
+                                    this.DetectPausesFromSpeedTrack = (parts[1] == "1");
+                                    break;
+                                case xmlTags.LastValidComPorts:
+                                    lastValidComPorts = new List<string>();
+                                    String[] ports = parts[1].Split(',');
+                                    foreach (string port in ports)
+                                    {
+                                        if (!string.IsNullOrEmpty(port))
+                                        {
+                                            lastValidComPorts.Add(port);
+                                        }
+                                    }
                                     break;
                                 case xmlTags.Verbose:
-                                    configInfo.Verbose = int.Parse(parts[1]);
+                                    this.Verbose = int.Parse(parts[1]);
                                     break;
                                 default:
                                     break;
@@ -74,7 +86,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch {}
             }
-            return configInfo;
         }
 
         public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates)
@@ -98,7 +109,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
                 ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
                 ";" + xmlTags.ImportSpeedDistanceTrack + "=" + (this.ImportSpeedDistanceTrack ? "1" : "0") +
-                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + (this.DetectPausesFromSpeedTrack ? "1" : "0")+
+                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + (this.DetectPausesFromSpeedTrack ? "1" : "0") +
+                ";" + xmlTags.LastValidComPorts + "=" + this.LastComPortsText() +
                 ";" + xmlTags.Verbose + "=" + this.Verbose;
         }
 
@@ -112,6 +124,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string AllowedIdsText = "allowedids";
             public const string ImportSpeedDistanceTrack = "ImportSpeedDistanceTrack";
             public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack";
+            public const string LastValidComPorts = "LastValidComPorts";
             public const string Verbose = "Verbose";
         }
         public int MaxPacketPayload = 2500;
@@ -126,6 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
         public int Verbose = 10;
+        private IList<string> lastValidComPorts = null;
 
         public string ComPortsText
         {
@@ -237,6 +251,42 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
             }
+        }
+
+        private string LastComPortsText()
+        {
+            string s = "";
+            if (this.lastValidComPorts != null)
+            {
+                foreach (string port in lastValidComPorts)
+                {
+                    s += string.Format("{0},", port);
+                }
+            }
+            return s;
+        }
+
+        public IList<string> GetLastValidComPorts()
+        {
+            if (lastValidComPorts != null)
+            {
+                return lastValidComPorts;
+            }
+            return new List<string>();
+        }
+
+        public void SetLastValidComPort(string val)
+        {
+            if (lastValidComPorts == null)
+            {
+                lastValidComPorts = new List<string>();
+            }
+            if (lastValidComPorts.Contains(val))
+            {
+                //Make sure the most recent is first only
+                lastValidComPorts.Remove(val);
+            }
+            lastValidComPorts.Insert(0, val);
         }
     }
 }
