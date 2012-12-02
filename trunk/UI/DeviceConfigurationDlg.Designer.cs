@@ -52,8 +52,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.chkImportOnlyNew = new System.Windows.Forms.CheckBox();
             this.txtHoursOffset = new ZoneFiveSoftware.Common.Visuals.TextBox();
             this.labelHoursOffset = new System.Windows.Forms.Label();
-            this.textBoxComPort = new ZoneFiveSoftware.Common.Visuals.TextBox();
-            this.labelComPort = new System.Windows.Forms.Label();
             this.buttonDetect = new ZoneFiveSoftware.Common.Visuals.Button();
             this.labelDetect = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -139,33 +137,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelHoursOffset.TabIndex = 1;
             this.labelHoursOffset.Text = "Hours offset:";
             // 
-            // textBoxComPort
-            // 
-            this.textBoxComPort.AcceptsReturn = false;
-            this.textBoxComPort.AcceptsTab = false;
-            this.textBoxComPort.BackColor = System.Drawing.Color.White;
-            this.textBoxComPort.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(114)))), ((int)(((byte)(108)))));
-            this.textBoxComPort.ButtonImage = null;
-            this.textBoxComPort.Location = new System.Drawing.Point(117, 62);
-            this.textBoxComPort.MaxLength = 32767;
-            this.textBoxComPort.Multiline = false;
-            this.textBoxComPort.Name = "textBoxComPort";
-            this.textBoxComPort.ReadOnly = false;
-            this.textBoxComPort.ReadOnlyColor = System.Drawing.SystemColors.Control;
-            this.textBoxComPort.ReadOnlyTextColor = System.Drawing.SystemColors.ControlLight;
-            this.textBoxComPort.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.textBoxComPort.Size = new System.Drawing.Size(45, 19);
-            this.textBoxComPort.TabIndex = 6;
-            this.textBoxComPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            // 
-            // labelComPort
-            // 
-            this.labelComPort.Location = new System.Drawing.Point(12, 65);
-            this.labelComPort.Name = "labelComPort";
-            this.labelComPort.Size = new System.Drawing.Size(100, 19);
-            this.labelComPort.TabIndex = 5;
-            this.labelComPort.Text = "COM Port:";
-            // 
             // buttonDetect
             // 
             this.buttonDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -204,8 +175,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.ClientSize = new System.Drawing.Size(343, 122);
             this.Controls.Add(this.labelDetect);
             this.Controls.Add(this.buttonDetect);
-            this.Controls.Add(this.textBoxComPort);
-            this.Controls.Add(this.labelComPort);
             this.Controls.Add(this.txtHoursOffset);
             this.Controls.Add(this.labelHoursOffset);
             this.Controls.Add(this.chkImportOnlyNew);
@@ -229,8 +198,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private System.Windows.Forms.CheckBox chkImportOnlyNew;
         private ZoneFiveSoftware.Common.Visuals.TextBox txtHoursOffset;
         private System.Windows.Forms.Label labelHoursOffset;
-        private Common.Visuals.TextBox textBoxComPort;
-        private System.Windows.Forms.Label labelComPort;
         private Common.Visuals.Button buttonDetect;
         private System.Windows.Forms.Label labelDetect;
     }

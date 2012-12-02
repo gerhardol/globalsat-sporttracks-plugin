@@ -40,7 +40,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
-            labelComPort.Text = "COM Port:"; //Translate if visible
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
 
@@ -54,10 +53,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             btnCancel.Click += new EventHandler(btnCancel_Click);
             chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
-            this.textBoxComPort.Text = this.fitnessDevice.configInfo.ComPortsText;
             //COM Ports only configurable in xml
-            this.textBoxComPort.Visible = false;
-            this.labelComPort.Visible = false;
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
             this.labelDetect.Text = "";
@@ -70,7 +66,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             get
             {
                 this.fitnessDevice.configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
-                this.fitnessDevice.configInfo.ComPortsText = textBoxComPort.Text;
                 return this.fitnessDevice.configInfo;
             }
         }
@@ -82,7 +77,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             theme = visualTheme;
             labelHoursOffset.ForeColor = visualTheme.ControlText;
             txtHoursOffset.ThemeChanged(visualTheme);
-            textBoxComPort.ThemeChanged(visualTheme);
             chkImportOnlyNew.ForeColor = visualTheme.ControlText;
             BackColor = visualTheme.Control;
         }

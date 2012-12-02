@@ -26,7 +26,7 @@ using ZoneFiveSoftware.Common.Visuals;
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     //A generic device that should resolve to the actual device
-    //There should be no overridden methods in this class, all should use Device()
+    //The class should possibly only use specific methods to achieve identification
     public class GenericDevice : GlobalsatProtocol
     {
         public GenericDevice(FitnessDevice_GsSport fitnessDevice)
