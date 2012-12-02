@@ -50,19 +50,7 @@
     <Compile Include="Device\Gh625XTDevice.cs" />
     <Compile Include="Device\GhDeviceBase.cs" />
     <Compile Include="Device\GhPacketBase.cs" />
-    <Compile Include="Settings\DeviceConfigurationSettingsControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Settings\DeviceConfigurationSettingsControl.Designer.cs">
-      <DependentUpon>DeviceConfigurationSettingsControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Settings\ExtendSettingsPages.cs" />
-    <Compile Include="Settings\ScreenCaptureControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Settings\ScreenCaptureControl.Designer.cs">
-      <DependentUpon>ScreenCaptureControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="Settings\SettingsControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -82,14 +70,6 @@
     <None Include="Xml\Gpx11\gpx.xsd">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Settings\DeviceConfigurationSettingsControl.resx">
-      <DependentUpon>DeviceConfigurationSettingsControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Settings\ScreenCaptureControl.resx">
-      <DependentUpon>ScreenCaptureControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Settings\SettingsControl.resx">
       <DependentUpon>SettingsControl.cs</DependentUpon>
       <SubType>Designer</SubType>
