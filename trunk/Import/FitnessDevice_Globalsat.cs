@@ -57,7 +57,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public string Configure(string configurationInfo)
         {
             this.configInfo.Parse(configurationInfo);
-            DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(this);
+            DeviceConfigurationDlg dialog = new DeviceConfigurationDlg(this, true);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 return dialog.ConfigurationInfo.ToString();
@@ -158,11 +158,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Detect()
         {
+            return Detect(true);
+        }
+
+        public string Detect(bool query)
+        {
             string identification = "Error";
             try
             {
-                if (this.Device().Open())
+                if (!query || this.Device().Open())
                 {
+                    //devId and lastDevId should not be null
                     if (this.configInfo.AllowedIds == null || this.configInfo.AllowedIds.Count == 0)
                     {
                         identification = this.Device().devId + " (Globalsat Generic)";
@@ -176,6 +182,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             {
                                 found = true;
                                 identification = this.Device().devId;
+                                break;
                             }
                         }
                         if (!found)

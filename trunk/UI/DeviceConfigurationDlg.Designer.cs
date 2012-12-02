@@ -54,6 +54,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelHoursOffset = new System.Windows.Forms.Label();
             this.buttonDetect = new ZoneFiveSoftware.Common.Visuals.Button();
             this.labelDetect = new System.Windows.Forms.Label();
+            this.groupBoxDeviceConfig = new System.Windows.Forms.GroupBox();
+            this.labelStatus = new System.Windows.Forms.Label();
+            this.buttonExportDeviceConfig = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.buttonImportDeviceConfig = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.groupBoxScreenCapture = new System.Windows.Forms.GroupBox();
+            this.buttonSave = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.buttonCaptureScreen = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.groupBoxDeviceConfig.SuspendLayout();
+            this.groupBoxScreenCapture.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnOk
@@ -66,7 +77,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.btnOk.HyperlinkStyle = false;
             this.btnOk.ImageMargin = 2;
             this.btnOk.LeftImage = null;
-            this.btnOk.Location = new System.Drawing.Point(175, 94);
+            this.btnOk.Location = new System.Drawing.Point(193, 312);
             this.btnOk.Name = "btnOk";
             this.btnOk.PushStyle = true;
             this.btnOk.RightImage = null;
@@ -87,7 +98,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.btnCancel.HyperlinkStyle = false;
             this.btnCancel.ImageMargin = 2;
             this.btnCancel.LeftImage = null;
-            this.btnCancel.Location = new System.Drawing.Point(256, 94);
+            this.btnCancel.Location = new System.Drawing.Point(274, 312);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.PushStyle = true;
             this.btnCancel.RightImage = null;
@@ -139,7 +150,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // buttonDetect
             // 
-            this.buttonDetect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonDetect.BackColor = System.Drawing.Color.Transparent;
             this.buttonDetect.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
             this.buttonDetect.CenterImage = null;
@@ -147,7 +157,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.HyperlinkStyle = false;
             this.buttonDetect.ImageMargin = 2;
             this.buttonDetect.LeftImage = null;
-            this.buttonDetect.Location = new System.Drawing.Point(12, 65);
+            this.buttonDetect.Location = new System.Drawing.Point(15, 65);
             this.buttonDetect.Name = "buttonDetect";
             this.buttonDetect.PushStyle = true;
             this.buttonDetect.RightImage = null;
@@ -168,11 +178,140 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelDetect.TabIndex = 8;
             this.labelDetect.Text = "Globalsat device not found";
             // 
+            // groupBoxDeviceConfig
+            // 
+            this.groupBoxDeviceConfig.Controls.Add(this.labelStatus);
+            this.groupBoxDeviceConfig.Controls.Add(this.buttonExportDeviceConfig);
+            this.groupBoxDeviceConfig.Controls.Add(this.buttonImportDeviceConfig);
+            this.groupBoxDeviceConfig.Location = new System.Drawing.Point(15, 86);
+            this.groupBoxDeviceConfig.Name = "groupBoxDeviceConfig";
+            this.groupBoxDeviceConfig.Size = new System.Drawing.Size(245, 92);
+            this.groupBoxDeviceConfig.TabIndex = 13;
+            this.groupBoxDeviceConfig.TabStop = false;
+            this.groupBoxDeviceConfig.Text = "Device Configuration";
+            // 
+            // labelStatus
+            // 
+            this.labelStatus.AutoSize = true;
+            this.labelStatus.Location = new System.Drawing.Point(7, 72);
+            this.labelStatus.Name = "labelStatus";
+            this.labelStatus.Size = new System.Drawing.Size(37, 13);
+            this.labelStatus.TabIndex = 11;
+            this.labelStatus.Text = "Status";
+            // 
+            // buttonExportDeviceConfig
+            // 
+            this.buttonExportDeviceConfig.AutoSize = true;
+            this.buttonExportDeviceConfig.BackColor = System.Drawing.Color.Transparent;
+            this.buttonExportDeviceConfig.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
+            this.buttonExportDeviceConfig.CenterImage = null;
+            this.buttonExportDeviceConfig.DialogResult = System.Windows.Forms.DialogResult.None;
+            this.buttonExportDeviceConfig.HyperlinkStyle = false;
+            this.buttonExportDeviceConfig.ImageMargin = 2;
+            this.buttonExportDeviceConfig.LeftImage = null;
+            this.buttonExportDeviceConfig.Location = new System.Drawing.Point(10, 47);
+            this.buttonExportDeviceConfig.Name = "buttonExportDeviceConfig";
+            this.buttonExportDeviceConfig.PushStyle = true;
+            this.buttonExportDeviceConfig.RightImage = null;
+            this.buttonExportDeviceConfig.Size = new System.Drawing.Size(80, 22);
+            this.buttonExportDeviceConfig.TabIndex = 10;
+            this.buttonExportDeviceConfig.Text = "Export to file";
+            this.buttonExportDeviceConfig.TextAlign = System.Drawing.StringAlignment.Near;
+            this.buttonExportDeviceConfig.TextLeftMargin = 2;
+            this.buttonExportDeviceConfig.TextRightMargin = 2;
+            this.buttonExportDeviceConfig.Click += new System.EventHandler(this.buttonExportDeviceConfig_Click);
+            // 
+            // buttonImportDeviceConfig
+            // 
+            this.buttonImportDeviceConfig.AutoSize = true;
+            this.buttonImportDeviceConfig.BackColor = System.Drawing.Color.Transparent;
+            this.buttonImportDeviceConfig.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
+            this.buttonImportDeviceConfig.CenterImage = null;
+            this.buttonImportDeviceConfig.DialogResult = System.Windows.Forms.DialogResult.None;
+            this.buttonImportDeviceConfig.HyperlinkStyle = false;
+            this.buttonImportDeviceConfig.ImageMargin = 2;
+            this.buttonImportDeviceConfig.LeftImage = null;
+            this.buttonImportDeviceConfig.Location = new System.Drawing.Point(10, 19);
+            this.buttonImportDeviceConfig.Name = "buttonImportDeviceConfig";
+            this.buttonImportDeviceConfig.PushStyle = true;
+            this.buttonImportDeviceConfig.RightImage = null;
+            this.buttonImportDeviceConfig.Size = new System.Drawing.Size(93, 22);
+            this.buttonImportDeviceConfig.TabIndex = 9;
+            this.buttonImportDeviceConfig.Text = "Import from file";
+            this.buttonImportDeviceConfig.TextAlign = System.Drawing.StringAlignment.Near;
+            this.buttonImportDeviceConfig.TextLeftMargin = 2;
+            this.buttonImportDeviceConfig.TextRightMargin = 2;
+            this.buttonImportDeviceConfig.Click += new System.EventHandler(this.buttonImportDeviceConfig_Click);
+            // 
+            // groupBoxScreenCapture
+            // 
+            this.groupBoxScreenCapture.Controls.Add(this.buttonSave);
+            this.groupBoxScreenCapture.Controls.Add(this.buttonCaptureScreen);
+            this.groupBoxScreenCapture.Controls.Add(this.pictureBox1);
+            this.groupBoxScreenCapture.Location = new System.Drawing.Point(15, 193);
+            this.groupBoxScreenCapture.Name = "groupBoxScreenCapture";
+            this.groupBoxScreenCapture.Size = new System.Drawing.Size(205, 112);
+            this.groupBoxScreenCapture.TabIndex = 14;
+            this.groupBoxScreenCapture.TabStop = false;
+            this.groupBoxScreenCapture.Text = "Screen Capture";
+            // 
+            // buttonSave
+            // 
+            this.buttonSave.BackColor = System.Drawing.Color.Transparent;
+            this.buttonSave.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
+            this.buttonSave.CenterImage = null;
+            this.buttonSave.DialogResult = System.Windows.Forms.DialogResult.None;
+            this.buttonSave.HyperlinkStyle = false;
+            this.buttonSave.ImageMargin = 2;
+            this.buttonSave.LeftImage = null;
+            this.buttonSave.Location = new System.Drawing.Point(14, 62);
+            this.buttonSave.Name = "buttonSave";
+            this.buttonSave.PushStyle = true;
+            this.buttonSave.RightImage = null;
+            this.buttonSave.Size = new System.Drawing.Size(27, 23);
+            this.buttonSave.TabIndex = 20;
+            this.buttonSave.TextAlign = System.Drawing.StringAlignment.Center;
+            this.buttonSave.TextLeftMargin = 2;
+            this.buttonSave.TextRightMargin = 2;
+            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            // 
+            // buttonCaptureScreen
+            // 
+            this.buttonCaptureScreen.BackColor = System.Drawing.Color.Transparent;
+            this.buttonCaptureScreen.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(40)))), ((int)(((byte)(50)))), ((int)(((byte)(120)))));
+            this.buttonCaptureScreen.CenterImage = null;
+            this.buttonCaptureScreen.DialogResult = System.Windows.Forms.DialogResult.None;
+            this.buttonCaptureScreen.HyperlinkStyle = false;
+            this.buttonCaptureScreen.ImageMargin = 2;
+            this.buttonCaptureScreen.LeftImage = null;
+            this.buttonCaptureScreen.Location = new System.Drawing.Point(14, 28);
+            this.buttonCaptureScreen.Name = "buttonCaptureScreen";
+            this.buttonCaptureScreen.PushStyle = true;
+            this.buttonCaptureScreen.RightImage = null;
+            this.buttonCaptureScreen.Size = new System.Drawing.Size(27, 23);
+            this.buttonCaptureScreen.TabIndex = 19;
+            this.buttonCaptureScreen.TextAlign = System.Drawing.StringAlignment.Center;
+            this.buttonCaptureScreen.TextLeftMargin = 2;
+            this.buttonCaptureScreen.TextRightMargin = 2;
+            this.buttonCaptureScreen.Click += new System.EventHandler(this.buttonCaptureScreen_Click);
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackColor = System.Drawing.Color.White;
+            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox1.Location = new System.Drawing.Point(54, 19);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(120, 80);
+            this.pictureBox1.TabIndex = 0;
+            this.pictureBox1.TabStop = false;
+            // 
             // DeviceConfigurationDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(343, 122);
+            this.ClientSize = new System.Drawing.Size(361, 340);
+            this.Controls.Add(this.groupBoxScreenCapture);
+            this.Controls.Add(this.groupBoxDeviceConfig);
             this.Controls.Add(this.labelDetect);
             this.Controls.Add(this.buttonDetect);
             this.Controls.Add(this.txtHoursOffset);
@@ -186,6 +325,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Name = "DeviceConfigurationDlg";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "GPS Options";
+            this.groupBoxDeviceConfig.ResumeLayout(false);
+            this.groupBoxDeviceConfig.PerformLayout();
+            this.groupBoxScreenCapture.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -200,5 +343,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private System.Windows.Forms.Label labelHoursOffset;
         private Common.Visuals.Button buttonDetect;
         private System.Windows.Forms.Label labelDetect;
+        private System.Windows.Forms.GroupBox groupBoxDeviceConfig;
+        private System.Windows.Forms.Label labelStatus;
+        private Common.Visuals.Button buttonExportDeviceConfig;
+        private Common.Visuals.Button buttonImportDeviceConfig;
+        private System.Windows.Forms.GroupBox groupBoxScreenCapture;
+        private Common.Visuals.Button buttonSave;
+        private Common.Visuals.Button buttonCaptureScreen;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

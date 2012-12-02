@@ -32,7 +32,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public partial class DeviceConfigurationDlg : Form
     {
-        public DeviceConfigurationDlg(FitnessDevice_Globalsat fitnessDevice)
+        public DeviceConfigurationDlg(FitnessDevice_Globalsat fitnessDevice) :
+            this(fitnessDevice, false)
+        {
+        }
+        public DeviceConfigurationDlg(FitnessDevice_Globalsat fitnessDevice, bool detect)
         {
             InitializeComponent();
 
@@ -53,14 +57,35 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             btnCancel.Click += new EventHandler(btnCancel_Click);
             chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
-            //COM Ports only configurable in xml
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
             this.labelDetect.Text = "";
+            if (detect)
+            {
+                this.VisibleChanged += DeviceConfigurationDlg_VisibleChanged;
+            }
+
+            //Device Configuration
+            this.buttonImportDeviceConfig.LeftImage = CommonResources.Images.Import16;
+            this.buttonExportDeviceConfig.LeftImage = CommonResources.Images.Export16;
+
+            this.buttonImportDeviceConfig.Text = Properties.Resources.UI_Settings_ImportConfigButton_Text;
+            this.buttonExportDeviceConfig.Text = Properties.Resources.UI_Settings_ExportConfigButton_Text;
+            this.labelStatus.Text = "";
+
+            this.groupBoxDeviceConfig.Text = Properties.Resources.UI_Settings_DeviceConfiguration_Title;
+
+            //Screen capture
+            this.buttonCaptureScreen.CenterImage = CommonResources.Images.Refresh16;
+            this.buttonSave.CenterImage = CommonResources.Images.Save16;
+
+            this.buttonSave.Enabled = false;
+            this.pictureBox1.Left = buttonCaptureScreen.Right + 8;
         }
 
         #region Public properties
 
+ 
         internal DeviceConfigurationInfo ConfigurationInfo
         {
             get
@@ -128,14 +153,167 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         #endregion
 
-        #region Private members
-        private ITheme theme;
-        private FitnessDevice_Globalsat fitnessDevice;
-        #endregion
+        private void DeviceConfigurationDlg_VisibleChanged(object sender, EventArgs e)
+        {
+            if (this.Visible == true)
+            {
+                this.buttonDetect_Click(sender, e);
+            }
+        }
 
         private void buttonDetect_Click(object sender, EventArgs e)
         {
             this.labelDetect.Text = this.fitnessDevice.Detect();
         }
+
+        private void buttonCaptureScreen_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                IJobMonitor jobMonitor = new JobMonitor();
+                GlobalsatProtocol device2 = this.fitnessDevice.Device();
+                if (device2 != null)
+                {
+                    Bitmap screenshot = device2.GetScreenshot(jobMonitor);
+
+                    if (screenshot != null)
+                    {
+                        this.Height += screenshot.Height - pictureBox1.Height;
+                        this.groupBoxScreenCapture.Height += screenshot.Height - pictureBox1.Height;
+                        this.pictureBox1.ClientSize = new Size(screenshot.Width, screenshot.Height);
+                        this.pictureBox1.Image = screenshot;
+                        this.Refresh();
+
+                        this.buttonSave.Enabled = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ScreenCapture_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
+
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog(); 
+            saveFileDialog1.Filter = "Bitmap (*.bmp)|*.bmp|JPEG (*.jpg)|*.jpg|PNG (*.png)|*.png";
+            saveFileDialog1.FileName = this.fitnessDevice.Device().devId;
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    if (pictureBox1.Image != null)
+                    {
+                        System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                        if (saveFileDialog1.FilterIndex == 1)
+                        {
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                        }
+                        else if (saveFileDialog1.FilterIndex == 2)
+                        {
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                        }
+                        pictureBox1.Image.Save(saveFileDialog1.FileName, format);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ScreenCaptureSave_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+        }
+
+        private void buttonImportDeviceConfig_Click(object sender, EventArgs e)
+        {
+
+            labelStatus.Text = "";
+            System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();;
+            openFileDialog1.Filter = "Configuration Files (*.cfg)|*.cfg";
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                GlobalsatDeviceConfiguration importedDeviceConfig = null;
+
+                try
+                {
+                    importedDeviceConfig = GlobalsatDeviceConfiguration.Load(openFileDialog1.FileName);
+                }
+                catch (Exception)
+                {
+                    MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                try
+                {
+                    GlobalsatProtocol device2 = this.fitnessDevice.Device();
+                    if (device2 != null)
+                    {
+                        IJobMonitor jobMonitor = new JobMonitor();
+                        GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+
+                        if (importedDeviceConfig != null && importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
+                        {
+                            device2.SetSystemConfiguration2(importedDeviceConfig, jobMonitor);
+                            labelStatus.Text = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
+                        }
+                        else
+                        {
+                            labelStatus.Text = Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration;
+                            //MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    else
+                    {
+                        labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void buttonExportDeviceConfig_Click(object sender, EventArgs e)
+        {
+            labelStatus.Text = "";
+            try
+            {
+                GlobalsatProtocol device2 = this.fitnessDevice.Device();
+                if (device2 != null)
+                {
+                    IJobMonitor jobMonitor = new JobMonitor();
+                    GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+                    System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+                    saveFileDialog1.Filter = "Configuration Files (*.cfg)|*.cfg";
+                    saveFileDialog1.FileName = currentDeviceConfig.DeviceName;
+                    if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+                    {
+                        currentDeviceConfig.Save(saveFileDialog1.FileName);
+
+                        labelStatus.Text = CommonResources.Text.MessageExportComplete;
+                        //MessageDialog.Show(CommonResources.Text.MessageExportComplete, Properties.Resources.UI_Settings_ExportConfigButton_Text, MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                }
+                else
+                {
+                    labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ExportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+        }
+
+        #region Private members
+        private ITheme theme;
+        private FitnessDevice_Globalsat fitnessDevice;
+        #endregion
     }
 }
