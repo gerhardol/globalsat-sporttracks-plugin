@@ -65,6 +65,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.VisibleChanged += DeviceConfigurationDlg_VisibleChanged;
             }
 
+            this.buttonDelete.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Delete16;
+            this.buttonDelete.Text = "";
+            this.dateTimePickerOldest.Visible = false;
+            GlobalsatProtocol device = this.fitnessDevice.Device();
+            if (device is GlobalsatProtocol2)
+            {
+                this.labelRemainingTime.Text = "Click to get remaining time";
+                this.labelDelete.Text = "Delete all device activities"; //TBD
+                DateTime oldest = DateTime.Now - TimeSpan.FromDays(31);
+                this.dateTimePickerOldest.Value = oldest;
+            }
+            else
+            {
+                this.labelRemainingTime.Visible = false;
+                this.buttonDelete.Visible = false;
+                this.labelDelete.Visible = false;
+            }
             //Device Configuration
             this.buttonImportDeviceConfig.LeftImage = CommonResources.Images.Import16;
             this.buttonExportDeviceConfig.LeftImage = CommonResources.Images.Export16;
@@ -315,5 +332,52 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private ITheme theme;
         private FitnessDevice_Globalsat fitnessDevice;
         #endregion
+
+        private void labelRemainingTime_Click(object sender, EventArgs e)
+        {
+            GlobalsatProtocol device = this.fitnessDevice.Device();
+            if (device is GlobalsatProtocol2)
+            {
+                GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;
+                TimeSpan time = device2.GetRemainingTime();
+                string s;
+                if (time <= TimeSpan.MinValue)
+                {
+                    s = Properties.Resources.Device_Unsupported;
+                }
+                else
+                {
+                    s = "Remaining time: " + time;
+                }
+                this.labelRemainingTime.Text = s;
+            }
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            GlobalsatProtocol device = this.fitnessDevice.Device();
+            //device should already be checked, no error
+            if (device is GlobalsatProtocol2)
+            {
+                //Delete date time not fully working, keep structure for now
+                DateTime oldest = DateTime.MaxValue; //this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString()
+                //string msg = string.Format("Are you sure you want to delete all activities older than {0}?", this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString());
+                string msg = string.Format("Are you sure you want to delete all device activities?", oldest);
+                if (System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == DialogResult.OK)
+                {
+                    GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;
+                    int n = device2.DeleteTracks(oldest);
+                    if (n >= 0)
+                    {
+                        msg = string.Format("Deleted {0} activities", n);
+                    }
+                    else
+                    {
+                        msg = string.Format("Failed to delete activities");
+                    }
+                    System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                }
+            }
+        }
     }
 }

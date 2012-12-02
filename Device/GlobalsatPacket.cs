@@ -240,9 +240,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             InitPacket(CommandGetTrackFileHeaders, 0);
             return this;
         }
+
         public GlobalsatPacket GetTrackFileSections(IList<Int16> trackPointIndexes)
         {
-            Int16 totalLength = (Int16)(Int16)(2 + trackPointIndexes.Count * 2);
+            Int16 totalLength = (Int16)(2 + trackPointIndexes.Count * 2);
             this.InitPacket(CommandGetTrackFileSections, totalLength);
             this.Write(0, (Int16)trackPointIndexes.Count);
             int offset = 2;
@@ -252,6 +253,31 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 offset += 2;
             }
             CheckOffset(totalLength, offset);
+            return this;
+        }
+        
+        public GlobalsatPacket GetDeleteAllTracks()
+        {
+            InitPacket(CommandDeleteTracks, 2);
+            //Note: Seem to always be bigendian in spec?
+            this.Write(0, (Int16)0x64, false);
+            return this;
+        }
+
+        //Should be similar to GetTrackFileSections(), always deleting all?
+        public GlobalsatPacket GetDeleteTracks(IList<GlobalsatPacket.TrackFileHeader> headers)
+        {
+            Int16 totalLength = (Int16)(2 + headers.Count * 2);
+            InitPacket(CommandDeleteTracks, totalLength);
+            this.Write(0, (Int16)headers.Count);
+            int offset = 2;
+            foreach(GlobalsatPacket.TrackFileHeader header in headers)
+            {
+                this.Write(offset, (Int16)header.TrackPointIndex);
+                offset += 2;
+            }
+            CheckOffset(totalLength, offset);
+
             return this;
         }
 
