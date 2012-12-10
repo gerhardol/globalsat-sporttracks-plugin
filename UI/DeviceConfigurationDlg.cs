@@ -272,14 +272,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         IJobMonitor jobMonitor = new JobMonitor();
                         GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
 
-                        if (importedDeviceConfig != null && importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
+                        if (importedDeviceConfig != null && currentDeviceConfig != null && 
+                            importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && 
+                            importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
                         {
                             device2.SetSystemConfiguration2(importedDeviceConfig, jobMonitor);
                             labelStatus.Text = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;
                         }
                         else
                         {
-                            labelStatus.Text = Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration;
+                            labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
                             //MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
@@ -301,10 +303,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 GlobalsatProtocol device2 = this.fitnessDevice.Device();
+                IJobMonitor jobMonitor = new JobMonitor();
+                GlobalsatDeviceConfiguration currentDeviceConfig = null;
                 if (device2 != null)
                 {
-                    IJobMonitor jobMonitor = new JobMonitor();
-                    GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+                    currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+                }
+                if (currentDeviceConfig != null)
+                {
                     System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
                     saveFileDialog1.Filter = "Configuration Files (*.cfg)|*.cfg";
                     saveFileDialog1.FileName = currentDeviceConfig.DeviceName;
