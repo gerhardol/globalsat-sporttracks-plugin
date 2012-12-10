@@ -207,7 +207,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             finally
             {
-                this.Device().Close();
+                if (this.Device() != null)
+                {
+                    this.Device().Close();
+                }
             }
             return identification;
         }
