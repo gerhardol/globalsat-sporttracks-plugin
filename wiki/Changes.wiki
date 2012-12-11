@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.210 2012-12-10 (Plugin Catalog)
+ * It was possible to get an exception in device configuration if no device was connected.
+ 
 3.2.210 2012-12-02
  * Major internal redesign to show Device Configuration and Screen Capture for Globalsat devices in Import Device Configuration instead of in Settings subpages.
  * Show approximate remaining recording time in device configuration dialog
