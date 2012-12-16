@@ -116,17 +116,25 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             bool result = false;
             this.configInfo.Parse(configurationInfo);
-            bool generic = this is FitnessDevice_Globalsat;
+            bool generic = this is FitnessDevice_GsSport;
+            //import for specific device - Importjob must be implemented
+            monitor.PercentComplete = 0;
+
+            try
             {
-                //import for specific device - Importjob must be implemented
-                monitor.PercentComplete = 0;
-                string str = ConfiguredDescription(configurationInfo);
-                if (!generic)
+                if (generic)
                 {
+                    //Always retry to reimport (other use create new device at each use, but device kept at import)
+                    FitnessDevice_GsSport dev = (this as FitnessDevice_GsSport);
+                    dev.DetectionAttempted = false;
+                }
+                else
+                {
+                    //Only change status message for non generic
                     monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_OpeningDevice;
                 }
 
-                try
+                if (this.Device() != null)
                 {
                     string cfgDesc = ConfiguredDescription(configurationInfo);
                     if (generic)
@@ -144,10 +152,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         result = job.Import();
                     }
                 }
-                catch (NotImplementedException)
-                {
-                    result = false;
-                }
+            }
+            catch (NotImplementedException)
+            {
+                result = false;
             }
             if (!result)
             {

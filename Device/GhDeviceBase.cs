@@ -63,8 +63,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void CopyPort(GhDeviceBase b)
         {
-            this.FitnessDevice.SetDynamicConfigurationString();
-            b.FitnessDevice.SetDynamicConfigurationString();
             this.port = b.port;
             this.devId = b.devId;
         }

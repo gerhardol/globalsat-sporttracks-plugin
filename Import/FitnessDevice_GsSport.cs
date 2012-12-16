@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
+using ZoneFiveSoftware.Common.Data.Fitness;
 using ZoneFiveSoftware.Common.Visuals;
 using ZoneFiveSoftware.Common.Visuals.Fitness;
 
@@ -44,10 +45,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatPacket PacketFactory { get { return new GlobalsatPacket(this); } }
 
+        //Detect the Globalsat (protocol) device
         public override GlobalsatProtocol Device()
         { 
             GlobalsatProtocol gdevice = null;
-            FitnessDevice_Globalsat gfdev = this.SpecificDevice;
+            FitnessDevice_Globalsat gfdev = this.FitnessDevice;
             if (gfdev != null)
             {
                 gdevice = gfdev.Device();
@@ -55,8 +57,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return gdevice;
         }
         
-        //Detect the actual Globalsat Device
-        public FitnessDevice_Globalsat SpecificDevice
+        //Detect the actual Globalsat Fitness Device
+        private FitnessDevice_Globalsat FitnessDevice
         {
             get
             {
@@ -64,24 +66,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     DetectionAttempted = true;
                     IList<FitnessDevice_Globalsat> fds = new List<FitnessDevice_Globalsat> {
-                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GH505(), new FitnessDevice_GH615()/*, new Gh561Device()*/ };
+                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GH505(), 
+                      //Not in general devices - will add one...
+                      new FitnessDevice_GH615(), 
+                      //No support for import, but waypoints
+                      new FitnessDevice_GH561() 
+                    };
 
                     if (!this.device.Open())
                     {
                         this.device.Close();
+                        FitnessDevice_GH625XT Gh561Device = new FitnessDevice_GH625XT();
                         //Support GH-561 - skipped by default, not working
-                        foreach (FitnessDevice_Globalsat g in fds)
+                        foreach (IConfiguredDevice d in Plugin.Instance.Application.SystemPreferences.FitnessDevices)
                         {
-                            if (g.configInfo.AllowedIds != null)
+                            if (Gh561Device.Id.Equals(d.Id))
                             {
-                                foreach (string s in g.configInfo.AllowedIds)
-                                {
-                                    if (s.StartsWith("GH-561"))
-                                    {
-                                        this.m_bigEndianPacketLength = false;
-                                        this.device.Open();
-                                    }
-                                }
+                                this.m_bigEndianPacketLength = false;
+                                this.device.Open();
                             }
                         }
                     }
@@ -99,6 +101,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                         m_FitnessDevice = g;
                                         m_FitnessDevice.Device().CopyPort(this.device);
                                         //Copy settings from generic
+                                        this.SetDynamicConfigurationString();
+                                        m_FitnessDevice.SetDynamicConfigurationString();
                                         m_FitnessDevice.configInfo.Copy(this.configInfo);
                                         return m_FitnessDevice;
                                     }
@@ -114,10 +118,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool BigEndianPacketLength { get { return m_bigEndianPacketLength; } }
 
-        public bool m_bigEndianPacketLength = true;
+        public bool DetectionAttempted = false;
 
         #region Private members
-        private bool DetectionAttempted = false;
+        private bool m_bigEndianPacketLength = true;
         private FitnessDevice_Globalsat m_FitnessDevice;
         #endregion
     }
