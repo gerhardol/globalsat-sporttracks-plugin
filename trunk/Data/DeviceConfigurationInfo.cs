@@ -25,6 +25,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     public class DeviceConfigurationInfo
     {
+        public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates)
+        {
+            BaudRates = baudRates;
+            AllowedIds = allowedIds;
+        }
+
+        public void Copy(DeviceConfigurationInfo c)
+        {
+            this.HoursAdjustment = c.HoursAdjustment;
+            this.ImportOnlyNew = c.ImportOnlyNew;
+        }
+
         //Parse string overlay default configuration
         public void Parse(string configurationInfo)
         {
@@ -86,18 +98,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch {}
             }
-        }
-
-        public DeviceConfigurationInfo(IList<string> allowedIds, IList<int> baudRates)
-        {
-            BaudRates = baudRates;
-            AllowedIds = allowedIds;
-        }
-
-        public void Copy(DeviceConfigurationInfo c)
-        {
-            this.HoursAdjustment = c.HoursAdjustment;
-            this.ImportOnlyNew = c.ImportOnlyNew;
         }
 
         public override string ToString()

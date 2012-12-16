@@ -31,7 +31,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             //Depreciate use of GH615, though possibly handled in generic import
             get { return new IFitnessDevice[] { new FitnessDevice_GsSport(), new FitnessDevice_GH625(), new FitnessDevice_GH505(), 
-                new FitnessDevice_GH625XT(), new FitnessDevice_GB580() }; }
+                new FitnessDevice_GH625XT(), new FitnessDevice_GB580(), new FitnessDevice_GH561() };
+            }
         }
     }
 }

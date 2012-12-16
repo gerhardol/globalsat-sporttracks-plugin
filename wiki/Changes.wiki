@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+ * Experimental GH-561 support
+ * No longer required to close import dialog if importing from GsSport device and device was not connected at first import attempt.
+
 3.2.210 2012-12-10 (Plugin Catalog)
  * It was possible to get an exception in device configuration if no device was connected.
  
