@@ -396,7 +396,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     GlobalsatPacket packet;
                     GlobalsatPacket response;
-                    if (this.FitnessDevice.RouteRequiresWaypoints)
+                    if (this.RouteRequiresWaypoints)
                     {
                         packet = PacketFactory.GetWaypoints();
                         response = (GlobalsatPacket)this.SendPacket(packet);
@@ -511,6 +511,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             return null;
         }
+
+        //625XT (but other?) do not require waypoints in routes
+        public virtual bool RouteRequiresWaypoints { get { return true; } }
     }
 
 

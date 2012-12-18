@@ -30,5 +30,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected override int WptLatLonOffset { get { return 2; } }
         public override int TrackPointsPerSection { get { return 73; } }
+
+        protected override int SystemConfigWaypointCountOffset { get { return 38; } }
+        protected override int SystemConfigPcRouteCountOffset { get { return 39; } }
     }
 }

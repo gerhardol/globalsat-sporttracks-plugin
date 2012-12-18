@@ -81,6 +81,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 this.labelRemainingTime.Visible = false;
                 this.buttonDelete.Visible = false;
                 this.labelDelete.Visible = false;
+                if (fitnessDevice is FitnessDevice_GH561)
+                {
+                    this.labelHoursOffset.Visible = false;
+                    this.txtHoursOffset.Visible = false;
+                    this.chkImportOnlyNew.Visible = false;
+                }
             }
             //Device Configuration
             this.buttonImportDeviceConfig.LeftImage = CommonResources.Images.Import16;

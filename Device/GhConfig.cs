@@ -63,8 +63,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Barometric devices
         public virtual bool HasElevationTrack { get { return false; } }
         public virtual bool CanRotateScreen { get { return false; } }
-        //625XT (but other?) do not require waypoints in routes
-        public virtual bool RouteRequiresWaypoints { get { return true; } }
+
         //Some device related settings - affecting packets
         public virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         public virtual int ScreenBpp { get { return 2; } }

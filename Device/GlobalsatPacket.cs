@@ -73,11 +73,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //No reasonable check for CheckOffset()
             string deviceName = ByteArr2String(0, 20 + 1);
             string firmware = ByteArr2String(25, 16 + 1); //21wo version
-            int waypointCount = (int)PacketData[63]; //38 in 615?
+            int waypointCount = 0;
             int pcRouteCount = 0;
-            if (this.PacketLength > 70)
+            if (this.PacketLength > this.SystemConfigWaypointCountOffset)
             {
-                pcRouteCount = (int)PacketData[70]; //39 in 615?
+                waypointCount = (int)PacketData[this.SystemConfigWaypointCountOffset];
+                pcRouteCount = (int)PacketData[this.SystemConfigPcRouteCountOffset];
+            }
+            else
+            {
+                ReportOffset(this.PacketLength, this.SystemConfigWaypointCountOffset);
             }
             GlobalsatSystemConfiguration systemInfo = new GlobalsatSystemConfiguration(deviceName, firmware, waypointCount, pcRouteCount);
 
@@ -358,6 +363,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected virtual int TrackLapLength { get { return 22; } }
         protected virtual int TrackPointLength { get { return 25; } }
         protected virtual int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 1; } } //cDataType
+
+        protected virtual int SystemConfigWaypointCountOffset { get { return 63; } } //54 in 505?
+        protected virtual int SystemConfigPcRouteCountOffset { get { return 70; } } //63 in 505?
 
         protected virtual int MaxRouteNameLength { get { return 15; } }
         protected virtual int RouteWaypointLength { get { return 8; } }
