@@ -29,6 +29,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         protected override bool IsLittleEndian { get { return true; } }
 
         protected override int WptLatLonOffset { get { return 2; } }
+        protected override int RoutePointOffset { get { return 1; } }
         public override int TrackPointsPerSection { get { return 73; } }
 
         protected override int SystemConfigWaypointCountOffset { get { return 38; } }

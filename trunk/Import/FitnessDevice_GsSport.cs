@@ -76,7 +76,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (!this.device.Open())
                     {
                         this.device.Close();
-                        FitnessDevice_GH625XT Gh561Device = new FitnessDevice_GH625XT();
+                        FitnessDevice_GH561 Gh561Device = new FitnessDevice_GH561();
                         //Support GH-561 - skipped by default, not working
                         foreach (IConfiguredDevice d in Plugin.Instance.Application.SystemPreferences.FitnessDevices)
                         {

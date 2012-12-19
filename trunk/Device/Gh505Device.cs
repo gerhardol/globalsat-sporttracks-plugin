@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using ZoneFiveSoftware.Common.Visuals;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -30,5 +31,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             : base(fitnessDevice)
         {
         }
+
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor) { throw new FeatureNotSupportedException(); }
     }
 }
