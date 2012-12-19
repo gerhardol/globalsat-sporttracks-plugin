@@ -323,12 +323,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //}
 
             byte nrPoints = (byte)Math.Min(0xFF, route.wpts.Count);
-            Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + nrPointsLength + nrPoints * RouteWaypointLength); // save a byte for the ending null char
+            Int16 totalLength = (Int16)((MaxRouteNameLength + 1) + RoutePointOffset + nrPointsLength + nrPoints * RouteWaypointLength); // save a byte for the ending null char
             this.InitPacket(CommandSendRoute, totalLength);
 
             int offset = 0;
             offset += this.Write(offset, MaxRouteNameLength + 1, route.Name);
 
+            for (int i = 0; i < RoutePointOffset; i++)
+            {
+                this.PacketData[offset++] = 0;
+            } 
             this.PacketData[offset++] = nrPoints;
 
             for (int i = 0; i < nrPoints; i++)
@@ -355,6 +359,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Packetsizes
         protected virtual int LocationLength { get { return 18 + WptLatLonOffset; } }
         protected virtual int WptLatLonOffset { get { return 0; } }
+        protected virtual int RoutePointOffset { get { return 0; } }
 
         public virtual int TrackPointsPerSection { get { return 136; } }
         //Unused: public virtual int TrackLapsPerSection { get { return 58; } }

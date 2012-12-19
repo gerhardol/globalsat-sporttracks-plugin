@@ -36,22 +36,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public Guid Id
         {
-            get { return id; }
+            get { return this.id; }
         }
 
         public string Name
         {
-            get { return name; }
+            get { return this.name; }
         }
 
         public Image Image
         {
-            get { return image; }
+            get { return this.image; }
         }
 
         public string ConfiguredDescription(string configurationInfo)
         {
-            return Name;
+            return this.Name;
         }
 
         public string Configure(string configurationInfo)
@@ -105,10 +105,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 Plugin.Instance.Application.SystemPreferences.FitnessDevices.Add(configuredDevice);
             }
 
-            if (configInfo.DynamicInfoChanged(configuredDevice.Configuration))
+            if (this.configInfo.DynamicInfoChanged(configuredDevice.Configuration))
             {
                 //Only save if dynamic information changed
-                configuredDevice.Configuration = configInfo.ToString();
+                configuredDevice.Configuration = this.configInfo.ToString();
             }
         }
 
