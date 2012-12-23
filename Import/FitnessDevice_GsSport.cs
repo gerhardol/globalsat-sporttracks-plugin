@@ -58,7 +58,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
         
         //Detect the actual Globalsat Fitness Device
-        private FitnessDevice_Globalsat FitnessDevice
+        public FitnessDevice_Globalsat FitnessDevice
         {
             get
             {

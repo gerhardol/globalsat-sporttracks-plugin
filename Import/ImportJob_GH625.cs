@@ -39,6 +39,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool Import()
         {
+            bool result = false;
             try
             {
                 Gh625Device device = (Gh625Device)this.device;
@@ -80,12 +81,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     IList<Gh625Packet.TrackFileSection625M> sections = device.ReadTracks(fetch, monitor);
                     AddActivities(importResults, sections, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack);
                 }
+                result = true;
             }
             catch (Exception e)
             {
-                if (device.DataRecieved)
+                //if (device.DataRecieved)
                 {
-                    throw e;
+                    monitor.ErrorText = e.Message;
+                    //throw e;
                 }
             }
             finally
@@ -95,9 +98,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (!device.DataRecieved)
             {
                 device.NoCommunicationError(monitor);
-                return false;
             }
-            return true;
+            return result;
         }
 
 

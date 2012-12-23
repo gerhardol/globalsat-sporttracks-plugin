@@ -19,9 +19,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     public class JobMonitor : ZoneFiveSoftware.Common.Visuals.IJobMonitor
     {
         public bool Cancelled { get { return false; } }
-        public string ErrorText { set { } }
+        public string ErrorText
+        {
+            set
+            {
+                m_errorText = value;
+            }
+            get { return m_errorText == null ? "" : m_errorText; }
+        }
         public float PercentComplete { set { } }
-        public string StatusText { set { } }
+        public string StatusText
+        {
+            set
+            {
+            }
+        }
+
+        private string m_errorText;
     }
 
     public class GlobalsatWaypoint : IComparable

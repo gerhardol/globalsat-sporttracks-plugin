@@ -35,6 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         //Standard error text when a device is detected but "second protocol" times out
+        //This overrides the primary error message
         public void NoCommunicationError(IJobMonitor jobMonitor)
         {
             if (!string.IsNullOrEmpty(this.devId))
@@ -111,7 +112,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                     //throw new Exception(Properties.Resources.Device_SendTrack_Error);
                                 }
                                 //Console.WriteLine("------ send error 4");
-                                throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
+                                jobMonitor.ErrorText = Properties.Resources.Device_SendTrack_Error + response.CommandId;
+                                break;
+                                //throw new Exception(Properties.Resources.Device_SendTrack_Error + response.CommandId);
                             }
 
                             i++;
@@ -127,7 +130,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         result++;
 
-                        //Globalsat seem to be needing to wait in between activities....
+                        //Globalsat seem to need waiting in between activities....
                         if (trains.Count > 1)
                         {
                             System.Threading.Thread.Sleep(1000);
@@ -136,11 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception ex)
                 {
-                    if (this.DataRecieved)
-                    {
-                        jobMonitor.ErrorText = Properties.Resources.Device_SendTrack_Error + Environment.NewLine + ex.Message;
-                        throw new Exception(Properties.Resources.Device_SendTrack_Error + ex);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_SendTrack_Error + Environment.NewLine + ex.Message;
                 }
                 finally
                 {
@@ -224,22 +223,28 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     response = (GlobalsatPacket)this.SendPacket(packet);
 
                     devConfig.SystemConfigData = response.PacketData;
-                    return devConfig;
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                    devConfig = null;
+                    jobMonitor.ErrorText = Properties.Resources.Device_GetInfo_Error + e;
+                    //throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
                 }
                 finally
                 {
                     this.Close();
                 }
             }
-            return null;
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
+            }
+            return devConfig;
         }
 
-        public virtual void SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
+        public virtual int SetSystemConfiguration2(GlobalsatDeviceConfiguration devConfig, IJobMonitor jobMonitor)
         {
+            int result = -1;
             //No need to check if device is connected
             if (this.Open())
             {
@@ -248,16 +253,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigData);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                     //No info in the response
+                    result = 0;
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                    jobMonitor.ErrorText = Properties.Resources.Device_GetInfo_Error + e;
+                    //throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
                 }
                 finally
                 {
                     this.Close();
                 }
             }
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
+            }
+            return result;
         }
 
         public virtual IList<GlobalsatWaypoint> GetWaypoints(IJobMonitor jobMonitor)
@@ -274,10 +286,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (this.DataRecieved)
-                    {
-                        throw new Exception(Properties.Resources.Device_GetWaypoints_Error + e);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_GetWaypoints_Error + e;
                 }
                 finally
                 {
@@ -308,10 +317,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (this.DataRecieved)
-                    {
-                        throw new Exception(Properties.Resources.Device_SendWaypoints_Error + e);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_SendWaypoints_Error + e;
                 }
                 finally
                 {
@@ -328,19 +334,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public virtual bool DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames, IJobMonitor jobMonitor)
         {
+            bool result = false;
             if (this.Open())
             {
                 try
                 {
                     GlobalsatPacket packet = PacketFactory.DeleteWaypoints(this.FitnessDevice.configInfo.MaxNrWaypoints, waypointNames);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    result = true;
                 }
                 catch (Exception e)
                 {
-                    if (this.DataRecieved)
-                    {
-                        throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_DeleteWaypoints_Error + e;
                 }
                 finally
                 {
@@ -350,27 +355,25 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (!this.DataRecieved)
             {
                 NoCommunicationError(jobMonitor);
-                return false;
             }
-            return true;
+            return result;
         }
 
 
         public virtual bool DeleteAllWaypoints(IJobMonitor jobMonitor)
         {
+            bool result = false;
             if (this.Open())
             {
                 try
                 {
                     GlobalsatPacket packet = PacketFactory.DeleteAllWaypoints();
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
+                    result = true;
                 }
                 catch (Exception e)
                 {
-                    if (this.DataRecieved)
-                    {
-                        throw new Exception(Properties.Resources.Device_DeleteWaypoints_Error + e);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_DeleteWaypoints_Error + e;
                 }
                 finally
                 {
@@ -380,9 +383,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (!this.DataRecieved)
             {
                 NoCommunicationError(jobMonitor);
-                return false;
             }
-            return true;
+            return result;
         }
 
         public virtual int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
@@ -450,14 +452,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception e)
                 {
-                    if (this.DataRecieved)
-                    {
-                        if (e is InsufficientMemoryException)
-                        {
-                            throw e;
-                        }
-                        throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_SendRoute_Error + e;
+                        //throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
                 }
                 finally
                 {
@@ -467,13 +463,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (!this.DataRecieved)
             {
                 NoCommunicationError(jobMonitor);
-                return 0;
             }
             return res;
         }
 
         public virtual Bitmap GetScreenshot(IJobMonitor jobMonitor)
         {
+            Bitmap result = null;
             //Note: No check for connected here
             if (this.Open())
             {
@@ -498,18 +494,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         catch{}
                     }
-                    return response.ResponseGetScreenshot(rotate);
+                    result = response.ResponseGetScreenshot(rotate);
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
+                    jobMonitor.ErrorText = Properties.Resources.Device_GetInfo_Error + e;
+                    //throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
                 }
                 finally
                 {
                     this.Close();
                 }
             }
-            return null;
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
+            }
+            return result;
         }
 
         //625XT (but other?) do not require waypoints in routes
@@ -656,36 +657,42 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return trains;
         }
 
-        public virtual void DeleteAllTracks()
+        public virtual bool DeleteAllTracks(IJobMonitor jobMonitor)
         {
+            bool result = false;
             try
             {
-                IJobMonitor jobMonitor = new JobMonitor();
                 if (this.Open())
                 {
                     //IList<GlobalsatPacket.TrackFileHeader> headers = ((GlobalsatProtocol2)device).ReadTrackHeaders(jobMonitor);
                     //List<GlobalsatPacket.TrackFileHeader> fetch = new List<GlobalsatPacket.TrackFileHeader>();
                     GlobalsatPacket getDeleteAllTracks = PacketFactory.GetDeleteAllTracks();
                     GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getDeleteAllTracks);
+                    result = true;
                 }
             }
             catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error + e;
+                //throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
             }
             finally
             {
                 this.Close();
             }
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
+            }
+            return result;
         }
 
         //not working, deletes all...
-        public virtual int DeleteTracks(DateTime oldest)
+        public virtual int DeleteTracks(DateTime oldest, IJobMonitor jobMonitor)
         {
             int res = -1;
             try
             {
-                IJobMonitor jobMonitor = new JobMonitor();
                 if (this.Open())
                 {
                     IList<GlobalsatPacket.TrackFileHeader> headers = this.ReadTrackHeaders(jobMonitor);
@@ -697,31 +704,35 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             fetch.Add(t);
                         }
                     }
-                    res = fetch.Count;
                     if (fetch.Count > 0)
                     {
                         GlobalsatPacket getDeleteTracks = PacketFactory.GetDeleteTracks(fetch);
                         GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getDeleteTracks);
                     }
+                    res = fetch.Count;
                 }
             }
             catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error + e;
+                //throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
             }
             finally
             {
                 this.Close();
             }
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
+            }
             return res;
         }
 
-        public TimeSpan GetRemainingTime()
+        public TimeSpan GetRemainingTime(IJobMonitor jobMonitor)
         {
             TimeSpan res = TimeSpan.MinValue;
             try
             {
-                IJobMonitor jobMonitor = new JobMonitor();
                 if (this.Open())
                 {
                     IList<GlobalsatPacket.TrackFileHeader> headers = this.ReadTrackHeaders(jobMonitor);
@@ -730,11 +741,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (Exception e)
             {
-                throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
+                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error + e;
+                //throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
             }
             finally
             {
                 this.Close();
+            }
+            if (!this.DataRecieved)
+            {
+                NoCommunicationError(jobMonitor);
             }
             return res;
         }
