@@ -58,6 +58,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override bool Import()
         {
+            bool result = false;
             try
             {
                 if (device.Open())
@@ -107,13 +108,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //Read the complete activities from the device
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
                     AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPausesFromSpeedTrack, device.FitnessDevice.configInfo.Verbose);
+                    result = true;
                 }
             }
             catch (Exception e)
             {
-                if (device.DataRecieved)
+                //if (device.DataRecieved)
                 {
-                    throw e;
+                    monitor.ErrorText = e.Message;
+                    //throw e;
                 }
             }
             finally
@@ -122,10 +125,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             if (!device.DataRecieved)
             {
+                //override other possible errors
                 device.NoCommunicationError(monitor);
-                return false;
             }
-            return true;
+            return result;
         }
 
         protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, bool detectPausesFromSpeed, int verbose)

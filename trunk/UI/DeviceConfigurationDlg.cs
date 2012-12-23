@@ -191,9 +191,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         private void buttonCaptureScreen_Click(object sender, EventArgs e)
         {
+            JobMonitor jobMonitor = new JobMonitor();
             try
             {
-                IJobMonitor jobMonitor = new JobMonitor();
                 GlobalsatProtocol device2 = this.fitnessDevice.Device();
                 if (device2 != null)
                 {
@@ -213,8 +213,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (Exception ex)
             {
-                MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ScreenCapture_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                jobMonitor.ErrorText += ex.Message;
+            }
+            if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
+            {
+                MessageDialog.Show(jobMonitor.ErrorText, Properties.Resources.UI_Settings_ScreenCapture_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -266,16 +269,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception)
                 {
+                    importedDeviceConfig = null;
+                }
+                if (importedDeviceConfig == null || importedDeviceConfig.SystemConfigData == null)
+                {
                     MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
+                JobMonitor jobMonitor = new JobMonitor();
                 try
                 {
                     GlobalsatProtocol device2 = this.fitnessDevice.Device();
                     if (device2 != null)
                     {
-                        IJobMonitor jobMonitor = new JobMonitor();
                         GlobalsatDeviceConfiguration currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
 
                         if (importedDeviceConfig != null && currentDeviceConfig != null && 
@@ -298,7 +305,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception ex)
                 {
-                    MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    jobMonitor.ErrorText += ex.Message;
+                }
+                if(!string.IsNullOrEmpty(jobMonitor.ErrorText))
+                {
+                    MessageDialog.Show(jobMonitor.ErrorText, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -309,11 +320,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             try
             {
                 GlobalsatProtocol device2 = this.fitnessDevice.Device();
-                IJobMonitor jobMonitor = new JobMonitor();
                 GlobalsatDeviceConfiguration currentDeviceConfig = null;
+                JobMonitor jobMonitor = new JobMonitor();
+
                 if (device2 != null)
                 {
                     currentDeviceConfig = device2.GetSystemConfiguration2(jobMonitor);
+                }
+                if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
+                {
+                    MessageDialog.Show(jobMonitor.ErrorText, Properties.Resources.UI_Settings_ExportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
                 }
                 if (currentDeviceConfig != null)
                 {
@@ -336,7 +353,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             catch (Exception ex)
             {
                 MessageDialog.Show(ex.Message, Properties.Resources.UI_Settings_ExportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
             }
         }
 
@@ -351,17 +367,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (device is GlobalsatProtocol2)
             {
                 GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;
-                TimeSpan time = device2.GetRemainingTime();
-                string s;
-                if (time <= TimeSpan.MinValue)
+                JobMonitor jobMonitor = new JobMonitor();
+                TimeSpan time = device2.GetRemainingTime(jobMonitor);
+
+                if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
                 {
-                    s = Properties.Resources.Device_Unsupported;
+                    System.Windows.Forms.MessageBox.Show(jobMonitor.ErrorText, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                }
+                else if (time <= TimeSpan.MinValue)
+                {
+                    System.Windows.Forms.MessageBox.Show(Properties.Resources.Device_Unsupported, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
                 else
                 {
-                    s = "Remaining time: " + time;
+                    this.labelRemainingTime.Text = "Remaining time: " + time;
                 }
-                this.labelRemainingTime.Text = s;
             }
         }
 
@@ -378,8 +398,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;
-                    int n = device2.DeleteTracks(oldest);
-                    if (n >= 0)
+                    JobMonitor jobMonitor = new JobMonitor();
+                    int n = device2.DeleteTracks(oldest, jobMonitor);
+                    if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
+                    {
+                        msg = jobMonitor.ErrorText;
+                    }
+                    else if (n >= 0)
                     {
                         msg = string.Format("Deleted {0} activities", n);
                     }

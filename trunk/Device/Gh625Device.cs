@@ -120,7 +120,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
         {
-            throw new FeatureNotSupportedException();
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
         }
     }
 }

@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using ZoneFiveSoftware.Common.Visuals;
+using ZoneFiveSoftware.Common.Visuals.Fitness;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -31,7 +33,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
         }
 
-        //Unknown protocol
+        public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
+        {
+            return null;
+        }
+        public override int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+        }
         public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
     }
 }

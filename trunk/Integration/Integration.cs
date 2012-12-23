@@ -54,7 +54,7 @@ namespace GlobalsatDevicePlugin
         {
             FitnessDevice_GsSport device = new FitnessDevice_GsSport();
             GlobalsatProtocol device2 = device.Device();
-            if (device2 == null) { return 0; }
+            if (device2 == null) { return -1; }
             return device2.SendWaypoints(WaypointsPlugin.IO.ImportWaypoints.ImportStreamGpxWaypoints(waypoints), jobMonitor);
         }
 
@@ -76,7 +76,9 @@ namespace GlobalsatDevicePlugin
 
         public static Stream ImportRte(IJobMonitor jobMonitor)
         {
-            throw new GlobalsatProtocol.FeatureNotSupportedException();
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return null;
+            //throw new GlobalsatProtocol.FeatureNotSupportedException();
             //GenericDevice device = new GenericDevice();
             //GlobalsatProtocol device2 = device.Device(jobMonitor);
             //if (device2 == null) { return null; }
@@ -88,13 +90,15 @@ namespace GlobalsatDevicePlugin
         {
             FitnessDevice_GsSport device = new FitnessDevice_GsSport();
             GlobalsatProtocol device2 = device.Device();
-            if (device2 == null) { return 0; }
+            if (device2 == null) { return -1; }
             return device2.SendRoute(WaypointsPlugin.IO.ImportRoutes.ImportStreamGpxRoutes(routes), jobMonitor);
         }
 
-        public static void DeleteRte(Stream waypoints, IJobMonitor jobMonitor)
+        public static int DeleteRte(Stream waypoints, IJobMonitor jobMonitor)
         {
-            throw new GlobalsatProtocol.FeatureNotSupportedException();
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+            //throw new GlobalsatProtocol.FeatureNotSupportedException();
         }
 
         //Get the data in a generic Globalsat format, to separate ST
@@ -175,7 +179,7 @@ namespace GlobalsatDevicePlugin
         {
             FitnessDevice_GsSport device = new FitnessDevice_GsSport();
             GlobalsatProtocol device2 = device.Device();
-            if (device2 == null) { return 0; }
+            if (device2 == null) { return -1; }
             return device2.SendTrack(ToGlobTrack(device2, activities), jobMonitor);
         }
     }

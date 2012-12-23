@@ -49,10 +49,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 catch (Exception ex)
                 {
-                    if (this.DataRecieved)
-                    {
-                        throw new Exception(Properties.Resources.Device_SendWaypoints_Error + ex);
-                    }
+                    jobMonitor.ErrorText = Properties.Resources.Device_SendWaypoints_Error + ex;
                 }
                 finally
                 {
@@ -63,7 +60,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 //Normal case
                 NoCommunicationError(jobMonitor);
-                return 0;
             }
             return nrSentWaypoints;
         }

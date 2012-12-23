@@ -144,7 +144,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     ImportJob job = this.Device().ImportJob(cfgDesc, monitor, importResults);
                     if (job == null)
                     {
-                        monitor.ErrorText = "Import not supported for " + this.Device().devId;
+                        string devId = this.Device().devId;
+                        if (string.IsNullOrEmpty(devId))
+                        {
+                            devId = this.Name;
+                        }
+                        monitor.ErrorText = "Import not supported for " + devId;
                         result = false;
                     }
                     else
@@ -155,11 +160,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             catch (NotImplementedException)
             {
+                monitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
                 result = false;
-            }
-            if (!result)
-            {
-                monitor.StatusText = CommonResources.Text.Devices.ImportJob_Status_ImportError;
             }
             return result;
         }
@@ -176,26 +178,32 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 if (!query || this.Device().Open())
                 {
-                    //devId and lastDevId should not be null
-                    if (this.configInfo.AllowedIds == null || this.configInfo.AllowedIds.Count == 0)
+                    FitnessDevice_Globalsat cmpFitness = this;
+                    if (this is FitnessDevice_GsSport)
                     {
-                        identification = this.Device().devId + " (Globalsat Generic)";
+                        cmpFitness = (this as FitnessDevice_GsSport).FitnessDevice;
+                    }
+
+                    //devId and lastDevId should not be null
+                    if (cmpFitness.configInfo.AllowedIds == null || cmpFitness.configInfo.AllowedIds.Count == 0)
+                    {
+                        identification = cmpFitness.Device().devId + " (Globalsat Generic)";
                     }
                     else
                     {
                         bool found = false;
-                        foreach (string s in this.configInfo.AllowedIds)
+                        foreach (string s in cmpFitness.configInfo.AllowedIds)
                         {
-                            if (this.Device().devId.Equals(s))
+                            if (cmpFitness.Device().devId.Equals(s))
                             {
                                 found = true;
-                                identification = this.Device().devId;
+                                identification = cmpFitness.Device().devId;
                                 break;
                             }
                         }
                         if (!found)
                         {
-                            identification = this.Device().devId + " (" + this.configInfo.AllowedIds[0] + " Compatible)";
+                            identification = cmpFitness.Device().devId + " (" + cmpFitness.Name + " Compatible)";
                         }
                     }
                     IList<string> s2 = this.configInfo.GetLastValidComPorts();
@@ -217,6 +225,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 if (this.Device() != null)
                 {
+                    //this.Device().DataRecieved Should not be handled here
                     this.Device().Close();
                 }
             }
