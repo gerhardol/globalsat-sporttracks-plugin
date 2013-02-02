@@ -10,13 +10,13 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
  * GH-625M (SendRoute unsupported)
  * GB-580P
  * GH-505 (SendRoute unsupported)
+ * GH-561 (only waypoint handling). The device must be added to SportTrack import devices even if device import is not supported.
  
 There is very minor difference using the generic GS-Sport device and one of the specific devices, as the generic device use the specific device after auto-detection. Therefore the only difference is that the no device timeout for the 625XT is slightly shorter than the generic and that you can have more than one supported Globalsat device type connected at a time. The GS-Sport device is always used for other than activity import (for instance sending activities).
 
 === Unsupported Devices ===
  * KeyMaze-500, KeyMaze-700 (untested)
  * Bowflex GPS Tracking Heart Rate Monitor (model GPS-905) (untested)
- * GH-561 (only waypoint handling implemented, currently not working) (Only via Generic device)
  * GH-615 activity import implemented but completely untested - upgrade to GH-625M instead. (Import via Generic device)
 
 === Unknown devices ===
@@ -28,10 +28,10 @@ Most Globalsat devices have unique protocols and packet formats. However, there 
   * If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
 
 While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
- * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ].
+ * Make a copy of the global settings file Prefernces.System.xml. For location, see the [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290 ST FAQ]. Restore this backup if your update fails and SportTracks will not start or start with a default configuration after the edit.
  * Delete all import devices but the the device to add support for.
  * Open Preferences.System.xml and search for "{{{<FitnessDevices>}}}". Take a note of the "deviceId" GUID.
- * Restore Preferences.System.xml (but keep a backup copy), add the device identification listed previously after "allowedids=". For example "allowedids=GH-625XT".
+ * Edit Preferences.System.xml, add the device identification listed previously after "allowedids=". For example "allowedids=GH-625XT".
 
 == Import ==
 Import from Globalsat devices.

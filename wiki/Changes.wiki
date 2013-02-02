@@ -5,12 +5,13 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
- * Experimental GH-561 support
+3.2.216 2013-02-02
+ * GH-561 support, for waypoints only (using Waypoints plugin)
  * No longer required to close import dialog if importing from GsSport device and device was not connected at first import attempt.
  * Error message when exporting route to 505 updated: Not supported by device
  * Reworked the internal error message passing, also to Waypoints plugin
  
-3.2.210 2012-12-10 (Plugin Catalog)
+3.2.211 2012-12-10 (Plugin Catalog)
  * It was possible to get an exception in device configuration if no device was connected.
  
 3.2.210 2012-12-02
