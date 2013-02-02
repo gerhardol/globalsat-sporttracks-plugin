@@ -33,15 +33,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
         }
 
+        //The 561 does only support waypoints and routes
         public override ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
+            monitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
             return null;
         }
+
         public override int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor)
         {
             jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
             return -1;
         }
+        //Called in SendTrack(), not realy needed to set to exception
         public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
+
+        //Implementation do not work, only transfers waypoints in route, but route is not registered
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+        }
     }
 }
