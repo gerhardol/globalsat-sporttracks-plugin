@@ -5,6 +5,37 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+20 52416 34896 17520: 9:44 21:51:05 30990 (logbook properties)
+9:14:24 16632
+52416 29:07:12
+-> 39 per activity
+
+52290 29:03:00 4s
+ 126
+52164 28:58:48 3s
+ 126
+52038 28:54:36 3s(?)
+ 126
+8 points
+
+29054 32:16, 4th sec
+28908 32:07:12 3s
+  146
+28762 31 57 28  06:13
+  146
+1th sec
+28616 7:56:56 4:53
+  146
+28470 7:54:30  11:22
+  146
+->20150 5:35:50
+121472 101 13 36 3th 
+121326 101 06 18 3s
+ 146
+121180 100:59:00 03:45
+  146
+7 min? -> 4:03:45:24
+
 3.2.216 2013-02-02
  * GH-561 support, for waypoints only (using Waypoints plugin)
  * No longer required to close import dialog if importing from GsSport device and device was not connected at first import attempt.

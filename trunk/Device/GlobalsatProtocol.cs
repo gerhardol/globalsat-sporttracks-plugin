@@ -51,6 +51,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Import kept in separate structure, while most other protocols implemented here
         public virtual ImportJob ImportJob(string sourceDescription, IJobMonitor monitor, IImportResults importResults)
         {
+            monitor.ErrorText = Properties.Resources.Device_OpenDevice_Error;
             throw new FeatureNotSupportedException();
         }
 
@@ -61,11 +62,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             TimeSpan totalTime = TimeSpan.Zero;
             foreach (GlobalsatPacket.TrackFileHeader header in headers)
             {
-                //The dvice allocates points in blocks/sectors for each activity, compare to file storage
+                //The device allocates points in blocks/sectors for each activity, compare to file storage
                 totalUsedPoints += (header.TrackPointCount / this.FitnessDevice.PointsInBlock + 1) * this.FitnessDevice.PointsInBlock;
                 totalTime += header.TotalTime;
             }
-            int recordingInterval = currentDeviceConfig.cRecordTime;
+            int recordingInterval = 1;
+            if (currentDeviceConfig != null)
+            {
+                recordingInterval = currentDeviceConfig.cRecordTime;
+            }
 
             TimeSpan remainTime = TimeSpan.FromSeconds((this.FitnessDevice.TotalPoints - totalUsedPoints) * recordingInterval);
 
@@ -748,7 +753,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             catch (Exception e)
             {
                 jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error + e;
-                //throw new Exception(Properties.Resources.Device_OpenDevice_Error + e);
             }
             finally
             {
