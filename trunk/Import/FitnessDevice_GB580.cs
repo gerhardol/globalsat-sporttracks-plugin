@@ -50,5 +50,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override bool CanRotateScreen { get { return true; } }
         public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
         public override int TotalPoints { get { return 52416; } }
+        public override int PointsInBlock { get { return 126; } }
     }
 }

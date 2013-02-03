@@ -284,9 +284,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
         {
-            //No reasonable check for CheckOffset()
+            const int SystemConfiguration2 = 404;
+            if (this.PacketLength < SystemConfiguration2)
+            {
+                ReportOffset(this.PacketLength, SystemConfiguration2);
+                return null;
+            }
+
             GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
             systemInfo.ScreenOrientation = this.PacketData[394];
+            systemInfo.cRecordTime = this.PacketData[326];
 
             return systemInfo;
         }

@@ -23,7 +23,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     public class GlobalsatDeviceConfiguration
     {
         public string DeviceName;
-        public byte[] SystemConfigData;
+        public byte[] SystemConfigDataRaw;
 
         public void Save(string filename)
         {
@@ -111,6 +111,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
     //    public int HeightCm;
     //    public DateTime BirthDate;
         public byte ScreenOrientation = 0;
+        public int cRecordTime = 1; //RecordingInterval;
 
     //    public GlobalsatSystemConfiguration2(string deviceName, double version, string firmware,
     //        string userName, bool isFemale, int age, int weightPounds, int weightKg, int heightInches, int heightCm, DateTime birthDate,

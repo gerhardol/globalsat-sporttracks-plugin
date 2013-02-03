@@ -68,7 +68,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 96); } }
         public virtual int ScreenBpp { get { return 2; } }
         public virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
-        public virtual int TotalPoints { get { return 60000; } }
+        public virtual int TotalPoints { get { return 60000; } } //Total no of points in device
+        public virtual int PointsInBlock { get { return 146; } } //Minimal block allocation of points in device
 
         #endregion
     }

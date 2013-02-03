@@ -271,7 +271,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     importedDeviceConfig = null;
                 }
-                if (importedDeviceConfig == null || importedDeviceConfig.SystemConfigData == null)
+                if (importedDeviceConfig == null || importedDeviceConfig.SystemConfigDataRaw == null)
                 {
                     MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
@@ -287,7 +287,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                         if (importedDeviceConfig != null && currentDeviceConfig != null && 
                             importedDeviceConfig.DeviceName == currentDeviceConfig.DeviceName && 
-                            importedDeviceConfig.SystemConfigData.Length == currentDeviceConfig.SystemConfigData.Length)
+                            importedDeviceConfig.SystemConfigDataRaw.Length == currentDeviceConfig.SystemConfigDataRaw.Length)
                         {
                             device2.SetSystemConfiguration2(importedDeviceConfig, jobMonitor);
                             labelStatus.Text = CommonResources.Text.Devices.ImportJob_Status_ImportComplete;

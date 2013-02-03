@@ -271,6 +271,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return CheckOffset(TrackPointLength, offset - startOffset);
         }
 
+        public override GlobalsatSystemConfiguration2 ResponseGetSystemConfiguration2()
+        {
+            const int SystemConfiguration2 = 335;
+            if (this.PacketLength < SystemConfiguration2)
+            {
+                ReportOffset(this.PacketLength, SystemConfiguration2);
+                return null;
+            }
+
+            GlobalsatSystemConfiguration2 systemInfo = new GlobalsatSystemConfiguration2();
+            systemInfo.cRecordTime = this.PacketData[259];
+
+            return systemInfo;
+        }
+
         public override int TrackPointsPerSection { get { return 73; } }
         protected override int TrackHeaderLength { get { return 29; } }
         protected override int TrainDataHeaderLength { get { return 58; } }
