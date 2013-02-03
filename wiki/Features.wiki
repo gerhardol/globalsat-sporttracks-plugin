@@ -10,7 +10,7 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
  * GH-625M (SendRoute unsupported)
  * GB-580P
  * GH-505 (SendRoute unsupported)
- * GH-561 (only waypoint handling). The device must be added to SportTrack import devices even if device import is not supported.
+ * GH-561 (only waypoint handling and device configuration). The device must be added to SportTrack import devices even if device import is not supported.
  
 There is very minor difference using the generic GS-Sport device and one of the specific devices, as the generic device use the specific device after auto-detection. Therefore the only difference is that the no device timeout for the 625XT is slightly shorter than the generic and that you can have more than one supported Globalsat device type connected at a time. The GS-Sport device is always used for other than activity import (for instance sending activities).
 
@@ -40,6 +40,7 @@ Import from Globalsat devices.
  * Each device configuration dialog has a "Refresh" button to find if a device is connected.
 
 === Special Features ===
+ * Warn if less than 5h of recording time remains in the device at import.  (For GB-580, GH-625XT, GH-505)
  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
  * Pause detections. Globalsat devices have no marking of pauses. When you pause, the time is just stopped, there is no stop inserted at the recorded points. Distance is still calculated on all distance between points. 
 
