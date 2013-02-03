@@ -71,7 +71,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             GlobalsatProtocol device = this.fitnessDevice.Device();
             if (device is GlobalsatProtocol2)
             {
-                this.labelRemainingTime.Text = "Click to get remaining time";
+                //this.labelRemainingTime.Text = "Click to get remaining time";
+                labelRemainingTime_Click();
                 this.labelDelete.Text = "Delete all device activities"; //TBD
                 DateTime oldest = DateTime.Now - TimeSpan.FromDays(31);
                 this.dateTimePickerOldest.Value = oldest;
@@ -362,6 +363,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         #endregion
 
         private void labelRemainingTime_Click(object sender, EventArgs e)
+        {
+            labelRemainingTime_Click();
+        }
+
+        private void labelRemainingTime_Click()
         {
             GlobalsatProtocol device = this.fitnessDevice.Device();
             if (device is GlobalsatProtocol2)

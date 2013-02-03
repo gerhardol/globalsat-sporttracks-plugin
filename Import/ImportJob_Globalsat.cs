@@ -100,7 +100,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     GlobalsatSystemConfiguration2 systemInfo = ((GlobalsatProtocol2)device).GetGlobalsatSystemConfiguration2();
                     TimeSpan remainTime = device.RemainingTime(headers, systemInfo);
-                    if (remainTime < TimeSpan.FromHours(3))
+                    if (remainTime < TimeSpan.FromHours(5))
                     {
                         string msg = string.Format("Remaining recording time about {0}", remainTime.ToString());
                         System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
