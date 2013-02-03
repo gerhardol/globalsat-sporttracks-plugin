@@ -46,6 +46,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override int ScreenBpp { get { return 1; } }
         public override bool ScreenRowCol { get { return false; } }
-        public override int TotalPoints { get { return 52416; } }
+        public override int TotalPoints { get { return 60736; } } //52416?
     }
 }

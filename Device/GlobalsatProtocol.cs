@@ -54,21 +54,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             throw new FeatureNotSupportedException();
         }
 
-        public TimeSpan RemainingTime(IList<GlobalsatPacket.TrackFileHeader> headers)
+        public TimeSpan RemainingTime(IList<GlobalsatPacket.TrackFileHeader> headers, GlobalsatSystemConfiguration2 currentDeviceConfig)
         {
             //Find recording time in device
             int totalUsedPoints = 0;
             TimeSpan totalTime = TimeSpan.Zero;
             foreach (GlobalsatPacket.TrackFileHeader header in headers)
             {
-                totalUsedPoints += header.TrackPointCount;
+                //The dvice allocates points in blocks/sectors for each activity, compare to file storage
+                totalUsedPoints += (header.TrackPointCount / this.FitnessDevice.PointsInBlock + 1) * this.FitnessDevice.PointsInBlock;
                 totalTime += header.TotalTime;
             }
-            int recordingInterval = 1; //Is in config, will not be correct when interval is changed
-            if (totalUsedPoints > headers.Count * 2)
-            {
-                recordingInterval = (int)Math.Round(totalTime.TotalSeconds / totalUsedPoints);
-            }
+            int recordingInterval = currentDeviceConfig.cRecordTime;
 
             TimeSpan remainTime = TimeSpan.FromSeconds((this.FitnessDevice.TotalPoints - totalUsedPoints) * recordingInterval);
 
@@ -222,7 +219,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     packet = PacketFactory.GetSystemConfiguration2();
                     response = (GlobalsatPacket)this.SendPacket(packet);
 
-                    devConfig.SystemConfigData = response.PacketData;
+                    devConfig.SystemConfigDataRaw = response.PacketData;
                 }
                 catch (Exception e)
                 {
@@ -250,7 +247,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 try
                 {
-                    GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigData);
+                    GlobalsatPacket packet = PacketFactory.SetSystemConfiguration2(devConfig.SystemConfigDataRaw);
                     GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
                     //No info in the response
                     result = 0;
@@ -728,6 +725,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return res;
         }
 
+        public GlobalsatSystemConfiguration2 GetGlobalsatSystemConfiguration2()
+        {
+            GlobalsatPacket packet = PacketFactory.GetSystemConfiguration2();
+            GlobalsatPacket response2 = (GlobalsatPacket)this.SendPacket(packet);
+            GlobalsatSystemConfiguration2 systemInfo = response2.ResponseGetSystemConfiguration2();
+            return systemInfo;
+        }
+
         public TimeSpan GetRemainingTime(IJobMonitor jobMonitor)
         {
             TimeSpan res = TimeSpan.MinValue;
@@ -736,7 +741,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (this.Open())
                 {
                     IList<GlobalsatPacket.TrackFileHeader> headers = this.ReadTrackHeaders(jobMonitor);
-                    res = this.RemainingTime(headers);
+                    GlobalsatSystemConfiguration2 systemInfo = GetGlobalsatSystemConfiguration2();
+                    res = this.RemainingTime(headers, systemInfo);
                 }
             }
             catch (Exception e)
