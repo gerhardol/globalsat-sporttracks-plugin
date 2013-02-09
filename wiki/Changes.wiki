@@ -5,13 +5,13 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
-3.2.219 2013-02-04
- * GH-561 support, for waypoints only (using Waypoints plugin)
+3.2.219 2013-02-04 (Plugin Catalog)
+ * GH-561 support, for waypoints only (using Waypoints plugin) [Features#Supported_Devices]
  * No longer required to close import dialog if importing from GsSport device and device was not connected at first import attempt.
  * Error message when exporting route to 505 updated: Not supported by device
  * Reworked the internal error message passing, also to Waypoints plugin (must be updated too)
  * Better estimation of remaining recording time in device
- * Increase warning for limited recording time at import from 3 to 5 h remaining
+ * Changed minimum remaining time to warn at import from 3 to 5h
  
 3.2.211 2012-12-10 (Plugin Catalog)
  * It was possible to get an exception in device configuration if no device was connected.
