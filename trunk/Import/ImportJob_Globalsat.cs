@@ -164,6 +164,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.DistanceMetersTrack = new DistanceDataTrack();
 
                 float pointDist = 0;
+                //As interval to first is not zero, add point
+                activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
                 //Fix for (GB-580 only?) recording problem with interval 10 or larger (in fw before 2012-09)
                 double? fixInterval = null;
