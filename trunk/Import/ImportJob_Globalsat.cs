@@ -163,7 +163,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.ElevationMetersTrack = new NumericTimeDataSeries(); 
                 activity.DistanceMetersTrack = new DistanceDataTrack();
 
-                double pointElapsed = 0;
                 float pointDist = 0;
 
                 //Fix for (GB-580 only?) recording problem with interval 10 or larger (in fw before 2012-09)
@@ -185,14 +184,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         time = (double)fixInterval;
                     }
+                    //Note: There is an intervall time to the first point, also if TGP says it is 0
+                    pointTime = pointTime.AddSeconds(time);
+
                     float dist = (float)(point.Speed * time);
+                    pointDist += dist;
+
                     // TODO: How are GPS points indicated in indoor activities?
                     //It seems like all are the same
                     IGPSPoint gpsPoint = new GPSPoint((float)point.Latitude, (float)point.Longitude, point.Altitude);
-                    //Note: There may be points witin the same second, the second point will then overwrite the first
-                    pointTime = pointTime.AddSeconds(time);
-                    pointElapsed += time;
-                    pointDist += dist;
 
                     //There are no pause markers in the Globalsat protocol
                     //Insert pauses when estimated/listed distance differs "too much"
@@ -218,7 +218,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 //Info on activity is unreliable as distance when paused is included, but average speed at start is too
                                 if (pointDist > 0 && gpsDist < 10000)
                                 {
-                                    estimatedSec = 2 * gpsDist * pointElapsed / pointDist;
+                                    estimatedSec = 2 * gpsDist * (pointTime - train.StartTime).TotalSeconds / pointDist;
                                     //Sudden jumps can create huge estimations, limit
                                     estimatedSec = Math.Min(estimatedSec, 3600);
                                 }
@@ -374,6 +374,20 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //It may be used also if the user drops GPS if points have been recorded.
                 //(ST may have partial use of elevation together with GPS on other parts in the future?)
                 if (!device.FitnessDevice.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null; 
+                //Barometric devices occasionally have bad points last
+                if (activity.ElevationMetersTrack != null && activity.ElevationMetersTrack.Count > 1 &&
+                    Math.Abs(activity.ElevationMetersTrack[activity.ElevationMetersTrack.Count - 1].Value - 
+                    activity.ElevationMetersTrack[activity.ElevationMetersTrack.Count - 2].Value) > 1)
+                {
+                    if (activity.GPSRoute != null &&
+                        activity.ElevationMetersTrack.StartTime.AddSeconds(activity.ElevationMetersTrack.TotalElapsedSeconds) ==
+                        activity.GPSRoute.StartTime.AddSeconds(activity.GPSRoute.TotalElapsedSeconds))
+                    {
+                        IGPSPoint g = activity.GPSRoute[activity.GPSRoute.Count - 1].Value;
+                        activity.GPSRoute.SetValueAt(activity.GPSRoute.Count - 1, new GPSPoint(g.LatitudeDegrees, g.LongitudeDegrees, float.NaN));
+                    }
+                    activity.ElevationMetersTrack.RemoveAt(activity.ElevationMetersTrack.Count - 1);
+                }
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;

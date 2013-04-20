@@ -5,6 +5,8 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+ * GB-580 barometric elevation could have a bad point last, avoid when importing.
+ 
 3.2.219 2013-02-04 (Plugin Catalog)
  * GH-561 support, for waypoints only (using Waypoints plugin) [Features#Supported_Devices]
  * No longer required to close import dialog if importing from GsSport device and device was not connected at first import attempt.
