@@ -36,7 +36,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.image = Properties.Resources.Image_48_GB580;
             this.name = "Globalsat - GB-580";
             this.device = new Gb580Device(this);
-            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P" }, new List<int> { 115200 });
+            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P", "DCY-580P" }, new List<int> { 115200 });
             this.GetConfigurationString(); //Set configuration from Preferences
         }
 
@@ -46,7 +46,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         //The GB-580B has no barometer, unsure if 580F is ever reported
         //Do not use preferences here, it may have changed since recording
-        public override bool HasElevationTrack { get { if (this.Device().devId == "GB-580P" || this.Device().devId == "GB-580F") { return true; } else { return false; } } }
+        public override bool HasElevationTrack { get { if (this.Device().devId.EndsWith("580P") || this.Device().devId.EndsWith("580F")) { return true; } else { return false; } } }
         public override bool CanRotateScreen { get { return true; } }
         public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
         public override int TotalPoints { get { return 52416; } }
