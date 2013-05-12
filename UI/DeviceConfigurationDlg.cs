@@ -161,13 +161,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         void btnOk_Click(object sender, EventArgs e)
         {
-            DialogResult = btnOk.DialogResult;
+            this.DialogResult = btnOk.DialogResult;
             Close();
         }
 
         void btnCancel_Click(object sender, EventArgs e)
         {
-            DialogResult = btnCancel.DialogResult;
+            this.DialogResult = btnCancel.DialogResult;
             Close();
         }
 
