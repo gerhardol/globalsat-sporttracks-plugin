@@ -55,19 +55,20 @@ Import from Globalsat devices.
 
 == Waypoints, Routes and Courses ==
 The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin to have GUI for the action. This is implemented in [http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints Waypoints] plugin. The handling could be implemented in other plugins too.
-Export from the Export menu.
+Export waypoints etc from the Export menu.
 
 Routes, Courses etc are explained some in the 
 [http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=6389 ST FAQ].
-The Globalsat devices does not use Courses, but allows use of activities directly, as well as sending activities to the device. However, there is no equivalence to Course Points.
+The Globalsat devices does not use Courses, but allows use of activities ("Track Points") directly, as well as sending activities to the device. However, there is no equivalence to Course Points.
 
- * Waypoints - Find specific positions
+ * Waypoints - Find specific positions. Globlsat devices (not all devices support waypoints) can store up to 99 waypoints, separate from the trackpoint storage.
  * Routes - Normally only keypoints, the track details between keypoints may be incomplete.
   * Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
   * A route can have maximum 99 waypoints.
   * Note: The GH-505 cannot receive Routes, the command only sends the waypoints in the route.
- * Activities - Follow a detailed track (but can be used as a route too).
-  * Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not complete copy of the activity.
+ * Activities - Follow a detailed track (but can be used as a route too). Use "Track Back" for activities.
+  * Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not a complete copy of the activity.
+  * The maximum number of track points depends on the device.
 
 === Navigation ===
 A special note about navigation. This is assuming that the Waypoints plugin is installed.

@@ -6,6 +6,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 ===Changes===
 
  * GB-580 barometric elevation could have a bad point last, avoid when importing.
+ * If starting recording before GPS fix, time is incorrect. Set the time to slightly in the future instead so the activities can easily be found (and manually corrected) after import.
  
 3.2.219 2013-02-04 (Plugin Catalog)
  * GH-561 support, for waypoints only (using Waypoints plugin) [Features#Supported_Devices]

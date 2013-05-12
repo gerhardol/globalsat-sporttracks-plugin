@@ -71,6 +71,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual int TotalPoints { get { return 60000; } } //Total no of points in device
         public virtual int PointsInBlock { get { return 146; } } //Minimal block allocation of points in device
 
+        //No GPS fix sets incorrect time, adjust to current time instead
+        public virtual DateTime NoGpsDate { get { return new DateTime(2009, 02, 15); } }
+
         #endregion
     }
 }
