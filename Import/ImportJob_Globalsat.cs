@@ -108,13 +108,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     //Read the complete activities from the device
                     IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                    foreach (GlobalsatPacket.Train train in trains)
+                    if (trains.Count>0)
                     {
+                        GlobalsatPacket.Train train = trains[trains.Count - 1];
                         //Adjust "no gps fix" time so they are easier to find...
                         if (train.StartTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14))
                         {
-                            TimeSpan diffTime = DateTime.Now - device.FitnessDevice.NoGpsDate;
-                            train.StartTime += diffTime;
+                            train.StartTime = DateTime.Now;
                         }
                     }
                     AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPausesFromSpeedTrack, device.FitnessDevice.configInfo.Verbose);
