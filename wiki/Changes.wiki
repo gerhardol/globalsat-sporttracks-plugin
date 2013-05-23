@@ -5,8 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
- * GB-580 barometric elevation could have a bad point last, avoid when importing.
- * If starting recording before GPS fix, time is incorrect. Set the time to slightly in the future instead so the activities can easily be found (and manually corrected) after import.
+ * GB-580 barometric elevation could have a bad point last (similar to GPS), avoid when importing.
+ * If starting recording before GPS fix, time is incorrect (for instance 2009-02-15 for the GB-580). If this has occurred more than once, it can be hard to find the activity when importing (or be skipped by ST import). To improve this, the _latest_ activity is set to the time at import so the activities can easily be found (and manually corrected) after import.
+ * Support myCiclo DCY-580P at import.
  
 3.2.219 2013-02-04 (Plugin Catalog)
  * GH-561 support, for waypoints only (using Waypoints plugin) [Features#Supported_Devices]
