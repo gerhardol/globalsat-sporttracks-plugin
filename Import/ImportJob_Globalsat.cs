@@ -335,7 +335,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 foreach (GlobalsatPacket.Lap lapPacket in train.Laps)
                 {
                     DateTime lapTime = ZoneFiveSoftware.Common.Data.Algorithm.DateTimeRangeSeries.AddTimeAndPauses(activity.StartTime, lapElapsed, activity.TimerPauses);
-                    lapElapsed += lapPacket.LapTime;
+                    lapElapsed += lapPacket.LapTime; //Same as lapPacket.EndTime for unpaused
                     ILapInfo lap = activity.Laps.Add(lapTime, lapPacket.LapTime);
                     //Adding Distance markers will make ST fail to add new laps, it is not needed (Markers added)
                     //if (activity.TotalDistanceMetersEntered > 0)
@@ -357,6 +357,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     if (lapPacket.AveragePower > 0)
                     {
                         lap.AveragePowerWatts = lapPacket.AveragePower;
+                    }
+                    if (!foundGPSPoint && activity.ElevationMetersTrack != null && activity.ElevationMetersTrack.Count > 1)
+                    {
+                        //Limitation in ST: lap elevation not auto calc without GPS, lap preferred to elevation
+                        DateTime lapEnd = ZoneFiveSoftware.Common.Data.Algorithm.DateTimeRangeSeries.AddTimeAndPauses(activity.StartTime, lapElapsed, activity.TimerPauses);
+                        ITimeValueEntry<float> p1 = activity.ElevationMetersTrack.GetInterpolatedValue(lapTime);
+                        ITimeValueEntry<float> p2 = activity.ElevationMetersTrack.GetInterpolatedValue(lapEnd);
+                        if (p1 != null && p2 != null)
+                        {
+                            lap.ElevationChangeMeters = p2.Value - p1.Value;
+                        }
                     }
                     if (verbose >= 5)
                     {
