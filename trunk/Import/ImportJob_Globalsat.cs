@@ -114,7 +114,15 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         //Adjust "no gps fix" time so they are easier to find...
                         if (train.StartTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14))
                         {
-                            train.StartTime = DateTime.Now;
+                            if (DateTime.UtcNow - Plugin.Instance.Application.Logbook.Activities[Plugin.Instance.Application.Logbook.Activities.Count - 1].StartTime < TimeSpan.FromDays(1))
+                            {
+                                //Assume latest activity duplicate...
+                                train.StartTime = Plugin.Instance.Application.Logbook.Activities[Plugin.Instance.Application.Logbook.Activities.Count - 1].StartTime;
+                            }
+                            else
+                            {
+                                train.StartTime = DateTime.UtcNow;
+                            }
                         }
                     }
                     AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPausesFromSpeedTrack, device.FitnessDevice.configInfo.Verbose);
