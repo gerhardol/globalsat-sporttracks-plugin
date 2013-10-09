@@ -70,6 +70,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public virtual bool ScreenRowCol { get { return true; } } //Screenshot row over columns
         public virtual int TotalPoints { get { return 60000; } } //Total no of points in device
         public virtual int PointsInBlock { get { return 146; } } //Minimal block allocation of points in device
+        public virtual int MaxNoRoutePoints { get { return 100; } } //Points in routes (that may be Waypoints)
 
         //No GPS fix sets incorrect time, adjust to current time instead
         public virtual DateTime NoGpsDate { get { return new DateTime(2009, 02, 15); } }

@@ -315,7 +315,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     // km500 no out of memory- waypoint overwritten
                     nrSentWaypoints = response.ResponseSendWaypoints();
-
+                    int resp = response.ResponseSendWaypoints();
+                    nrSentWaypoints += resp;
+                    if (resp <= 0)
+                    {
+                        jobMonitor.ErrorText = string.Format("Could only send {0} out of {1} waypoints. (Capacity {2}).",
+                            nrSentWaypoints, waypoints.Count, this.FitnessDevice.configInfo.MaxNrWaypoints);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -394,6 +400,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             int res = 0;
             int totPackets = routes.Count;
             int extraPackets = 0; //Open, wpt etc
+            bool status = true;
+
             if (this.Open())
             {
                 try
@@ -442,27 +450,46 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
                         }
                     }
-
-                    //Finally the routes...
-                    foreach (GlobalsatRoute route in routes)
+                    else
                     {
-                        packet = PacketFactory.SendRoute(route);
-                        response = (GlobalsatPacket)this.SendPacket(packet);
-                        res++;
-                        jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
+                        //Check if capacity is sufficient. Wpt checked separetly
+                        int rtePoint = 0;
+                        foreach (GlobalsatRoute route in routes)
+                        {
+                            rtePoint += route.wpts.Count;
+                        }
+                        if (rtePoint > this.FitnessDevice.MaxNoRoutePoints)
+                        {
+                            jobMonitor.ErrorText = string.Format("Need to send {0} route points, the device can only handle {1}.",
+                                rtePoint, this.FitnessDevice.MaxNoRoutePoints);
+                            status = false;
+                        }
+                    }
+
+                    if (status)
+                    {
+                        //Finally the routes...
+                        foreach (GlobalsatRoute route in routes)
+                        {
+                            packet = PacketFactory.SendRoute(route);
+                            response = (GlobalsatPacket)this.SendPacket(packet);
+                            res++;
+                            jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
+                        }
                     }
                 }
                 catch (Exception e)
                 {
                     jobMonitor.ErrorText = Properties.Resources.Device_SendRoute_Error + e;
                         //throw new Exception(Properties.Resources.Device_SendRoute_Error + e);
+                    status = false;
                 }
                 finally
                 {
                     this.Close();
                 }
             }
-            if (!this.DataRecieved)
+            if (status && !this.DataRecieved)
             {
                 NoCommunicationError(jobMonitor);
             }

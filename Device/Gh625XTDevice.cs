@@ -44,7 +44,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         GlobalsatPacket packet = PacketFactory.SendWaypoints(this.FitnessDevice.configInfo.MaxNrWaypoints, new List<GlobalsatWaypoint> { g });
                         GlobalsatPacket response = (GlobalsatPacket)this.SendPacket(packet);
 
-                        nrSentWaypoints += response.ResponseSendWaypoints();
+                        int resp = response.ResponseSendWaypoints();
+                        nrSentWaypoints += resp;
+                        if (resp <= 0)
+                        {
+                            jobMonitor.ErrorText = string.Format("Could only send {0} out of {1} waypoints. (Capacity {2}).",
+                                nrSentWaypoints, waypoints.Count, this.FitnessDevice.configInfo.MaxNrWaypoints);
+                            break;
+                        }
                     }
                 }
                 catch (Exception ex)

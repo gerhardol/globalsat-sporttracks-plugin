@@ -45,5 +45,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Timeout when detecting - 625XT seem to be faster than other models (used to be 100ms)
         public override int ReadTimeoutDetect { get { return 1000; } }
         public override int TotalPoints { get { return 121472; } }
+        public override int MaxNoRoutePoints { get { return 200; } }
     }
 }
