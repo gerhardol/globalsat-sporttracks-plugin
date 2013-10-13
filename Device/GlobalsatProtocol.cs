@@ -315,9 +315,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     // km500 no out of memory- waypoint overwritten
                     nrSentWaypoints = response.ResponseSendWaypoints();
-                    if (nrSentWaypoints <= waypoints.Count)
+                    if (nrSentWaypoints < waypoints.Count)
                     {
-                        jobMonitor.ErrorText = string.Format("Could only send {0} out of {1} waypoints. (Capacity {2}).",
+                        jobMonitor.ErrorText = string.Format("Could only send {0} out of {1} waypoints (Capacity {2}).",
                             nrSentWaypoints, waypoints.Count, this.FitnessDevice.configInfo.MaxNrWaypoints);
                     }
                 }
@@ -440,12 +440,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         if (wptSend.Count > 0)
                         {
                             //Send with normal protocol, 625XT requires one by one
-                            this.SendWaypoints(wptSend, jobMonitor);
-                            extraPackets++;
-                            jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
-                            this.Open(); //Reopen
-                            extraPackets++;
-                            jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
+                            int sent = this.SendWaypoints(wptSend, jobMonitor);
+                            if (sent < wptSend.Count)
+                            {
+                                status = false;
+                            }
+                            else
+                            {
+                                extraPackets++;
+                                jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
+                                this.Open(); //Reopen
+                                extraPackets++;
+                                jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
+                            }
                         }
                     }
                     else
@@ -471,6 +478,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         {
                             packet = PacketFactory.SendRoute(route);
                             response = (GlobalsatPacket)this.SendPacket(packet);
+                            //Note: No way to determine that GB-580/GH-505 do not really receive the routes?
                             res++;
                             jobMonitor.PercentComplete = (float)(res + extraPackets) / (float)(totPackets + extraPackets);
                         }
