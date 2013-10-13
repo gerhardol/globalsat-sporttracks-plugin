@@ -315,9 +315,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     // km500 no out of memory- waypoint overwritten
                     nrSentWaypoints = response.ResponseSendWaypoints();
-                    int resp = response.ResponseSendWaypoints();
-                    nrSentWaypoints += resp;
-                    if (resp <= 0)
+                    if (nrSentWaypoints <= waypoints.Count)
                     {
                         jobMonitor.ErrorText = string.Format("Could only send {0} out of {1} waypoints. (Capacity {2}).",
                             nrSentWaypoints, waypoints.Count, this.FitnessDevice.configInfo.MaxNrWaypoints);
