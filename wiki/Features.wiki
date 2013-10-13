@@ -8,7 +8,7 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
  * GS-Sport (Generic device) Autodetect the connected device, use the device with ID matching the detected.
  * GH-625XT
  * GH-625M (SendRoute unsupported)
- * GB-580P
+ * GB-580P (SendRoute unsupported)
  * GH-505 (SendRoute unsupported)
  * GH-561 (only waypoint handling and device configuration). Note: The device must be added to SportTrack import devices (even if device import is not supported) to be used with waypoints.
  
@@ -63,9 +63,9 @@ The Globalsat devices does not use Courses, but allows use of activities ("Track
 
  * Waypoints - Find specific positions. Globlsat devices (not all devices support waypoints) can store up to 99 waypoints, separate from the trackpoint storage.
  * Routes - Normally only keypoints, the track details between keypoints may be incomplete.
-  * Note: Will create waypoints on the device for waypoints that not already exists (except for GH-625XT where this is not necessary).
-  * A route can have maximum 99 waypoints.
-  * Note: The GH-505 cannot receive Routes, the command only sends the waypoints in the route.
+  * 625XT: A route can have maximum 200 routepoints (not related to the waypoints).
+  * Other devices: A route can have maximum 99 waypoints, shared with stand alone waypoints. A route will create waypoints on the device for waypoints that not already exists.
+  * Note: The GB-580/GH-505 cannot receive Routes, the command only sends the waypoints in the route.
  * Activities - Follow a detailed track (but can be used as a route too). Use "Track Back" for activities.
   * Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not a complete copy of the activity.
   * The maximum number of track points depends on the device.
