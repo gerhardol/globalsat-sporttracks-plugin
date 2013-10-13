@@ -33,11 +33,5 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             : base(fitnessDevice)
         {
         }
-
-        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
-        {
-            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
-            return -1;
-        }
     }
 }
