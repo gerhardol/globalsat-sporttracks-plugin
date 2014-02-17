@@ -36,7 +36,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.image = Properties.Resources.Image_48_GB580;
             this.name = "Globalsat - GB-580";
             this.device = new Gb580Device(this);
-            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P", "DCY-580P" }, new List<int> { 115200 });
+            this.configInfo = new DeviceConfigurationInfo(new List<string> { "GB-580", "GB-580P", "DCY-580P", "GB-1000" }, new List<int> { 115200 });
             this.GetConfigurationString(); //Set configuration from Preferences
         }
 
