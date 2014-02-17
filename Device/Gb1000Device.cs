@@ -20,19 +20,18 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO.Ports;
 
-using ZoneFiveSoftware.Common.Visuals.Fitness;
+using ZoneFiveSoftware.Common.Visuals;
+
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
-    class ExtendFitnessDevices : IExtendFitnessDevices
+    class Gb1000Device : GlobalsatProtocol2
     {
-        public IList<IFitnessDevice> FitnessDevices
+        public Gb1000Device(FitnessDevice_GB1000 fitnessDevice)
+            : base(fitnessDevice)
         {
-            //Depreciate use of GH615, though possibly handled in generic import
-            get { return new IFitnessDevice[] { new FitnessDevice_GsSport(), new FitnessDevice_GH625(), new FitnessDevice_GH505(), 
-                new FitnessDevice_GH625XT(), new FitnessDevice_GB580(), new FitnessDevice_GB1000(), new FitnessDevice_GH561() };
-            }
         }
     }
 }

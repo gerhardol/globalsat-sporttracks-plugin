@@ -66,7 +66,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     DetectionAttempted = true;
                     IList<FitnessDevice_Globalsat> fds = new List<FitnessDevice_Globalsat> {
-                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GH505(), 
+                    new FitnessDevice_GH625XT(), new FitnessDevice_GH625(), new FitnessDevice_GB580(), new FitnessDevice_GB1000(), new FitnessDevice_GH505(), 
                       //Not in general devices - will add one...
                       new FitnessDevice_GH615(), 
                       //No support for import, but waypoints
