@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO.Ports;
+using System.Drawing;
 
 using ZoneFiveSoftware.Common.Visuals;
 
@@ -29,9 +30,48 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
     class Gb1000Device : GlobalsatProtocol2
     {
+        //The Gb1000 is basically a stripped down Gb580, most are not supported
+
         public Gb1000Device(FitnessDevice_GB1000 fitnessDevice)
             : base(fitnessDevice)
         {
         }
+        public override int SendTrack(IList<GhPacketBase.Train> trains, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+        }
+        public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
+        public override IList<GlobalsatWaypoint> GetWaypoints(IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return null;
+        }
+        public override int SendWaypoints(IList<GlobalsatWaypoint> waypoints, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+        }
+        public override bool DeleteWaypoints(IList<GlobalsatWaypoint> waypointNames, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return false;
+        }
+        public override bool DeleteAllWaypoints(IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return false;
+        }
+        public override int SendRoute(IList<GlobalsatRoute> routes, IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return -1;
+        }
+        public override Bitmap GetScreenshot(IJobMonitor jobMonitor)
+        {
+            jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
+            return null;
+        }
+
     }
 }
