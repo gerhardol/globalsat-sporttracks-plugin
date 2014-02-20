@@ -100,6 +100,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.groupBoxDeviceConfig.Text = Properties.Resources.UI_Settings_DeviceConfiguration_Title;
 
             //Screen capture
+            if (fitnessDevice is FitnessDevice_GB1000)
+            {
+                groupBoxScreenCapture.Enabled = false;
+            }
             this.buttonCaptureScreen.CenterImage = CommonResources.Images.Refresh16;
             this.buttonSave.CenterImage = CommonResources.Images.Save16;
 

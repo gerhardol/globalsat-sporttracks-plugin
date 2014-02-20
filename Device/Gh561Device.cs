@@ -45,7 +45,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             jobMonitor.ErrorText = ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties.Resources.Device_Unsupported;
             return -1;
         }
-        //Called in SendTrack(), not realy needed to set to exception
+        //Called in SendTrack(), not really needed to set to exception
         public override IList<GlobalsatPacket> SendTrackPackets(GhPacketBase.Train train) { throw new FeatureNotSupportedException(); }
 
         //Implementation do not work, only transfers waypoints in route, but route is not registered

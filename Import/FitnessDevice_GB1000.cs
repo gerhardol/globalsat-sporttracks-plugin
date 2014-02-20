@@ -41,12 +41,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
         //Assume packet format is the same as GB580 for now
-        public override GlobalsatPacket PacketFactory { get { return new Gb580Packet(this); } }
+        public override GlobalsatPacket PacketFactory { get { return new Gb1000Packet(this); } }
 
-        //public override bool HasElevationTrack { get { if (this.Device().devId.EndsWith("580P") || this.Device().devId.EndsWith("580F")) { return true; } else { return false; } } }
-        public override bool CanRotateScreen { get { return true; } }
-        public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(128, 128); } }
-        public override int TotalPoints { get { return 52416; } }
+        public override int TotalPoints { get { return 52000; } }
         public override int PointsInBlock { get { return 126; } }
     }
 }
