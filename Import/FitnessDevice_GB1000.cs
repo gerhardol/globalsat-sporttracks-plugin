@@ -43,7 +43,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Assume packet format is the same as GB580 for now
         public override GlobalsatPacket PacketFactory { get { return new Gb1000Packet(this); } }
 
-        public override int TotalPoints { get { return 52000; } }
+        public override int TotalPoints { get { return 52416; } }
         public override int PointsInBlock { get { return 126; } }
     }
 }

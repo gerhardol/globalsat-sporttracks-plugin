@@ -219,7 +219,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     GlobalsatSystemConfiguration systemInfo = response.ResponseGetSystemConfiguration();
                     devConfig.DeviceName = systemInfo.DeviceName;
-                    //devConfig.SystemInfoData = response.PacketData;
 
                     packet = PacketFactory.GetSystemConfiguration2();
                     response = (GlobalsatPacket)this.SendPacket(packet);
@@ -230,7 +229,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     devConfig = null;
                     jobMonitor.ErrorText = Properties.Resources.Device_GetInfo_Error + e;
-                    //throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
                 }
                 finally
                 {
@@ -260,7 +258,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 catch (Exception e)
                 {
                     jobMonitor.ErrorText = Properties.Resources.Device_GetInfo_Error + e;
-                    //throw new Exception(Properties.Resources.Device_GetInfo_Error + e);
                 }
                 finally
                 {
