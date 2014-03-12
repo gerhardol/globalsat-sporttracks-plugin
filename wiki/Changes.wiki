@@ -5,9 +5,12 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.241 2014-03-12 (Plugin Catalog)
+ * Support for GB-1000 bike computer
+ 
 3.2.236 2013-11-10 (Plugin Catalog)
  * Transfer error messages to Waypoints plugin when waypoints and routepoints exceed device capacity.
- * Allow sending waypoints in a route for GB-580, but routes are not supported.
+ * Allow sending the waypoints in a route for GB-580, even if routes are not supported.
 
 3.2.229 2013-06-17 (Plugin Catalog)
  * GB-580 barometric elevation could have a bad point last (similar to GPS), avoid when importing.

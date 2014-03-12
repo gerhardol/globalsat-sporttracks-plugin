@@ -9,6 +9,7 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
  * GH-625XT
  * GH-625M (SendRoute unsupported)
  * GB-580P (SendRoute unsupported)
+ * GB-1000 (Send, waypoint, screenshot unsupported by device)
  * GH-505 (SendRoute unsupported)
  * GH-561 (only waypoint handling and device configuration). Note: The device must be added to SportTrack import devices (even if device import is not supported) to be used with waypoints.
  
@@ -82,7 +83,10 @@ A special note about navigation. This is assuming that the Waypoints plugin is i
  * Use waypoints (add separately) in for instance turning points. (They will not show at the same though.)
  * As Routes only have 99 points, Activities are normally a better choice to follow a a track. If you reduce the number of points in an activity before sending, the navigation functionality is the same for Globalsat activities and Globalsat routes.
  
-== Other ==
+== Other Functions ==
 See Plugin->Settings
  * Send and read device configuration. There is no GUI to configure settings, but profiles can be read and restored.
  * Screenshots for the device
+ 
+== Known Errors ==
+ * Activities cannot be imported when the storage in a GB-1000 is full.
