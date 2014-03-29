@@ -31,7 +31,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //get { return new ISettingsPage[] { new DeviceConfigurationSettingsPage(), new ScreenCapturePage() }; }
             get { return null; }
         }
-
+        
         #endregion
 
         #region IDialogPage Members
