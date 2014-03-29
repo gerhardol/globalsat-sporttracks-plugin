@@ -1,4 +1,4 @@
-REM Copyright (C) 2011 Gerhard Olsson
+REM Copyright (C) 2011-2013 Gerhard Olsson
 REM
 REM This library is free software; you can redistribute it and/or
 REM modify it under the terms of the GNU Lesser General Public
@@ -17,8 +17,8 @@ REM $(PluginId)
 SET guid=%1
 REM $(StPluginVersion)
 SET StPluginVersion=%2
-REM ProjectName)
-SET ProjectName=%3
+REM $(PluginName)
+SET PluginName=%3
 REM $(ProjectDir)
 SET ProjectDir=%4
 REM $(StPluginPath)
@@ -49,30 +49,47 @@ GOTO endversion
 
 :PERL_VERSION
 set cygwin=nodosfilewarning
-set tempfile=%temp%\%ProjectName%-stpluginversion.tmp
+set tempfile=%temp%\%PluginName%-stpluginversion.tmp
 %perl% -ne "if(/^^\[assembly: AssemblyVersion\(.([\.\d]*)(\.\*)*.\)\]/){print $1;}" %ProjectDir%\Properties\AssemblyInfo.cs > %tempfile%
 set /p PluginVersion= < %tempfile%
 rem DEL %tempfile%
 :endversion
 
-set stPlgFile=%ProjectDir%%ProjectName%-%PluginVersion%.st%StPluginVersion%plugin
-IF NOT "%ConfigurationType%"=="Release" set stPlgFile="%ProjectDir%%ProjectName%-%PluginVersion%-%ConfigurationType%.st%StPluginVersion%plugin"
+set stPlgFile=%ProjectDir%%PluginName%-%PluginVersion%.st%StPluginVersion%plugin
+IF NOT "%ConfigurationType%"=="Release" set stPlgFile="%ProjectDir%%PluginName%-%PluginVersion%-%ConfigurationType%.st%StPluginVersion%plugin"
 REM To move a .stplugin to common area, create environment variable (or set it below)
 REM set stPlgoutdir=g:\Users\go\dev\web
 
 REM Vista+ / XP compatibility
 set C_APPDATA=%PROGRAMDATA%
 IF "%C_APPDATA%"=="" set C_APPDATA=%ALLUSERSPROFILE%\Application Data
-IF EXIST "%C_APPDATA%" GOTO COPY_REL
-GOTO END_COPY_REL
+IF EXIST "%C_APPDATA%" GOTO COPY_FILES
+GOTO END_COPY_FILES
+
+:COPY_FILES
+IF "%ConfigurationType%"=="Profile" GOTO COPY_PROFILE
 
 :COPY_REL
-set StTarget="%C_APPDATA%\%StPluginPath%\Update\%guid%\%ProjectName%"
+set StTarget="%C_APPDATA%\%StPluginPath%\Update\%guid%\%PluginName%"
 IF NOT EXIST %StTarget% mkdir %StTarget%
 
 REM XCOPY depreciated in Vista, use for XP compatibility
 XCOPY  "%TargetDir%*.*" %StTarget% /I/Y/Q/E <NUL:
+GOTO END_COPY_FILES
 :END_COPY_REL
+
+:COPY_PROFILE
+IF EXIST %C_APPDATA%\%StPluginPath%\Update ECHO Delete %C_APPDATA%\%StPluginPath%\Update\%guid%
+set StTarget="%C_APPDATA%\%StPluginPath%\Installed\%guid%\%PluginName%"
+IF NOT EXIST %StTarget% mkdir %StTarget%
+
+REM XCOPY depreciated in Vista, use for XP compatibility
+XCOPY  "%TargetDir%*.*"                                      %StTarget% /I/Y/Q/E <NUL:
+XCOPY  "%ProgramFiles%\Zone Five Software\SportTracks 3\*.*" %StTarget% /I/Y/Q <NUL:
+GOTO END_COPY_FILES
+:END_COPY_PROFILE
+
+:END_COPY_FILES
 
 REM generate the plugin.xml file
 ECHO ^<?xml version="1.0" encoding="utf-8" ?^> >  "%TargetDir%plugin.xml"
@@ -89,16 +106,17 @@ IF "%ConfigurationType%"=="Release" GOTO ReleasePluginPackage
 
 :DebugPluginPackage
 REM Create debug package, with pdb
-"%sevenzip%" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%ProjectName%.xml
+"%sevenzip%" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%PluginName%.xml
 GOTO COPY_ZIP_PACKAGE
 
 :ReleasePluginPackage
-"%sevenzip%" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%ProjectName%.xml -x!*.pdb
+"%sevenzip%" a -r -tzip "%stPlgFile%" "%TargetDir%*" -x!*.st*plugin -x!*.tmp -x!*.locked -x!%PluginName%.xml -x!*.pdb
 
 :COPY_ZIP_PACKAGE
 IF "%stPlgoutdir%"=="" GOTO END
 IF not EXIST "%stPlgoutdir%" GOTO END
 COPY "%stPlgFile%" "%stPlgoutdir%"
 :END_ZIP_PACKAGE
+GOTO END
 
 :END

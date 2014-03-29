@@ -97,7 +97,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Globalsat device not found.
+        ///   Looks up a localized string similar to Device not found.
         /// </summary>
         internal static string Device_OpenDevice_Error {
             get {
@@ -142,7 +142,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Not supported by this Globalsat device.
+        ///   Looks up a localized string similar to Not supported by this device.
         /// </summary>
         internal static string Device_Unsupported {
             get {
@@ -165,6 +165,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         internal static System.Drawing.Bitmap Image_16_Keymaze {
             get {
                 object obj = ResourceManager.GetObject("Image_16_Keymaze", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Image_48_a_rival_spoq {
+            get {
+                object obj = ResourceManager.GetObject("Image_48_a_rival_spoq", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

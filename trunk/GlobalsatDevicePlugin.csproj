@@ -5,10 +5,42 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ZoneFiveSoftware.SportTracks.Device.Globalsat</RootNamespace>
-    <AssemblyName>GlobalsatDevicePlugin</AssemblyName>
+    <PluginName>GlobalsatDevicePlugin</PluginName>
+    <AssemblyName>$(PluginName)</AssemblyName>
     <PluginId>fb88d87e-5bea-4b70-892a-b97530108cfb</PluginId>
   </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'ST3.0ReleaseSpoq'">
+    <!-- Override configuration -->
+    <Configuration>ST3.0Release</Configuration>
+	<StPluginVersion>3</StPluginVersion>
+    <ConfigurationType>Release</ConfigurationType>
+	
+    <PluginName>ArivalSpoQPlugin</PluginName>
+    <AssemblyName>$(PluginName)</AssemblyName>
+    <PluginId>18e55911-e8cb-4c32-aee1-e2cec2b3e132</PluginId>
+  </PropertyGroup>
   <Import Project=".\Common\Common-References.csproj" />
+  
+  <Choose>
+    <When Condition="'$(ConfigurationType)' != 'Release'">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);GLOBALSAT_DEVICE;A_RIVAL_DEVICE</DefineConstants>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(PluginName)' == 'ArivalSpoQPlugin'">
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);A_RIVAL_DEVICE</DefineConstants>
+        <PluginId>18e55911-e8cb-4c32-aee1-e2cec2b3e132</PluginId>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <DefineConstants>$(DefineConstants);GLOBALSAT_DEVICE</DefineConstants>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  
   <ItemGroup>
     <Compile Include="Data\DeviceConfigurationInfo.cs" />
     <Compile Include="Data\GlobalsatRoute.cs" />
@@ -25,6 +57,7 @@
     <Compile Include="Device\GlobalsatProtocol.cs" />
     <Compile Include="Device\GlobalsatPacket.cs" />
     <Compile Include="Import\FitnessDevice_GB1000.cs" />
+    <Compile Include="Import\FitnessDevice_SpoQ.cs" />
     <Compile Include="Import\FitnessDevice_GsSport.cs" />
     <Compile Include="Import\FitnessDevice_GH561.cs" />
     <Compile Include="Import\FitnessDevice_Globalsat.cs" />
@@ -172,6 +205,7 @@
     <None Include="Resources\Image_48_GSSPORT.png" />
     <None Include="Resources\Image_16_Keymaze.png" />
     <None Include="Resources\Image_48_GB1000.png" />
+    <None Include="Resources\Image_48_a_rival_spoq.png" />
   </ItemGroup>
   <Import Project=".\Common\Common-Files.csproj" />
 </Project>

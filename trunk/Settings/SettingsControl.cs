@@ -66,7 +66,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             //this.labelGlobalsatDevice.Text = Integration.GlobalsatDevice.CompabilityText;
             //Some untranslated strings....
-            this.labelLicense.Text = "The Globalsat Device Plugin is distributed under the GNU Lesser General Public Licence.\r\nThe Li" +
+            this.labelLicense.Text = "The plugin is distributed under the GNU Lesser General Public Licence.\r\nThe Li" +
                 "cense is included in the plugin installation directory and at:\r\nhttp://www.gnu.o" +
                 "rg/licenses/lgpl.html.";
 
