@@ -32,6 +32,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelLicense = new System.Windows.Forms.Label();
             this.labelDetect = new System.Windows.Forms.Label();
             this.buttonDetect = new ZoneFiveSoftware.Common.Visuals.Button();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // labelName
@@ -83,10 +84,22 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.TextRightMargin = 2;
             this.buttonDetect.Click += new System.EventHandler(this.buttonDetect_Click);
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(16, 72);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(55, 13);
+            this.linkLabel1.TabIndex = 20;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "Plugin Webpage";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // SettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.labelDetect);
             this.Controls.Add(this.buttonDetect);
             this.Controls.Add(this.labelLicense);
@@ -105,5 +118,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private System.Windows.Forms.Label labelLicense;
         private System.Windows.Forms.Label labelDetect;
         private Common.Visuals.Button buttonDetect;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

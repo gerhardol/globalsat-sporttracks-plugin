@@ -73,15 +73,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
         #endregion
 
-        //private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
-        //{
-        //    try
-        //    {
-        //        System.Diagnostics.Process.Start("mailto:john.philip@sapo.pt");
-        //    }
-        //    catch { }
-        //}
-
         private void buttonDetect_Click(object sender, EventArgs e)
         {
             //Always Generic device here
@@ -90,6 +81,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             d.ShowDialog();
             //Retrieve detect information, without query device again
             this.labelDetect.Text = device.Detect(false);            
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new ProcessStartInfo(
+#if GLOBALSAT_DEVICE
+                "http://code.google.com/p/globalsat-sporttracks-plugin/wiki/Features"
+#else
+                "http://code.google.com/p/globalsat-sporttracks-plugin/wiki/ArivalSpoQ"
+#endif
+));
         }
     }
 }
