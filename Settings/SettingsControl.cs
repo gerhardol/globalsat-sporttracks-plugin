@@ -91,7 +91,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 #else
                 "http://code.google.com/p/globalsat-sporttracks-plugin/wiki/ArivalSpoQ"
 #endif
-));
+            ));
         }
     }
 }

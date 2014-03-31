@@ -221,8 +221,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //Insert pauses when estimated/listed distance differs "too much"
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
                     //Share setting with global split
-                    if (ZoneFiveSoftware.SportTracks.Device.Globalsat.Plugin.Instance.Application.SystemPreferences.ImportSettings.SplitActivity &&
-                        detectPausesFromSpeed &&
+                    if (detectPausesFromSpeed &&
                         (foundGPSPoint && activity.GPSRoute.Count > 0 ||
                         activity.HeartRatePerMinuteTrack.Count > 0))
                     {
