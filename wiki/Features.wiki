@@ -16,6 +16,7 @@ This plugin implements the interface to some Globalsat devices. Primary for impo
 There is very minor difference using the generic GS-Sport device and one of the specific devices, as the generic device use the specific device after auto-detection. Therefore the only difference is that the no device timeout for the 625XT is slightly shorter than the generic and that you can have more than one supported Globalsat device type connected at a time. The GS-Sport device is always used for other than activity import (for instance sending activities).
 
 === Unsupported Devices ===
+Rebranded devices may work in this plugin.
  * KeyMaze-500, KeyMaze-700 (untested)
  * Bowflex GPS Tracking Heart Rate Monitor (model GPS-905) (untested)
  * GH-615 activity import implemented but completely untested - upgrade to GH-625M instead. (Import via Generic device)
@@ -51,7 +52,7 @@ Import from Globalsat devices.
 
    Only for 625XT, 505 and 580.
 
-   There is no separate setting for this feature, but if you deactivate "Split Activities with time gap" (Settings->Import).
+   Before 3.2.245, there was no separate setting for this feature, Instead the Settings->Import setting "Split Activities with time gap".
  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
 
 == Waypoints, Routes and Courses ==

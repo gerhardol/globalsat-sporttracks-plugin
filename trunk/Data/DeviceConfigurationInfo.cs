@@ -35,6 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             this.HoursAdjustment = c.HoursAdjustment;
             this.ImportOnlyNew = c.ImportOnlyNew;
+            this.DetectPausesFromSpeedTrack = c.DetectPausesFromSpeedTrack;
         }
 
         //Parse string overlay default configuration

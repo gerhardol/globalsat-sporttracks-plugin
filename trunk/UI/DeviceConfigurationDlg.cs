@@ -43,6 +43,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.fitnessDevice = fitnessDevice;
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
+            this.chkDetectPausesFromSpeed.Text = "Detect Pauses from Speed to GPS differences"; //TBD
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
@@ -56,6 +57,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             btnOk.Click += new EventHandler(btnOk_Click);
             btnCancel.Click += new EventHandler(btnCancel_Click);
             chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
+            this.chkDetectPausesFromSpeed.Checked = this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack;
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
@@ -87,6 +89,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     this.labelHoursOffset.Visible = false;
                     this.txtHoursOffset.Visible = false;
                     this.chkImportOnlyNew.Visible = false;
+                    this.chkDetectPausesFromSpeed.Visible = false;
                 }
             }
             //Device Configuration
@@ -119,6 +122,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             get
             {
                 this.fitnessDevice.configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
+                this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack = this.chkDetectPausesFromSpeed.Checked;
                 return this.fitnessDevice.configInfo;
             }
         }
@@ -131,6 +135,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             labelHoursOffset.ForeColor = visualTheme.ControlText;
             txtHoursOffset.ThemeChanged(visualTheme);
             chkImportOnlyNew.ForeColor = visualTheme.ControlText;
+            this.chkDetectPausesFromSpeed.ForeColor = visualTheme.ControlText;
             BackColor = visualTheme.Control;
         }
         #endregion

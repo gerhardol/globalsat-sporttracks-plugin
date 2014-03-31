@@ -5,7 +5,10 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
-3.2.241 2014-03-12 (Plugin Catalog)
+ * Separate option to insert pauses when speed-GPS differs. Previously the global option "Split Activity if GPS gap" was used (this option has no other use in Globalsat). 
+ * Support for a-rival SpoQ in separate plugin
+ 
+3.2.241 2014-03-12
  * Support for GB-1000 bike computer
  
 3.2.236 2013-11-10 (Plugin Catalog)
