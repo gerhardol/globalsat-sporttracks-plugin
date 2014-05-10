@@ -34,8 +34,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 #if GLOBALSAT_DEVICE
                 new FitnessDevice_GsSport(), new FitnessDevice_GH625(), new FitnessDevice_GH505(), 
                 new FitnessDevice_GH625XT(), new FitnessDevice_GB580(), new FitnessDevice_GB1000(), new FitnessDevice_GH561(),
-#endif
-#if A_RIVAL_DEVICE
+#elif A_RIVAL_DEVICE
+                //Debug builds could contain Spoq too, but then there will be errors in the log if GlobalSat-debug and Spoq is installed at the same time
                 new FitnessDevice_SpoQ()
 #endif
             };

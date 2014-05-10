@@ -35,7 +35,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public Guid Id
         {
+#if GLOBALSAT_DEVICE
             get { return new Guid("fb88d87e-5bea-4b70-892a-b97530108cfb"); }
+#else
+            get { return new Guid("18e55911-e8cb-4c32-aee1-e2cec2b3e132"); }
+#endif
+
         }
 
         public IApplication Application
