@@ -52,9 +52,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public string Name
         {
             get { 
-#if GLOBALSAT_DEVICE && A_RIVAL_DEVICE
-                return "Globalsat Compatible Plugin";
-#elif GLOBALSAT_DEVICE
+#if GLOBALSAT_DEVICE
+                //Keep Globalsat name for debug, licensing
                 return "Globalsat Device Plugin";
 #elif A_RIVAL_DEVICE
                 return "a-rival SpoQ Plugin";
