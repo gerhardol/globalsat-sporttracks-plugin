@@ -20,6 +20,7 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -96,7 +97,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<Lap> laps = new List<Lap>();
 
             int offset = TrackHeaderLength;
-            while (offset <= this.PacketLength - TrackLapLength)
+            setExtraLapRecordOffset(this.PacketLength - offset);
+
+            while (offset <= this.PacketLength - TrackLapLength - (int)m_extraLapRecordOffset)
             {
                 Lap lap = new Lap();
 
@@ -118,10 +121,41 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //lap.StartPointIndex = ReadInt16(36);
                 //lap.EndPointIndex = ReadInt16(38);
                 laps.Add(lap);
-                offset += TrackLapLength;
+                offset += TrackLapLength + (int)m_extraLapRecordOffset;
             }
             CheckOffset(this.PacketLength, offset);
             return laps;
+        }
+
+        private static int? m_extraLapRecordOffset = null;
+        private void setExtraLapRecordOffset(int len)
+        {
+            if (m_extraLapRecordOffset == null)
+            {
+                //Firmware F-GGB-2O-1402241 increases the size for DB_LAP with 8 bytes
+                //This may be possible to find out with the firmware version, that may change again, so guess
+                const int newFwExtraOffset = 8;
+                if (((len % TrackLapLength) == 0) && ((len % (TrackLapLength + newFwExtraOffset)) != 0))
+                {
+                    m_extraLapRecordOffset = 0;
+                }
+                else if (((len % TrackLapLength) != 0) && ((len % (TrackLapLength + newFwExtraOffset)) == 0))
+                {
+                    m_extraLapRecordOffset = newFwExtraOffset;
+                }
+                else
+                {
+                    String s = "Is Firmware updated to F-GGB-2O-1402241?";
+                    if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        m_extraLapRecordOffset = newFwExtraOffset;
+                    }
+                    else
+                    {
+                        m_extraLapRecordOffset = 0;
+                    }
+                }
+            }
         }
 
         public override IList<TrackPoint> UnpackTrackPoints()
@@ -195,7 +229,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override GlobalsatPacket SendTrackLaps(Train trackFile)
         {
             const Int16 nrLaps = 1;
-            Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * TrackLapLength);
+            setExtraLapRecordOffset(0);
+            Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * (TrackLapLength + (int)m_extraLapRecordOffset));
             this.InitPacket(CommandSendTrackSection, totalLength);
 
             int offset = 0;
@@ -226,8 +261,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // start/end index
             offset += Write(offset, 0);
             offset += Write(offset, (Int16)(trackFile.TrackPointCount - 1));
+            //possibly added
+            offset += (int)m_extraLapRecordOffset;
 
             CheckOffset(totalLength, offset);
+
             return this;
         }
 

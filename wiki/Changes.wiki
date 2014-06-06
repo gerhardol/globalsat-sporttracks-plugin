@@ -5,6 +5,9 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ===Changes===
 
+3.2.250 2014-06-06
+ * Workaround for GB-580P Firmware F-GGB-2O-1402241, that changes the format. If the format cannot be guessed, the user gets a popup.
+ 
 3.2.248 2014-05-10 (Plugin Catalog)
  * Separate option to insert pauses when speed-GPS differs. Previously the global option "Split Activity if GPS gap" was used (this option has no other use in Globalsat). 
  * Support for a-rival SpoQ in separate plugin from same code base
