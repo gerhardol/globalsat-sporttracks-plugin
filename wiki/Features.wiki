@@ -1,4 +1,5 @@
 #summary Features of this Plugin.
+#labels Featured
 
 <wiki:toc max_depth="3" />
 
