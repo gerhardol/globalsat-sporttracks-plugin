@@ -61,9 +61,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override Train UnpackTrainHeader()
         {
+            if (pVersion < 0)
+            {
+                if (this.PacketLength == TrainDataHeaderLength)
+                {
+                    pVersion = 0;
+                }
+                else if (this.PacketLength == TrainDataHeaderLength + 8)
+                {
+                    pVersion = 1;
+                }
+                //Other is unknown, caught below
+            }
+            CheckOffset(this.PacketLength, TrainDataHeaderLength);
             if (this.PacketLength < TrainDataHeaderLength)
             {
-                ReportOffset(this.PacketLength, TrackHeaderLength);
                 return null;
             }
 
@@ -81,7 +93,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             train.MaximumCadence = ReadInt16(44);
             train.AveragePower = ReadInt16(46);
             train.MaximumPower = ReadInt16(48);
-            //5 bytes of SportType, pad
+            //5 bytes of SportType
+            //pad
+
+            //if (pVersion > 0)
+            //{
+            //    lap.AverageTemperature = ReadInt16(offset + 56);
+            //    lap.MaximumTemperature = ReadInt16(offset + 58);
+            //    lap.MinimumTemperature = ReadInt16(offset + 60);
+            //pad 2 bytes
+            //}
+
             return train;
         }
 
@@ -97,9 +119,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             IList<Lap> laps = new List<Lap>();
 
             int offset = TrackHeaderLength;
-            setExtraLapRecordOffset(this.PacketLength - offset);
 
-            while (offset <= this.PacketLength - TrackLapLength - (int)m_extraLapRecordOffset)
+            while (offset <= this.PacketLength - TrackLapLength)
             {
                 Lap lap = new Lap();
 
@@ -118,44 +139,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 lap.MaximumPower = ReadInt16(offset + 32);
                 //byte multisport
                 //pad
-                //lap.StartPointIndex = ReadInt16(36);
-                //lap.EndPointIndex = ReadInt16(38);
+                //if (pVersion > 0)
+                //{
+                //    lap.AverageTemperature = ReadInt16(offset + 36);
+                //    lap.MaximumTemperature = ReadInt16(offset + 38);
+                //    lap.MinimumTemperature = ReadInt16(offset + 40);
+                //}
+                //int offset2 = 0;
+                //if (pVersion > 0) { offset2 = 2; }
+                //lap.StartPointIndex = ReadInt16(TrackLapLength-4-offset2);
+                //lap.EndPointIndex = ReadInt16(TrackLapLength-2-offset2);
                 laps.Add(lap);
-                offset += TrackLapLength + (int)m_extraLapRecordOffset;
+                offset += TrackLapLength;
             }
             CheckOffset(this.PacketLength, offset);
             return laps;
-        }
-
-        private static int? m_extraLapRecordOffset = null;
-        private void setExtraLapRecordOffset(int len)
-        {
-            if (m_extraLapRecordOffset == null)
-            {
-                //Firmware F-GGB-2O-1402241 increases the size for DB_LAP with 8 bytes
-                //This may be possible to find out with the firmware version, that may change again, so guess
-                const int newFwExtraOffset = 8;
-                if (((len % TrackLapLength) == 0) && ((len % (TrackLapLength + newFwExtraOffset)) != 0))
-                {
-                    m_extraLapRecordOffset = 0;
-                }
-                else if (((len % TrackLapLength) != 0) && ((len % (TrackLapLength + newFwExtraOffset)) == 0))
-                {
-                    m_extraLapRecordOffset = newFwExtraOffset;
-                }
-                else
-                {
-                    String s = "Is Firmware updated to F-GGB-2O-1402241?";
-                    if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                    {
-                        m_extraLapRecordOffset = newFwExtraOffset;
-                    }
-                    else
-                    {
-                        m_extraLapRecordOffset = 0;
-                    }
-                }
-            }
         }
 
         public override IList<TrackPoint> UnpackTrackPoints()
@@ -182,7 +180,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.Cadence = ReadInt16(offset + 24);
                 point.PowerCadence = ReadInt16(offset + 26);
                 point.Power = ReadInt16(offset + 28);
-                //2 byte padding
+                //if (pVersion > 0) { point.Temperature = ReadInt16(offset + 30); }
                 points.Add(point);
                 offset += TrackPointLength;
             }
@@ -193,6 +191,19 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Trackstart without laps
         public override GlobalsatPacket SendTrackStart(Train trackFile)
         {
+            if (pVersion < 0)
+            {
+                String s = "Is Firmware updated to F-GGB-2O-1402241?";
+                if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    pVersion = 1;
+                }
+                else
+                {
+                    pVersion = 0;
+                }
+            }
+
             Int16 nrLaps = 1;
             Int16 totalLength = (Int16)TrainDataHeaderLength;
             this.InitPacket(CommandSendTrackStart, totalLength);
@@ -220,6 +231,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.PacketData[offset++] = 0; // sport 4
             this.PacketData[offset++] = 0; // sport 5
             offset += 1; //pad
+            if (pVersion > 0)
+            {
+                offset += 8;
+            }
 
             CheckOffset(totalLength, offset);
             return this;
@@ -229,8 +244,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public override GlobalsatPacket SendTrackLaps(Train trackFile)
         {
             const Int16 nrLaps = 1;
-            setExtraLapRecordOffset(0);
-            Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * (TrackLapLength + (int)m_extraLapRecordOffset));
+            Int16 totalLength = (Int16)(TrackHeaderLength + nrLaps * TrackLapLength);
             this.InitPacket(CommandSendTrackSection, totalLength);
 
             int offset = 0;
@@ -261,8 +275,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // start/end index
             offset += Write(offset, 0);
             offset += Write(offset, (Int16)(trackFile.TrackPointCount - 1));
-            //possibly added
-            offset += (int)m_extraLapRecordOffset;
+            if (pVersion > 0)
+            {
+                offset += 8;
+            }
 
             CheckOffset(totalLength, offset);
 
@@ -340,10 +356,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         protected override int WptLatLonOffset { get { return 2; } }
 
+        private static int pVersion = -1;
         public override int TrackPointsPerSection { get { return 63; } }
         protected override int TrackHeaderLength { get { return 24; } }
-        protected override int TrainDataHeaderLength { get { return 56; } }
-        protected override int TrackLapLength { get { return 40; } }
+        protected override int TrainDataHeaderLength { get { return pVersion <= 0 ? 56 : 64; } }
+        protected override int TrackLapLength { get { return pVersion <= 0 ? 40 : 48; } }
         protected override int TrackPointLength { get { return 32; } }
         protected override int TrainHeaderCTypeOffset { get { return TrackHeaderLength - 2; } }
 
