@@ -111,6 +111,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             //byte Sport3;
             //byte Sport4;
             //byte Sport5;
+            //public Int16 AverageTemperature; //GB580P
+            //public Int16 MaximumTemperature;
+            //public Int16 MaximumTemperature;
 
             public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
@@ -137,6 +140,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 AveragePower;
             public Int16 MaximumPower;
             //public bool Multisport;
+            //public Int16 AverageTemperature; //GB580P
+            //public Int16 MaximumTemperature;
+            //public Int16 MaximumTemperature;
+
             //    public Int16 StartPointIndex;
             //    public Int16 EndPointIndex;
         }
@@ -160,6 +167,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 PowerCadence=0; // unknown units
             //Int16 in GH625XT, GB580, GH505, (but not available?)
             public Int16 Cadence=0; // Cadence, unknown units
+            //public Int16 Temperature; //GB580P
         }
 
         public byte[] ConstructPayload(bool bigEndianPacketLength)
