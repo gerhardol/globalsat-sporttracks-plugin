@@ -167,7 +167,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public Int16 PowerCadence=0; // unknown units
             //Int16 in GH625XT, GB580, GH505, (but not available?)
             public Int16 Cadence=0; // Cadence, unknown units
-            //public Int16 Temperature; //GB580P
+            public Int16 Temperature=0x7fff; //GB580P
         }
 
         public byte[] ConstructPayload(bool bigEndianPacketLength)
