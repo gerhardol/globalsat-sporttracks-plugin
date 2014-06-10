@@ -180,7 +180,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 point.Cadence = ReadInt16(offset + 24);
                 point.PowerCadence = ReadInt16(offset + 26);
                 point.Power = ReadInt16(offset + 28);
-                //if (pVersion > 0) { point.Temperature = ReadInt16(offset + 30); }
+                if (pVersion > 0) { point.Temperature = ReadInt16(offset + 30); }
                 points.Add(point);
                 offset += TrackPointLength;
             }

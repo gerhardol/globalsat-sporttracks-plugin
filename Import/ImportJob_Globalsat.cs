@@ -176,11 +176,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 bool foundHrPoint = false;
                 bool foundCadencePoint = false;
                 bool foundPowerPoint = false;
+                bool foundTemperaturePoint = false;
 
                 activity.GPSRoute = new GPSRoute();
                 activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
                 activity.CadencePerMinuteTrack = new NumericTimeDataSeries();
                 activity.PowerWattsTrack = new NumericTimeDataSeries();
+                activity.TemperatureCelsiusTrack = new NumericTimeDataSeries();
                 activity.ElevationMetersTrack = new NumericTimeDataSeries(); 
                 activity.DistanceMetersTrack = new DistanceDataTrack();
 
@@ -339,6 +341,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     activity.PowerWattsTrack.Add(pointTime, point.Power);
                     if (point.Power > 0) foundPowerPoint = true;
+
+                    activity.TemperatureCelsiusTrack.Add(pointTime, point.Temperature/10.0F);
+                    if (point.Temperature != 0x7fff) foundTemperaturePoint = true;
                 }
 
                 TimeSpan lapElapsed = TimeSpan.Zero;
@@ -424,6 +429,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
+                if (!foundTemperaturePoint) activity.TemperatureCelsiusTrack = null;
                 if (pointDist == 0)
                 {
                     activity.DistanceMetersTrack = null;
