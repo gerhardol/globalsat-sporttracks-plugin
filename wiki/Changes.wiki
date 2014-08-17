@@ -8,6 +8,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 3.2.255 2014-06-10
  * Support for GB-580P Firmware F-GGB-2O-1402241, recording a temperature track. The firmware breaks importing lap information with previous releases.
  Note: When transferring an activity without importing first, the format is unknown and the user gets a popup.
+ Note 2: You cannot import settings from a previous firmware to a newer firmware, the update is silently ignored.
  
 3.2.248 2014-05-10 (Plugin Catalog)
  * Separate option to insert pauses when speed-GPS differs. Previously the global option "Split Activity if GPS gap" was used (this option has no other use in Globalsat). 
