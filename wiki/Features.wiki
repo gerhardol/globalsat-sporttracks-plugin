@@ -87,7 +87,7 @@ A special note about navigation. This is assuming that the Waypoints plugin is i
  
 == Other Functions ==
 See Plugin->Settings
- * Send and read device configuration. There is no GUI to configure settings, but profiles can be read and restored.
+ * Send and read device configuration. There is no GUI to configure settings, but profiles can be read and restored. Note that the save/restore may not work for firmware with certain changes, use TGP to save/restore at updates.
  * Screenshots for the device
  
 == Known Errors ==
