@@ -1,0 +1,16 @@
+## ZoneFiveSoftware ##
+The original developer of the plugin. Mostly community driven now.
+
+## Phil ##
+Waypoints, Routes, SendActivities, GetScreenshot, device detection code is to some extent from the Waypoint (Phil's KeyMaze) plugin
+
+## gerhard ##
+Developer.
+
+## zingo ##
+Developer and tester
+
+## Translations ##
+Finish: rookie
+Nedelands: vanomme
+Swedish: zingo/gerhard

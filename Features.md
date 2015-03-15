@@ -1,0 +1,91 @@
+
+
+This plugin implements the interface to some Globalsat devices. Primary for importing activities to SportTracks, but also to handle Waypoints, Routes and Sending activities. The plugin also have some specific features like reading/saving configuration and saving screenshots.
+
+## Supported Devices ##
+  * GS-Sport (Generic device) Autodetect the connected device, use the device with ID matching the detected.
+  * GH-625XT
+  * GH-625M (SendRoute unsupported)
+  * GB-580P (SendRoute unsupported)
+  * GB-1000 (Send, waypoint, screenshot unsupported by device)
+  * GH-505 (SendRoute unsupported)
+  * GH-561 (only waypoint handling and device configuration). Note: The device must be added to SportTrack import devices (even if device import is not supported) to be used with waypoints.
+
+There is very minor difference using the generic GS-Sport device and one of the specific devices, as the generic device use the specific device after auto-detection. Therefore the only difference is that the no device timeout for the 625XT is slightly shorter than the generic and that you can have more than one supported Globalsat device type connected at a time. The GS-Sport device is always used for other than activity import (for instance sending activities).
+
+### Unsupported Devices ###
+Rebranded devices may work in this plugin.
+  * KeyMaze-500, KeyMaze-700 (untested)
+  * Bowflex GPS Tracking Heart Rate Monitor (model GPS-905) (untested)
+  * GH-615 activity import implemented but completely untested - upgrade to GH-625M instead. (Import via Generic device)
+
+### Unknown devices ###
+Most Globalsat devices have unique protocols and packet formats. However, there are some devices that have identical protocols, even if they identifies uniquely.
+  * Go to Settings->Plugins->Globalsat Device Plugin, press Refresh button.
+  * Take a note of the device identifier listed.
+    * If the name of the device is listed only, the device is supported
+    * If the device name is suffixed with "(`<device>` Compatible)", the listed device is handled as the mentioned device (but there is no specific device image at import).
+    * If the device name is suffixed with "(Globalsat Generic)", there is no specific support for the device, but some operations (like handling waypoints) may work anyway.
+
+While the plugin requires that identifiers are explicitly added, it is possible to add other identifiers to existing devices. If you have no possibility to rebuild the plugin, the advanced user can add support to the configuration.
+  * Make a copy of the global settings file Prefernces.System.xml. For location, see the [ST FAQ](http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=4290). Restore this backup if your update fails and SportTracks will not start or start with a default configuration after the edit.
+  * Delete all import devices but the the device to add support for.
+  * Open Preferences.System.xml and search for "`<FitnessDevices>`". Take a note of the "deviceId" GUID.
+  * Edit Preferences.System.xml, add the device identification listed previously after "allowedids=". For example "allowedids=GH-625XT".
+
+## Import ##
+Import from Globalsat devices.
+  * Generic Device support: For all devices, selecting protocols from the device identification. (This generic device is used for Waypoints and routes, added automatically at first use).
+  * Device check: The plugin checks that the identification matches for the device you try to import from. If you have more than one device connected, the plugin will now import from the correct device.
+  * Each device configuration dialog has a "Refresh" button to find if a device is connected.
+
+### Special Features ###
+  * Warn if less than 5h of recording time remains in the device at import.  (For GB-580, GH-625XT, GH-505)
+  * Speed/distance import. Globalsat records speed in each point, the plugin tries to convert this to the distance at each port. The total distance is too short for some reason, but the information can be used to debug distance calculations. (See Trails plugin for more information.)
+  * Pause detections. Globalsat devices have no marking of pauses. When you pause, the time is just stopped, there is no stop inserted at the recorded points. Distance is still calculated on all distance between points.
+
+> This creates special problems when stopping. It is first when you reset that the device records a point. The GPS position is actually correct if the activity is reset with the reset button, but if reset when connecting to PC, the last GPS point is the last GPS point known when the device had GPS contact instead of the last point when recording.
+
+> To get around this, the plugin tries to detect when a pause has occurred between two GPS points. If the GPS distance between two points is more than 50m and 3 times the Globalsat reported speed\*time between points, the last part is considered to be a pause. (This algorithm may require tuning).
+
+> Only for 625XT, 505 and 580.
+
+> Before 3.2.245, there was no separate setting for this feature, Instead the Settings->Import setting "Split Activities with time gap".
+  * Max speed/HR per lap is stored as text in Lap comments (ST calculates this data normally).
+
+## Waypoints, Routes and Courses ##
+The implement implements support for communicating some other protocols with Globalsat devices. All of these actions requires a separate plugin to have GUI for the action. This is implemented in [Waypoints](http://www.zonefivesoftware.com/sporttracks/plugins/?p=waypoints) plugin. The handling could be implemented in other plugins too.
+Export waypoints etc from the Export menu.
+
+Routes, Courses etc are explained some in the
+[ST FAQ](http://www.zonefivesoftware.com/sporttracks/forums/viewtopic.php?f=42&t=6389).
+The Globalsat devices does not use Courses, but allows use of activities ("Track Points") directly, as well as sending activities to the device. However, there is no equivalence to Course Points.
+
+  * Waypoints - Find specific positions. Globlsat devices (not all devices support waypoints) can store up to 99 waypoints, separate from the trackpoint storage.
+  * Routes - Normally only keypoints, the track details between keypoints may be incomplete.
+    * 625XT: A route can have maximum 200 routepoints (not related to the waypoints).
+    * Other devices: A route can have maximum 99 waypoints, shared with stand alone waypoints. A route will create waypoints on the device for waypoints that not already exists.
+    * Note: The GB-580/GH-505 cannot receive Routes, the command only sends the waypoints in the route.
+  * Activities - Follow a detailed track (but can be used as a route too). Use "Track Back" for activities.
+    * Globalsat supports using activities for trackback. The plugin can send activities to the device. All GPS points are transferred, but not information like HR, so it is not a complete copy of the activity.
+    * The maximum number of track points depends on the device.
+
+### Navigation ###
+A special note about navigation. This is assuming that the Waypoints plugin is installed.
+
+  * Use a separate category under "My Friends Activities" for navigation "activities". ST Routes view is limited in features, export to Globalsat is not possible (You can use ApplyRoutes plugin to transfer GPS tracks Activities`<->`Routes).
+  * The normal use in ST would be to draw a route point to point, to get key information like crossings.
+  * Copy an existing activity or create a new activity. See ST Help: [Editing a GPS Route](http://www.zonefivesoftware.com/sporttracks/support/help/?topic=manual-exploring-activity-details#editing-gps-route)
+  * ST3.1 has a possibility to create GPS tracks from Google navigation, you get a detailed track information.
+  * The time for the GPS points in an activity is (currently) not used when navigating using the Globalsat device. (There are enhancement suggestions to show how much before after you are the reference though). Time can be set with plugins (like [MiscPlugin](http://code.google.com/p/sporttracks-miscplugin/)).
+  * Clean up normal activities before sending, to speed up handling in the device: Edit->Reduce Points. The Douglas-Peuker algoritm makes a good job reducing activity points, maybe down to 10% of the original. Make sure that there are points at for instance turns.
+  * Use waypoints (add separately) in for instance turning points. (They will not show at the same though.)
+  * As Routes only have 99 points, Activities are normally a better choice to follow a a track. If you reduce the number of points in an activity before sending, the navigation functionality is the same for Globalsat activities and Globalsat routes.
+
+## Other Functions ##
+See Plugin->Settings
+  * Send and read device configuration. There is no GUI to configure settings, but profiles can be read and restored. Note that the save/restore may not work for firmware with certain changes, use TGP to save/restore at updates.
+  * Screenshots for the device
+
+## Known Errors ##
+  * Activities cannot be imported when the storage in a GB-1000 is full.
