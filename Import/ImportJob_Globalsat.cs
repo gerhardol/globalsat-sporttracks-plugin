@@ -187,6 +187,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.DistanceMetersTrack = new DistanceDataTrack();
 
                 float pointDist = 0;
+                double pointElapsed = 0;
                 //As interval to first is not zero, add point
                 activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
@@ -209,6 +210,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         time = (double)fixInterval;
                     }
+                    pointElapsed += time;
                     //Note: There is an intervall time to the first point, also if TGP says it is 0
                     pointTime = pointTime.AddSeconds(time);
 
@@ -232,26 +234,34 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         //how far from the first point
                         double perc = 0;
                         string info = "";
+                        bool insertPause = false;
                         if (activity.GPSRoute.Count > 0)
                         {
                             float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
                             //Some limit on when to include pause
-                            if (gpsDist > 50 && gpsDist > 3 * dist)
+                            //gpsDist must be higher than (all) GPS errors
+                            if (gpsDist > 100 && gpsDist > 3 * dist)
                             {
-                                //Assume lost path is not a straight line, assume 2 times
-                                //Info on activity is unreliable as distance when paused is included, but average speed at start is too
-                                if (pointDist > 0 && gpsDist < 10000)
-                                {
-                                    estimatedSec = 2 * gpsDist * (pointTime - train.StartTime).TotalSeconds / pointDist;
-                                    //Sudden jumps can create huge estimations, limit
-                                    estimatedSec = Math.Min(estimatedSec, 3600);
-                                }
-                                else
-                                {
-                                    estimatedSec = 4;
-                                }                                
-                                //The true pause point is somewhere between last and this point
-                                //Use first part of the interval, insert a new point
+                                insertPause = true;
+                                //We cannot know the true time for the expected pause, just set time between as pause to show on map
+                                estimatedSec = time;
+
+                                //Old guess
+                                ////Info on activity is unreliable as distance when paused is included, but average speed at start is too
+                                //if (pointDist > 0 && gpsDist < 10000)
+                                //{
+                                //    //Avarage speed since start, not the last points
+                                //    estimatedSec = 2 * pointElapsed * gpsDist / pointDist;
+                                //    //Sudden jumps can create huge estimations, limit
+                                //    estimatedSec = Math.Min(estimatedSec, 3600);
+                                //}
+                                //else
+                                //{
+                                //    estimatedSec = 4;
+                                //}                                
+                                //if (estimatedSec > 3) { insertPause = true; }
+                                ////The true pause point is somewhere between last and this point
+                                ////Use first part of the interval, insert a new point
                                 if (gpsDist > 0)
                                 {
                                     perc = dist / gpsDist;
@@ -275,7 +285,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         //        estimatedSec = 4;
                         //    }
                         //}
-                        if (estimatedSec > 3)
+                        if (insertPause)
                         {
                             //Use complete seconds only - pause is estimated, ST handles sec internally and this must be synced to laps
                             estimatedSec = Math.Round(estimatedSec);
@@ -289,31 +299,41 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                             else
                             {
-                                //Add extra point and pause
-                                activity.DistanceMetersTrack.Add(pointTime, pointDist);
-
-                                if (point.Latitude != 0 || point.Longitude != 0)
+                                DateTime pointTimePrev;
+                                DateTime pointTimeNext;
+                                if (estimatedSec <= time+1)
                                 {
-                                    activity.GPSRoute.Add(pointTime, newPoint);
+                                    pointTimePrev = pointTime.AddSeconds(-time);
+                                    pointTimeNext = pointTime;
                                 }
-                                else if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                else
                                 {
-                                    activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
-                                }
+                                    //Add extra point
+                                    activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
-                                //Only add even pauses, ST only handles complete seconds
-                                DateTime pointTime2 = pointTime.AddSeconds((int)estimatedSec);
+                                    if (point.Latitude != 0 || point.Longitude != 0)
+                                    {
+                                        activity.GPSRoute.Add(pointTime, newPoint);
+                                    }
+                                    else if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                    {
+                                        activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
+                                    }
+                                    pointTimePrev = pointTime;
+                                    pointTimeNext = pointTime.AddSeconds((int)(estimatedSec - time));
+                                    pointTime = pointTimeNext;
+                                }
+                                //Only add rounded pauses, ST only handles complete seconds
                                 activity.TimerPauses.Add(new ValueRange<DateTime>(
-                                    pointTime.AddMilliseconds(-pointTime.Millisecond),
-                                    pointTime2.AddMilliseconds(-pointTime2.Millisecond)));
+                                    pointTimePrev.AddMilliseconds(-pointTimePrev.Millisecond+1000),
+                                    pointTimeNext.AddMilliseconds(-pointTimeNext.Millisecond-10000)));
                                 if (verbose >= 10)
                                 {
                                     //TODO: Remove remark when stable
                                     activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
-                                        pointTime.ToLocalTime(), pointTime2.ToLocalTime(), dist, time, perc, info) +
+                                        pointTimePrev.ToLocalTime(), pointTimeNext.ToLocalTime(), dist, time, perc, info) +
                                         System.Environment.NewLine;
                                 }
-                                pointTime = pointTime2;
                             }
                         }
                     }
