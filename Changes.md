@@ -4,8 +4,8 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 3.2.255 2014-06-10
   * Support for GB-580P Firmware F-GGB-2O-1402241, recording a temperature track. The firmware breaks importing lap information with previous releases.
-> Note: When transferring an activity without importing first, the format is unknown and the user gets a popup.
-> Note 2: You cannot import settings from a previous firmware to a newer firmware, the update is silently ignored: [Configurations](Features#other-functions).
+  Note: When transferring an activity without importing first, the format is unknown and the user gets a popup.
+  Note 2: You cannot import settings from a previous firmware to a newer firmware, the update is silently ignored: [Configurations](Features#other-functions).
 
 3.2.248 2014-05-10 (Plugin Catalog)
   * Separate option to insert pauses when speed-GPS differs. Previously the global option "Split Activity if GPS gap" was used (this option has no other use in Globalsat).
@@ -52,7 +52,7 @@ This page describes the changes between plugin releases. See the SVN change log 
   * Cache last used COM port used, to speed up device detection
   * Increase communication timeouts (from 1s to 4s by default), to avoid occasional communication failures seen on 625M (580P had 2s before). The first import on a certain COM port(and waypoint handling) will be slower, subsequent imports will be slightly faster due to caching.
 
-> 3.2.186 2012-09-26 (Plugin Catalog)
+3.2.186 2012-09-26 (Plugin Catalog)
   * Some refined messages at import errors
 
 3.2.185 2012-07-09
@@ -92,7 +92,7 @@ This page describes the changes between plugin releases. See the SVN change log 
   * Increase read timeouts for GB-580P, the device hardly worked previously
   * Remove Chinese translation as it seem to create problems for some users. Only one string translated anyway.
   * Device settings were incorrectly saved. This increase the time to detect when no device were detected as all serial speeds were tried, as well as slower start of import for 625M.
-> > Remove all existing Globalsat devices, add them again to update the settings.
+   Remove all existing Globalsat devices, add them again to update the settings.
   * Popup when ExportActivityAsRoute to GH-625M, GB-580P. (GUI for action is in Waypoints plugin, the popup is initiated in this plugin.)
 
 3.2.138 2012-02-19
@@ -142,6 +142,6 @@ See [Features](Features) for major changes.
   * Latest update from ZoneFiveSoftware
 
 
-> ### Feedback ###
+### Feedback ###
 For patches, bugreports or feature suggestions, use the Google Code issue list.
 For other feedback please use the SportTracks forum or this wiki.
