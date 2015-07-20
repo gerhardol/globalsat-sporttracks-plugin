@@ -578,7 +578,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (tracks.Count == 0) return new GlobalsatPacket.Train[0];
 
-            float totalPoints = 0;
+            int totalPoints = 0;
             IList<Int16> trackIndexes = new List<Int16>();
             foreach (GlobalsatPacket.TrackFileHeader header in tracks)
             {
@@ -586,7 +586,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //track number, less than 100
                 trackIndexes.Add((Int16)header.TrackPointIndex);
             }
-            float totalPointsRead = 0;
+            int totalPointsRead = 0;
 
             GlobalsatPacket getFilesPacket = PacketFactory.GetTrackFileSections(trackIndexes);
             GlobalsatPacket2 response = (GlobalsatPacket2)SendPacket(getFilesPacket);
@@ -672,7 +672,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             DateTime startTime = currentTrain.StartTime.ToLocalTime();
                             string statusProgress = startTime.ToShortDateString() + " " + startTime.ToShortTimeString();
                             monitor.StatusText = String.Format(CommonResources.Text.Devices.ImportJob_Status_Reading, statusProgress);
-                            monitor.PercentComplete = totalPointsRead / totalPoints;
+                            monitor.PercentComplete = (float)totalPointsRead / (float)totalPoints;
                             if (pointsToRead <= 0)
                             {
                                 readMode = ReadMode.Header;

@@ -83,7 +83,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                         {
                             DateTime findTime = activity.StartTime;
-                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.FitnessDevice.configInfo.SecondsAlwaysImport)
+                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.FitnessDevice.configInfo.SecondsAlwaysImport &&
+                                //always import "bad" data
+                                findTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14))
                             {
                                 headersByStart.Remove(findTime);
                             }
@@ -98,6 +100,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         fetch.AddRange(headers);
                     }
 
+                    //Read the complete activities from the device
+                    IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
+
+                    //popup if short remaining time
                     GlobalsatSystemConfiguration2 systemInfo = ((GlobalsatProtocol2)device).GetGlobalsatSystemConfiguration2();
                     TimeSpan remainTime = device.RemainingTime(headers, systemInfo);
                     if (remainTime < TimeSpan.FromHours(5))
@@ -110,22 +116,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                     }
 
-                    //Read the complete activities from the device
-                    IList<GlobalsatPacket.Train> trains = ((GlobalsatProtocol2)device).ReadTracks(fetch, monitor);
-                    if (trains.Count>0)
+                    for (int i = 0; i < trains.Count; i++)
                     {
-                        GlobalsatPacket.Train train = trains[trains.Count - 1];
                         //Adjust "no gps fix" time so they are easier to find...
-                        if (train.StartTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14))
+                        //Guess assumes no-GPS matches a real activity and that activities are in order
+                        GlobalsatPacket.Train train = trains[i];
+                        if (i > 20)
+                        { }
+                        IActivity logActivity = this.getMatchingLogActivity(i, trains.Count);
+                        if (train.StartTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14) && logActivity != null)
                         {
-                            if (DateTime.UtcNow - Plugin.Instance.Application.Logbook.Activities[Plugin.Instance.Application.Logbook.Activities.Count - 1].StartTime < TimeSpan.FromDays(1))
+                            train.Comment += "Original activity date: " + train.StartTime + ", index: "+ i;
+                            if (DateTime.UtcNow - logActivity.StartTime < TimeSpan.FromDays(7))
                             {
-                                //Assume latest activity duplicate...
-                                train.StartTime = Plugin.Instance.Application.Logbook.Activities[Plugin.Instance.Application.Logbook.Activities.Count - 1].StartTime;
+                                //fairly recent, assume this is a duplicate
+                                train.StartTime = logActivity.StartTime;
                             }
                             else
                             {
-                                train.StartTime = DateTime.UtcNow;
+                                //older, set older date
+                                train.StartTime = DateTime.UtcNow - TimeSpan.FromDays(7 + trains.Count - i);
                             }
                         }
                     }
@@ -153,6 +163,36 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return result;
         }
 
+        //A device without time set has bad start dates, try to find a "matching" activity in tha latest logbook entries
+        private System.Collections.SortedList activities = null;
+        IActivity getMatchingLogActivity(int index, int count)
+        {
+            //Note: the activity list may not be in perfect order, sort the tail
+            if (activities == null || activities.Count != count)
+            {
+                activities = new System.Collections.SortedList(count);
+                int logIndex = Plugin.Instance.Application.Logbook.Activities.Count - 1;
+                for (int i = 0; i < count; i++)
+                {
+                    //TBD: Only use My Activities and ignore My Friends Activities?
+                    while (logIndex >= 0 && activities.ContainsKey(Plugin.Instance.Application.Logbook.Activities[logIndex].StartTime))
+                    {
+                        logIndex--;
+                    }
+                    if (logIndex > 0)
+                    {
+                        IActivity activity = Plugin.Instance.Application.Logbook.Activities[logIndex];
+                        activities.Add(activity.StartTime, activity);
+                    }
+                    else
+                    {
+                        activities.Add(DateTime.MinValue, null);
+                    }
+                }
+            }
+            return (IActivity)activities.GetByIndex(index);
+        }
+
         protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, bool detectPausesFromSpeed, int verbose)
         {
             foreach (GlobalsatPacket.Train train in trains)
@@ -171,12 +211,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 activity.AveragePowerWattsEntered = train.AveragePower;
                 activity.TotalAscendMetersEntered = train.TotalAscend;
                 activity.TotalDescendMetersEntered = -train.TotalDescend;
+                activity.Notes += train.Comment;
 
                 bool foundGPSPoint = false;
-                bool foundHrPoint = false;
                 bool foundCadencePoint = false;
                 bool foundPowerPoint = false;
-                bool foundTemperaturePoint = false;
 
                 activity.GPSRoute = new GPSRoute();
                 activity.HeartRatePerMinuteTrack = new NumericTimeDataSeries();
@@ -339,31 +378,39 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
+                    //lat/lon is 0 if a device has never had a fix
                     if (point.Latitude != 0 || point.Longitude != 0)
                     {
                         activity.GPSRoute.Add(pointTime, gpsPoint);
+
+                        //Check if lat/lon ever change (ignore altitude), GlobalSat reports last known location without a fix
+                        if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude)
+                        {
+                            foundGPSPoint = true;
+                        }
                     }
                     if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(point.Altitude))
                     {
                         activity.ElevationMetersTrack.Add(pointTime, point.Altitude);
                     }
-                    //Ignore altitude when checking if there is a GPS track, no need to check HasElevationTrack
-                    if (point.Latitude != train.TrackPoints[0].Latitude || point.Longitude != train.TrackPoints[0].Longitude)
+
+                    //zero HR is invalid reading - drop
+                    if (point.HeartRate > 0)
                     {
-                        foundGPSPoint = true;
+                        activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
                     }
 
-                    activity.HeartRatePerMinuteTrack.Add(pointTime, point.HeartRate);
-                    if (point.HeartRate > 0) foundHrPoint = true;
-
+                    //Zero Cadence/Power may be valid values, if there are any values (no way to detect lost communication)
                     activity.CadencePerMinuteTrack.Add(pointTime, point.Cadence);
                     if (point.Cadence > 0) foundCadencePoint = true;
 
                     activity.PowerWattsTrack.Add(pointTime, point.Power);
                     if (point.Power > 0) foundPowerPoint = true;
 
-                    activity.TemperatureCelsiusTrack.Add(pointTime, point.Temperature/10.0F);
-                    if (point.Temperature != 0x7fff) foundTemperaturePoint = true;
+                    if (point.Temperature != 0x7fff)
+                    {
+                        activity.TemperatureCelsiusTrack.Add(pointTime, point.Temperature / 10.0F);
+                    }
                 }
 
                 TimeSpan lapElapsed = TimeSpan.Zero;
@@ -419,7 +466,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     activity.DistanceMarkersMeters.Add(totalDistance);
                 }
                 
-                if (!foundGPSPoint && activity.GPSRoute.Count > 1)
+                if (!foundGPSPoint)
                 {
                     if (activity.GPSRoute.Count > 0)
                     {
@@ -431,11 +478,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //Keep elevation only if the device (may) record elevation separately from GPS
                 //It may be used also if the user drops GPS if points have been recorded.
                 //(ST may have partial use of elevation together with GPS on other parts in the future?)
-                if (!device.FitnessDevice.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null; 
+                if (!device.FitnessDevice.HasElevationTrack || activity.ElevationMetersTrack.Count == 0) activity.ElevationMetersTrack = null;
+
                 //Barometric devices occasionally have bad points last
                 if (activity.ElevationMetersTrack != null && activity.ElevationMetersTrack.Count > 1 &&
                     Math.Abs(activity.ElevationMetersTrack[activity.ElevationMetersTrack.Count - 1].Value - 
-                    activity.ElevationMetersTrack[activity.ElevationMetersTrack.Count - 2].Value) > 1)
+                      activity.ElevationMetersTrack[activity.ElevationMetersTrack.Count - 2].Value) > 1)
                 {
                     if (activity.GPSRoute != null &&
                         activity.ElevationMetersTrack.StartTime.AddSeconds(activity.ElevationMetersTrack.TotalElapsedSeconds) ==
@@ -446,10 +494,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     activity.ElevationMetersTrack.RemoveAt(activity.ElevationMetersTrack.Count - 1);
                 }
-                if (!foundHrPoint) activity.HeartRatePerMinuteTrack = null;
+                if (activity.HeartRatePerMinuteTrack.Count == 0) activity.HeartRatePerMinuteTrack = null;
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
-                if (!foundTemperaturePoint) activity.TemperatureCelsiusTrack = null;
+                if (activity.TemperatureCelsiusTrack.Count == 0) activity.TemperatureCelsiusTrack = null;
                 if (pointDist == 0)
                 {
                     activity.DistanceMetersTrack = null;

@@ -165,7 +165,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 return new List<TrackPoint>();
             }
 
-            IList<TrackPoint> points = new List<TrackPoint>();
+            IList<TrackPoint> points = new List<TrackPoint>((this.PacketLength - TrackHeaderLength) / TrackPointLength);
 
             int offset = TrackHeaderLength;
             while (offset <= this.PacketLength - TrackPointLength)

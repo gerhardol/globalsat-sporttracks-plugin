@@ -117,6 +117,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             public IList<TrackPoint> TrackPoints = new List<TrackPoint>();
             public IList<Lap> Laps = new List<Lap>();
+            //data related to the import, for instance if start date is changed
+            public string Comment = "";
         }
 
         public class TrackFileHeader : Header
