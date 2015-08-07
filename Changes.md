@@ -2,6 +2,11 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ### Changes ###
 
+3.2.262 2015-08-07
+  * Import Option to avoid importing the Globalsat Speed/Distance information. Strava uses this information instead of the GPS info.
+  * Drop HR 0 packets - invalid transmission
+  * Increase limits for how autodetect of pauses is done.
+
 3.2.255 2014-06-10
   * Support for GB-580P Firmware F-GGB-2O-1402241, recording a temperature track. The firmware breaks importing lap information with previous releases.
   Note: When transferring an activity without importing first, the format is unknown and the user gets a popup.
