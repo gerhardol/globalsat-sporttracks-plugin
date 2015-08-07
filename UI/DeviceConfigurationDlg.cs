@@ -42,8 +42,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
             this.fitnessDevice = fitnessDevice;
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
-            chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
-            this.chkDetectPausesFromSpeed.Text = "Detect Pauses from Speed to GPS differences"; //TBD
+            this.chkImportDistance.Text = Properties.Resources.DeviceConfigurationDlg_chkImportDistance;
+            this.chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
+            this.chkDetectPausesFromSpeed.Text = Properties.Resources.DeviceConfigurationDlg_chkDetectPauses;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
@@ -56,7 +57,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             txtHoursOffset.Validated += new EventHandler(txtHoursOffset_Validated);
             btnOk.Click += new EventHandler(btnOk_Click);
             btnCancel.Click += new EventHandler(btnCancel_Click);
-            chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
+            this.chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
+            this.chkImportDistance.Checked = this.fitnessDevice.configInfo.ImportSpeedDistanceTrack;
             this.chkDetectPausesFromSpeed.Checked = this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack;
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
@@ -75,7 +77,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 //this.labelRemainingTime.Text = "Click to get remaining time";
                 labelRemainingTime_Click();
-                this.labelDelete.Text = "Delete all device activities"; //TBD
+                this.labelDelete.Text = Properties.Resources.DeviceConfigurationDlg_DeleteAllActivities;
                 DateTime oldest = DateTime.Now - TimeSpan.FromDays(31);
                 this.dateTimePickerOldest.Value = oldest;
             }
@@ -89,6 +91,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     this.labelHoursOffset.Visible = false;
                     this.txtHoursOffset.Visible = false;
                     this.chkImportOnlyNew.Visible = false;
+                    this.chkImportDistance.Visible = false;
                     this.chkDetectPausesFromSpeed.Visible = false;
                 }
             }
@@ -121,7 +124,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             get
             {
-                this.fitnessDevice.configInfo.ImportOnlyNew = chkImportOnlyNew.Checked;
+                this.fitnessDevice.configInfo.ImportOnlyNew = this.chkImportOnlyNew.Checked;
+                this.fitnessDevice.configInfo.ImportSpeedDistanceTrack = this.chkImportDistance.Checked;
                 this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack = this.chkDetectPausesFromSpeed.Checked;
                 return this.fitnessDevice.configInfo;
             }
@@ -134,7 +138,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             theme = visualTheme;
             labelHoursOffset.ForeColor = visualTheme.ControlText;
             txtHoursOffset.ThemeChanged(visualTheme);
-            chkImportOnlyNew.ForeColor = visualTheme.ControlText;
+            this.chkImportOnlyNew.ForeColor = visualTheme.ControlText;
+            this.chkImportDistance.ForeColor = visualTheme.ControlText;
             this.chkDetectPausesFromSpeed.ForeColor = visualTheme.ControlText;
             BackColor = visualTheme.Control;
         }
@@ -387,7 +392,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                 if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
                 {
-                    System.Windows.Forms.MessageBox.Show(jobMonitor.ErrorText, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    this.labelRemainingTime.Text = "Remaining time: " + jobMonitor.ErrorText;
+                    //System.Windows.Forms.MessageBox.Show(jobMonitor.ErrorText, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
                 else if (time <= TimeSpan.MinValue)
                 {

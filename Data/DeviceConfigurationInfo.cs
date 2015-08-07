@@ -134,7 +134,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         //Also used for naming families - first should be readable (null is Globalsat)
         public IList<string> AllowedIds = new List<string>();
         public bool ImportOnlyNew = true;
-        public bool ImportSpeedDistanceTrack = true;
+        public bool ImportSpeedDistanceTrack = false;
         public bool DetectPausesFromSpeedTrack = true;
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
