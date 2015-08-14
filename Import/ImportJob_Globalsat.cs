@@ -498,7 +498,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!foundCadencePoint) activity.CadencePerMinuteTrack = null;
                 if (!foundPowerPoint) activity.PowerWattsTrack = null;
                 if (activity.TemperatureCelsiusTrack.Count == 0) activity.TemperatureCelsiusTrack = null;
-                if (pointDist == 0 || !importSpeedTrackAsDistance && !foundGPSPoint)
+                if (pointDist == 0 || !importSpeedTrackAsDistance && foundGPSPoint)
                 {
                     activity.DistanceMetersTrack = null;
                 }
