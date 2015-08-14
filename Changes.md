@@ -2,7 +2,7 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ### Changes ###
 
-3.2.262 2015-08-07
+3.2.264 2015-08-14 (Plugin Catalog)
   * Import Option to avoid importing the Globalsat Speed/Distance information. Strava uses this information instead of the GPS info.
   * Drop HR 0 packets - invalid transmission
   * Increase limits for how autodetect of pauses is done.
