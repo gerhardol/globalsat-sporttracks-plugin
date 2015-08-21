@@ -44,7 +44,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
             else
             {
-                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error;
+                jobMonitor.ErrorText = Properties.Resources.Device_OpenDevice_Error + "No Communication";
             }
         }
 

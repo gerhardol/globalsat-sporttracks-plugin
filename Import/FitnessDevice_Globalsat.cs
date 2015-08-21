@@ -173,7 +173,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public string Detect(bool query)
         {
-            string identification = "Error";
+            string identification = "Detection Error";
             try
             {
                 if (!query || this.Device().Open())
@@ -217,9 +217,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     identification = this.Device().lastDevId + " (" + ZoneFiveSoftware.Common.Visuals.CommonResources.Text.Devices.ImportJob_Status_CouldNotOpenDeviceError + ")";
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                identification = Properties.Resources.Device_OpenDevice_Error;
+                identification = Properties.Resources.Device_OpenDevice_Error + " (Detect)" + e;
             }
             finally
             {

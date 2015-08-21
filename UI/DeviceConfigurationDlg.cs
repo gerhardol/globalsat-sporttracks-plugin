@@ -309,7 +309,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         }
                         else
                         {
-                            labelStatus.Text = Properties.Resources.Device_OpenDevice_Error;
+                            labelStatus.Text = Properties.Resources.Device_OpenDevice_Error + "Received " + importedDeviceConfig.SystemConfigDataRaw.Length + " bytes ";
                             //MessageDialog.Show(Properties.Resources.UI_Settings_ImportConfig_InvalidConfiguration, Properties.Resources.UI_Settings_ImportConfig_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }

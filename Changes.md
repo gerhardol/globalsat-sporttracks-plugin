@@ -2,10 +2,11 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ### Changes ###
 
-3.2.264 2015-08-14 (Plugin Catalog)
+3.2.265 2015-08-21
   * Import Option to avoid importing the Globalsat Speed/Distance information. Strava uses this information instead of the GPS info.
   * Drop HR 0 packets - invalid transmission
   * Increase limits for how autodetect of pauses is done.
+  * Increase response timeout for 625B from 4 to 8s. Also modify some of the printouts.
 
 3.2.255 2014-06-10
   * Support for GB-580P Firmware F-GGB-2O-1402241, recording a temperature track. The firmware breaks importing lap information with previous releases.

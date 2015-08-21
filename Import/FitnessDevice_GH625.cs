@@ -43,6 +43,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override GlobalsatPacket PacketFactory { get { return new Gh625Packet(this); } }
 
+        //Problems accessing some (ageing?) 625, increase
+        public override int ReadTimeoutDetect { get { return 8000; } }
+        public override int ReadTimeout { get { return 8000; } }
         public override System.Drawing.Size ScreenSize { get { return new System.Drawing.Size(120, 80); } }
         public override int ScreenBpp { get { return 1; } }
     }
