@@ -88,6 +88,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                         }
                                     }
                                     break;
+                                case xmlTags.ScanComPorts:
+                                    this.ScanComPorts = (parts[1] != "0");
+                                    break;
+                                case xmlTags.ReadTimeout:
+                                    this.ReadTimeout = int.Parse(parts[1]);
+                                    break;
                                 case xmlTags.Verbose:
                                     this.Verbose = int.Parse(parts[1]);
                                     break;
@@ -103,7 +109,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public override string ToString()
         {
-            return xmlTags.ImportOnlyNew + "=" + (ImportOnlyNew ? "1" : "0") +
+            string s = xmlTags.ImportOnlyNew + "=" + (ImportOnlyNew ? "1" : "0") +
                 ";" + xmlTags.HoursAdjustment + "=" + HoursAdjustment.ToString() +
                 ";" + xmlTags.SecondsAlwaysImport + "=" + SecondsAlwaysImport.ToString() +
                 ";" + xmlTags.ComPortsText + "=" + this.ComPortsText +
@@ -112,7 +118,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.ImportSpeedDistanceTrack + "=" + (this.ImportSpeedDistanceTrack ? "1" : "0") +
                 ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + (this.DetectPausesFromSpeedTrack ? "1" : "0") +
                 ";" + xmlTags.LastValidComPorts + "=" + this.LastComPortsText() +
+                ";" + xmlTags.ScanComPorts + "=" + (this.ScanComPorts ? "1" : "0") +
+                ";" + xmlTags.ReadTimeout + "=" + this.ReadTimeout.ToString() +
                 ";" + xmlTags.Verbose + "=" + this.Verbose;
+            return s;
         }
 
         private static class xmlTags
@@ -126,6 +135,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string ImportSpeedDistanceTrack = "ImportSpeedDistanceTrack";
             public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack";
             public const string LastValidComPorts = "LastValidComPorts";
+            public const string ScanComPorts = "ScanComPorts";
+            public const string ReadTimeout = "ReadTimeout";
             public const string Verbose = "Verbose";
         }
         public int MaxPacketPayload = 2500;
@@ -139,6 +150,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();
+        //Allow override scanning of com ports (just use lastValidComPorts)
+        public bool ScanComPorts = true;
+        //Allow override ReadTimeouts (0 is no override)
+        public int ReadTimeout = 0;
         public int Verbose = 10;
         private IList<string> lastValidComPorts = null;
 

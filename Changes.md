@@ -2,11 +2,14 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ### Changes ###
 
-3.2.265 2015-08-21
+3.2.266 2015-08-23
   * Import Option to avoid importing the Globalsat Speed/Distance information. Strava uses this information instead of the GPS info.
   * Drop HR 0 packets - invalid transmission
   * Increase limits for how autodetect of pauses is done.
   * Increase response timeout for 625B from 4 to 8s. Also modify some of the printouts.
+  * Add device configuration. Editable in Preferences.System.xml (see SportTracks FAQ forum for location). Edit the device once and exit ST to see the configuration options (normally just search for the string).
+    * ScanComPorts: If set to 0, only scan ports in LastValidComPorts.
+	* ReadTimeout: Timeout in ms for receiving data from a device. If 0 (default), the device standard is used.
 
 3.2.255 2014-06-10
   * Support for GB-580P Firmware F-GGB-2O-1402241, recording a temperature track. The firmware breaks importing lap information with previous releases.

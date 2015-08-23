@@ -180,6 +180,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         port.ReadTimeout = this.FitnessDevice.ReadTimeout;
                     }
 
+                    //Override from device config?
+                    if (this.FitnessDevice.configInfo.ReadTimeout > 0 &&
+                        (packet.CommandId != GhPacketBase.CommandGetScreenshot || 
+                        this.FitnessDevice.configInfo.ReadTimeout > port.ReadTimeout))
+                    {
+                        port.ReadTimeout = this.FitnessDevice.configInfo.ReadTimeout;
+                    }
+
                     byte[] sendPayload = packet.ConstructPayload(this.FitnessDevice.BigEndianPacketLength);
                     try
                     {
@@ -375,23 +383,26 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 {
                     this.comPortsAdd(comPorts, port);
                 }
-                
-                if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
+
+                if (this.FitnessDevice.configInfo.ScanComPorts)
                 {
-                    for (int i = 1; i <= 30; i++)
+                    if (Environment.OSVersion.Platform == PlatformID.Win32Windows || Environment.OSVersion.Platform == PlatformID.Win32NT)
                     {
-                        this.comPortsAdd(comPorts, "COM" + i);
+                        for (int i = 1; i <= 30; i++)
+                        {
+                            this.comPortsAdd(comPorts, "COM" + i);
+                        }
                     }
-                }
-                else if (Environment.OSVersion.Platform == PlatformID.Unix)
-                {
-                    /* Linux & OSX */
-					/* TODO Check if file exists, well maybe this is fast enough and a check is not needed atleast in Linux */
-                    for (int i = 0; i <= 30; i++)
+                    else if (Environment.OSVersion.Platform == PlatformID.Unix)
                     {
-                        this.comPortsAdd(comPorts, "/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
-                        this.comPortsAdd(comPorts, "/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
-                        this.comPortsAdd(comPorts, "/dev/tty.usbserial" + i); /* OSX */
+                        /* Linux & OSX */
+                        /* TODO Check if file exists, well maybe this is fast enough and a check is not needed atleast in Linux */
+                        for (int i = 0; i <= 30; i++)
+                        {
+                            this.comPortsAdd(comPorts, "/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
+                            this.comPortsAdd(comPorts, "/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
+                            this.comPortsAdd(comPorts, "/dev/tty.usbserial" + i); /* OSX */
+                        }
                     }
                 }
             }
