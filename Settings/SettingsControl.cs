@@ -87,9 +87,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             System.Diagnostics.Process.Start(new ProcessStartInfo(
 #if GLOBALSAT_DEVICE
-                "http://code.google.com/p/globalsat-sporttracks-plugin/wiki/Features"
+                "https://github.com/gerhardol/globalsat-sporttracks-plugin/wiki/Features"
 #else
-                "http://code.google.com/p/globalsat-sporttracks-plugin/wiki/ArivalSpoQ"
+                "https://github.com/gerhardol/globalsat-sporttracks-plugin/wiki/ArivalSpoQ"
 #endif
             ));
         }
