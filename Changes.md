@@ -2,6 +2,10 @@ This page describes the changes between plugin releases. See the SVN change log 
 
 ### Changes ###
 
+3.2.267 2016-02-24
+  * Use ST native MessageBoxes for popups, support theming
+  * Update links to point to GitHub instead of Google Code
+
 3.2.266 2015-08-23
   * Import Option to avoid importing the Globalsat Speed/Distance information. Strava uses this information instead of the GPS info.
   * Drop HR 0 packets - invalid transmission
