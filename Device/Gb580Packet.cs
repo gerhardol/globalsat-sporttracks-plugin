@@ -19,8 +19,8 @@ License along with this library. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
+using ZoneFiveSoftware.Common.Visuals;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -194,7 +194,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (pVersion < 0)
             {
                 String s = "Is Firmware updated to F-GGB-2O-1402241?";
-                if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageDialog.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     pVersion = 1;
                 }

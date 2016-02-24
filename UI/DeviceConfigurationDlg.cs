@@ -393,11 +393,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 if (!string.IsNullOrEmpty(jobMonitor.ErrorText))
                 {
                     this.labelRemainingTime.Text = "Remaining time: " + jobMonitor.ErrorText;
-                    //System.Windows.Forms.MessageBox.Show(jobMonitor.ErrorText, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    //MessageDialog.Show(jobMonitor.ErrorText, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
                 else if (time <= TimeSpan.MinValue)
                 {
-                    System.Windows.Forms.MessageBox.Show(Properties.Resources.Device_Unsupported, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MessageDialog.Show(Properties.Resources.Device_Unsupported, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
                 else
                 {
@@ -416,7 +416,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 DateTime oldest = DateTime.MaxValue; //this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString()
                 //string msg = string.Format("Are you sure you want to delete all activities older than {0}?", this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString());
                 string msg = string.Format("Are you sure you want to delete all device activities?", oldest);
-                if (System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == DialogResult.OK)
+                if (MessageDialog.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;
                     JobMonitor jobMonitor = new JobMonitor();
@@ -433,7 +433,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         msg = string.Format("Failed to delete activities");
                     }
-                    System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                    MessageDialog.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
             }
         }

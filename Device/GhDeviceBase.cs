@@ -138,7 +138,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
 
                 string s2 = s + " " + trace + string.Format(" To show further popups, press {0}", System.Windows.Forms.DialogResult.Yes);
-                if (System.Windows.Forms.MessageBox.Show(s2, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
+                if (MessageDialog.Show(s2, "", System.Windows.Forms.MessageBoxButtons.YesNo, System.Windows.Forms.MessageBoxIcon.Exclamation) != System.Windows.Forms.DialogResult.Yes)
                 {
                     showPopup = false;
                 }

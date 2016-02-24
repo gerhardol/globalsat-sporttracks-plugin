@@ -8,10 +8,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.IO.Ports;
 using System.Windows.Forms;
 
+using ZoneFiveSoftware.Common.Visuals;
 
 namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 {
@@ -42,7 +41,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 string s = string.Format("Error occurred, unexpected offsets: {0}({1}).{2}{3}{2}Report to plugin maintainer.{2}To ignore further errors, press {4}",
                         headerLen, offset, System.Environment.NewLine, trace, DialogResult.Yes);
 
-                if (MessageBox.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
+                if (MessageDialog.Show(s, "", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                 {
                     showOffsetPopup = false;
                 }

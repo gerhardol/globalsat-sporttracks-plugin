@@ -113,7 +113,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             remainTime = TimeSpan.Zero;
                         }
                         string msg = string.Format("Remaining recording time about {0}", remainTime.ToString());
-                        System.Windows.Forms.MessageBox.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+                        MessageDialog.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                     }
 
                     for (int i = 0; i < trains.Count; i++)
