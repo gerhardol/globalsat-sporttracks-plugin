@@ -73,6 +73,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //detect pause from speed and cadance track
                     this.optDetectPausesFromSpeedCadence.Checked = true;
                     break;
+                default:
+                    this.optDetectPausesOff.Checked = true;
+                    break;
             }
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
@@ -140,7 +143,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.fitnessDevice.configInfo.ImportOnlyNew = this.chkImportOnlyNew.Checked;
                 this.fitnessDevice.configInfo.ImportSpeedDistanceTrack = this.chkImportDistance.Checked;
-                //this.fitnessDevice.configInfo.DetectPauses = this.optDetectPausesFromSpeed.Checked;
+                this.fitnessDevice.configInfo.DetectPauses = 0;
                 return this.fitnessDevice.configInfo;
             }
         }
