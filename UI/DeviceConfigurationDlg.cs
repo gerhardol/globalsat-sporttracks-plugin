@@ -59,9 +59,21 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             btnCancel.Click += new EventHandler(btnCancel_Click);
             this.chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
             this.chkImportDistance.Checked = this.fitnessDevice.configInfo.ImportSpeedDistanceTrack;
-            this.optDetectPausesFromSpeed.Checked = this.fitnessDevice.configInfo.DetectPauses == 1 ? true : false;
-            this.optDetectPausesFromSpeedCadence.Checked = this.fitnessDevice.configInfo.DetectPauses == 2 ? true : false;
-            this.optDetectPausesOff.Checked = this.fitnessDevice.configInfo.DetectPauses == 0 ? true : false;
+            switch (this.fitnessDevice.configInfo.DetectPauses)
+            {
+                case 0:
+                    //no pause detect
+                    this.optDetectPausesOff.Checked = true;
+                    break;
+                case 1:
+                    //detect pause from speed
+                    this.optDetectPausesFromSpeed.Checked = true;
+                    break;
+                case 2:
+                    //detect pause from speed and cadance track
+                    this.optDetectPausesFromSpeedCadence.Checked = true;
+                    break;
+            }
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;

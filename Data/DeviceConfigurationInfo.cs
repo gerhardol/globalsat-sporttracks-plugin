@@ -139,7 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string BaudRatesText = "baudrates";
             public const string AllowedIdsText = "allowedids";
             public const string ImportSpeedDistanceTrack = "ImportSpeedDistanceTrack";
-            public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack";
+            public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack"; //legacy parameter for migration from configurations to new
             public const string DetectPauses = "DetectPauses";
             public const string LastValidComPorts = "LastValidComPorts";
             public const string ScanComPorts = "ScanComPorts";

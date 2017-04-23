@@ -275,7 +275,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         string info = "";
                         
                         //speed & cadence method
-                        if (detectPauses == 2 && activity.CadencePerMinuteTrack != null)
+                        if (detectPauses == 2 && !float.IsNaN(point.Cadence))
                         {                            
                             if (activity.GPSRoute.Count > 0)
                             {
@@ -309,7 +309,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 {
 
                                     //TODO: Remove remark when stable
-                                    activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, {4}) ",
+                                    activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3} {4}) ",
                                         pointTimePrev.ToLocalTime(), pointTimeNext.ToLocalTime(), dist, pointTimeNext.Subtract(pointTimePrev).TotalSeconds, info) +
                                         System.Environment.NewLine;
                                 }
