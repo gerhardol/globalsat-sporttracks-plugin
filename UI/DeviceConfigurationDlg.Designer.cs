@@ -189,7 +189,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.TextAlign = System.Drawing.StringAlignment.Center;
             this.buttonDetect.TextLeftMargin = 2;
             this.buttonDetect.TextRightMargin = 2;
-            this.buttonDetect.Click += new System.EventHandler(this.buttonDetect_Click);
+            this.buttonDetect.Click += new System.EventHandler(this.ButtonDetect_Click);
             // 
             // labelDetect
             // 
@@ -241,7 +241,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonExportDeviceConfig.TextAlign = System.Drawing.StringAlignment.Near;
             this.buttonExportDeviceConfig.TextLeftMargin = 2;
             this.buttonExportDeviceConfig.TextRightMargin = 2;
-            this.buttonExportDeviceConfig.Click += new System.EventHandler(this.buttonExportDeviceConfig_Click);
+            this.buttonExportDeviceConfig.Click += new System.EventHandler(this.ButtonExportDeviceConfig_Click);
             // 
             // buttonImportDeviceConfig
             // 
@@ -263,7 +263,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonImportDeviceConfig.TextAlign = System.Drawing.StringAlignment.Near;
             this.buttonImportDeviceConfig.TextLeftMargin = 2;
             this.buttonImportDeviceConfig.TextRightMargin = 2;
-            this.buttonImportDeviceConfig.Click += new System.EventHandler(this.buttonImportDeviceConfig_Click);
+            this.buttonImportDeviceConfig.Click += new System.EventHandler(this.ButtonImportDeviceConfig_Click);
             // 
             // groupBoxScreenCapture
             // 
@@ -295,7 +295,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonSave.TextAlign = System.Drawing.StringAlignment.Center;
             this.buttonSave.TextLeftMargin = 2;
             this.buttonSave.TextRightMargin = 2;
-            this.buttonSave.Click += new System.EventHandler(this.buttonSave_Click);
+            this.buttonSave.Click += new System.EventHandler(this.ButtonSave_Click);
             // 
             // buttonCaptureScreen
             // 
@@ -315,7 +315,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonCaptureScreen.TextAlign = System.Drawing.StringAlignment.Center;
             this.buttonCaptureScreen.TextLeftMargin = 2;
             this.buttonCaptureScreen.TextRightMargin = 2;
-            this.buttonCaptureScreen.Click += new System.EventHandler(this.buttonCaptureScreen_Click);
+            this.buttonCaptureScreen.Click += new System.EventHandler(this.ButtonCaptureScreen_Click);
             // 
             // pictureBox1
             // 
@@ -335,7 +335,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.labelRemainingTime.Size = new System.Drawing.Size(118, 13);
             this.labelRemainingTime.TabIndex = 15;
             this.labelRemainingTime.Text = "<Click for remainingtime";
-            this.labelRemainingTime.Click += new System.EventHandler(this.labelRemainingTime_Click);
+            this.labelRemainingTime.Click += new System.EventHandler(this.LabelRemainingTime_Click);
             // 
             // buttonDelete
             // 
@@ -356,7 +356,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDelete.TextAlign = System.Drawing.StringAlignment.Center;
             this.buttonDelete.TextLeftMargin = 2;
             this.buttonDelete.TextRightMargin = 2;
-            this.buttonDelete.Click += new System.EventHandler(this.buttonDelete_Click);
+            this.buttonDelete.Click += new System.EventHandler(this.ButtonDelete_Click);
             // 
             // dateTimePickerOldest
             // 

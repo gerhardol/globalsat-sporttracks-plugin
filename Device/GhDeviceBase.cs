@@ -47,6 +47,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void Close()
         {
+            ClosePort();
+        }
+
+        public void ClosePort()
+        {
             //The actual port is closed after each packet, Close will require a new scan 
             if (this.port != null && this.port.IsOpen)
             {
@@ -182,7 +187,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
                     //Override from device config?
                     if (this.FitnessDevice.configInfo.ReadTimeout > 0 &&
-                        (packet.CommandId != GhPacketBase.CommandGetScreenshot || 
+                        (packet.CommandId != GhPacketBase.CommandGetScreenshot ||
                         this.FitnessDevice.configInfo.ReadTimeout > port.ReadTimeout))
                     {
                         port.ReadTimeout = this.FitnessDevice.configInfo.ReadTimeout;
@@ -207,7 +212,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 sendPayload.Length);
                         ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
-                        throw e;
+                        throw;
                     }
 
                     try
@@ -217,7 +222,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         if (data < 0 || data > 255)
                         {
                             //Special handling for first byte -1 is stream closed
-                            throw new TimeoutException(string.Format("No data received for {0},{1}", packet.CommandId,data));
+                            throw new TimeoutException(string.Format("No data received for {0},{1}", packet.CommandId, data));
                         }
                         if (packet.CommandId == GhPacketBase.CommandWhoAmI)
                         {
@@ -234,18 +239,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     catch (Exception e)
                     {
-                        string s = string.Format("Error occurred, receiving {0} bytes ({2},{3}).",
-                                received.PacketLength, this.DataRecieved, packet.CommandId, received.CommandId);
+                        string s = string.Format("Error occurred, receiving {0} bytes ({1},{2}).",
+                                received.PacketLength, packet.CommandId, received.CommandId);
                         ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
-                        throw e;
+                        throw;
                     }
 
                     if (packet.CommandId != GhPacketBase.CommandGetScreenshot && received.PacketLength > this.FitnessDevice.configInfo.MaxPacketPayload ||
                         received.PacketLength > 0x1000)
                     {
-                        string s = string.Format("Error occurred, bad response receiving {0} bytes ({2},{3}).",
-                                received.PacketLength, this.DataRecieved, packet.CommandId, received.CommandId);
+                        string s = string.Format("Error occurred, bad response receiving {0} bytes ({1},{2}).",
+                                received.PacketLength, packet.CommandId, received.CommandId);
                         ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI);
                         port.Close();
                         throw new Exception(Properties.Resources.Device_OpenDevice_Error);
@@ -287,7 +292,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 received.PacketLength, receivedBytes, packet.CommandId, received.CommandId);
                         ReportError(s, packet.CommandId == GhPacketBase.CommandWhoAmI, e);
                         port.Close();
-                        throw e;
+                        throw;
 
                         //Debug template, if the device is corrupted
                         //Should use resend
@@ -342,21 +347,23 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
 
+#pragma warning disable CS0168 // Variable is declared but never used
                 catch (Exception e)
+#pragma warning restore CS0168 // Variable is declared but never used
                 {
                     remainingAttempts--;
                     if (packet.CommandId == GhPacketBase.CommandWhoAmI || remainingAttempts <= 0)
                     {
                         //No need retry
                         this.Close();
-                        throw e;
+                        throw;
                     }
                 }
             }
             return received;
         }
 
-        private bool comPortsAdd(IList<string> comPorts, string s)
+        private bool ComPortsAdd(IList<string> comPorts, string s)
         {
             bool res = false;
             if (!string.IsNullOrEmpty(s))
@@ -379,9 +386,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 comPorts = new List<string>();
 
-                foreach(string port in this.FitnessDevice.configInfo.GetLastValidComPorts())
+                foreach (string port in this.FitnessDevice.configInfo.GetLastValidComPorts())
                 {
-                    this.comPortsAdd(comPorts, port);
+                    this.ComPortsAdd(comPorts, port);
                 }
 
                 if (this.FitnessDevice.configInfo.ScanComPorts)
@@ -390,7 +397,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     {
                         for (int i = 1; i <= 30; i++)
                         {
-                            this.comPortsAdd(comPorts, "COM" + i);
+                            this.ComPortsAdd(comPorts, "COM" + i);
                         }
                     }
                     else if (Environment.OSVersion.Platform == PlatformID.Unix)
@@ -399,9 +406,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         /* TODO Check if file exists, well maybe this is fast enough and a check is not needed atleast in Linux */
                         for (int i = 0; i <= 30; i++)
                         {
-                            this.comPortsAdd(comPorts, "/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
-                            this.comPortsAdd(comPorts, "/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
-                            this.comPortsAdd(comPorts, "/dev/tty.usbserial" + i); /* OSX */
+                            this.ComPortsAdd(comPorts, "/dev/ttyUSB" + i); /* Linux: gh615/gh625/gh625xt */
+                            this.ComPortsAdd(comPorts, "/dev/ttyACM" + i); /* Linux: gh505/gh561/(gb580??) */
+                            this.ComPortsAdd(comPorts, "/dev/tty.usbserial" + i); /* OSX */
                         }
                     }
                 }
@@ -411,9 +418,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 foreach (string comPort in comPorts)
                 {
-                    this.Close();
-                    port = new SerialPort(comPort, baudRate);
-                    port.WriteBufferSize = this.FitnessDevice.configInfo.MaxPacketPayload;
+                    this.ClosePort();
+                    port = new SerialPort(comPort, baudRate)
+                    {
+                        WriteBufferSize = this.FitnessDevice.configInfo.MaxPacketPayload
+                    };
                     if (ValidGlobalsatPort(port))
                     {
                         this.FitnessDevice.configInfo.SetLastValidComPort(comPort);
@@ -434,8 +443,17 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 
         public void Dispose()
         {
-            this.Close();
-            this.port.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.Close();
+                this.port.Dispose();
+            }
         }
     }
 }

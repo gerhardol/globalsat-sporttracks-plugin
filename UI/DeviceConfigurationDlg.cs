@@ -54,9 +54,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ThemeChanged(Plugin.Instance.Application.VisualTheme);
             }
 
-            txtHoursOffset.Validated += new EventHandler(txtHoursOffset_Validated);
-            btnOk.Click += new EventHandler(btnOk_Click);
-            btnCancel.Click += new EventHandler(btnCancel_Click);
+            txtHoursOffset.Validated += new EventHandler(TxtHoursOffset_Validated);
+            btnOk.Click += new EventHandler(BtnOk_Click);
+            btnCancel.Click += new EventHandler(BtnCancel_Click);
             this.chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
             this.chkImportDistance.Checked = this.fitnessDevice.configInfo.ImportSpeedDistanceTrack;
             switch (this.fitnessDevice.configInfo.DetectPauses)
@@ -91,7 +91,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             if (device is GlobalsatProtocol2)
             {
                 //this.labelRemainingTime.Text = "Click to get remaining time";
-                labelRemainingTime_Click();
+                LabelRemainingTime_Click();
                 this.labelDelete.Text = Properties.Resources.DeviceConfigurationDlg_DeleteAllActivities;
                 DateTime oldest = DateTime.Now - TimeSpan.FromDays(31);
                 this.dateTimePickerOldest.Value = oldest;
@@ -174,7 +174,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
 #endif
         }
 
-        void txtHoursOffset_Validated(object sender, EventArgs e)
+        void TxtHoursOffset_Validated(object sender, EventArgs e)
         {
             try
             {
@@ -191,13 +191,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
         }
 
-        void btnOk_Click(object sender, EventArgs e)
+        void BtnOk_Click(object sender, EventArgs e)
         {
             this.DialogResult = btnOk.DialogResult;
             Close();
         }
 
-        void btnCancel_Click(object sender, EventArgs e)
+        void BtnCancel_Click(object sender, EventArgs e)
         {
             this.DialogResult = btnCancel.DialogResult;
             Close();
@@ -213,16 +213,16 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (this.Visible == true)
             {
-                this.buttonDetect_Click(sender, e);
+                this.ButtonDetect_Click(sender, e);
             }
         }
 
-        private void buttonDetect_Click(object sender, EventArgs e)
+        private void ButtonDetect_Click(object sender, EventArgs e)
         {
             this.labelDetect.Text = this.fitnessDevice.Detect();
         }
 
-        private void buttonCaptureScreen_Click(object sender, EventArgs e)
+        private void ButtonCaptureScreen_Click(object sender, EventArgs e)
         {
             JobMonitor jobMonitor = new JobMonitor();
             try
@@ -255,11 +255,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         }
 
 
-        private void buttonSave_Click(object sender, EventArgs e)
+        private void ButtonSave_Click(object sender, EventArgs e)
         {
-            System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog(); 
-            saveFileDialog1.Filter = "Bitmap (*.bmp)|*.bmp|JPEG (*.jpg)|*.jpg|PNG (*.png)|*.png";
-            saveFileDialog1.FileName = this.fitnessDevice.Device().devId;
+            System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog()
+            {
+                Filter = "Bitmap (*.bmp)|*.bmp|JPEG (*.jpg)|*.jpg|PNG (*.png)|*.png",
+                FileName = this.fitnessDevice.Device().devId
+            };
             if (saveFileDialog1.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -286,7 +288,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        private void buttonImportDeviceConfig_Click(object sender, EventArgs e)
+        private void ButtonImportDeviceConfig_Click(object sender, EventArgs e)
         {
 
             labelStatus.Text = "";
@@ -347,7 +349,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        private void buttonExportDeviceConfig_Click(object sender, EventArgs e)
+        private void ButtonExportDeviceConfig_Click(object sender, EventArgs e)
         {
             labelStatus.Text = "";
             try
@@ -367,9 +369,11 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 }
                 if (currentDeviceConfig != null)
                 {
-                    System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-                    saveFileDialog1.Filter = "Configuration Files (*.cfg)|*.cfg";
-                    saveFileDialog1.FileName = currentDeviceConfig.DeviceName;
+                    System.Windows.Forms.SaveFileDialog saveFileDialog1 = new System.Windows.Forms.SaveFileDialog()
+                    {
+                        Filter = "Configuration Files (*.cfg)|*.cfg",
+                        FileName = currentDeviceConfig.DeviceName
+                    };
                     if (saveFileDialog1.ShowDialog() == DialogResult.OK)
                     {
                         currentDeviceConfig.Save(saveFileDialog1.FileName);
@@ -394,12 +398,12 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private FitnessDevice_Globalsat fitnessDevice;
         #endregion
 
-        private void labelRemainingTime_Click(object sender, EventArgs e)
+        private void LabelRemainingTime_Click(object sender, EventArgs e)
         {
-            labelRemainingTime_Click();
+            LabelRemainingTime_Click();
         }
 
-        private void labelRemainingTime_Click()
+        private void LabelRemainingTime_Click()
         {
             GlobalsatProtocol device = this.fitnessDevice.Device();
             if (device is GlobalsatProtocol2)
@@ -424,7 +428,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             }
         }
 
-        private void buttonDelete_Click(object sender, EventArgs e)
+        private void ButtonDelete_Click(object sender, EventArgs e)
         {
             GlobalsatProtocol device = this.fitnessDevice.Device();
             //device should already be checked, no error
@@ -433,7 +437,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 //Delete date time not fully working, keep structure for now
                 DateTime oldest = DateTime.MaxValue; //this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString()
                 //string msg = string.Format("Are you sure you want to delete all activities older than {0}?", this.dateTimePickerOldest.Value.ToLocalTime().ToShortDateString());
-                string msg = string.Format("Are you sure you want to delete all device activities?", oldest);
+                string msg = string.Format("Are you sure you want to delete all device activities?");
                 if (MessageDialog.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OKCancel, System.Windows.Forms.MessageBoxIcon.Question) == DialogResult.OK)
                 {
                     GlobalsatProtocol2 device2 = device as GlobalsatProtocol2;

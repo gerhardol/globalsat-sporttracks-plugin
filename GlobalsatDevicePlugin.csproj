@@ -8,6 +8,8 @@
     <PluginName>GlobalsatDevicePlugin</PluginName>
     <AssemblyName>$(PluginName)</AssemblyName>
     <PluginId>fb88d87e-5bea-4b70-892a-b97530108cfb</PluginId>
+    <BaseRelativeDir>.\</BaseRelativeDir>
+    <CommonRelativeDir>$(BaseRelativeDir)Common\</CommonRelativeDir>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)' == 'ST3.0ReleaseSpoq'">
@@ -20,7 +22,7 @@
     <AssemblyName>$(PluginName)</AssemblyName>
     <PluginId>18e55911-e8cb-4c32-aee1-e2cec2b3e132</PluginId>
   </PropertyGroup>
-  <Import Project=".\Common\Common-References.csproj" />
+  <Import Project="$(CommonRelativeDir)Common-References.csproj" />
   
   <Choose>
     <When Condition="'$(ConfigurationType)' != 'Release'">
@@ -207,5 +209,5 @@
     <None Include="Resources\Image_48_GB1000.png" />
     <None Include="Resources\Image_48_a_rival_spoq.png" />
   </ItemGroup>
-  <Import Project=".\Common\Common-Files.csproj" />
+  <Import Project="$(CommonRelativeDir)Common-Files.csproj" />
 </Project>

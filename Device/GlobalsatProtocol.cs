@@ -28,6 +28,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
         }
 
+        [Serializable]
         public class FeatureNotSupportedException : NotImplementedException
         {
             //This info should be handled by callers
