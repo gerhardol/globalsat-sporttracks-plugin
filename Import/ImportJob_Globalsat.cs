@@ -275,7 +275,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         string info = "";
                         
                         //speed & cadence method
-                        if (detectPauses == 2 )
+                        if (detectPauses == 2 && activity.CadencePerMinuteTrack != null)
                         {                            
                             if (activity.GPSRoute.Count > 0)
                             {
