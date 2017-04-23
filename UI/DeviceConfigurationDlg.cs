@@ -44,7 +44,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             this.chkImportDistance.Text = Properties.Resources.DeviceConfigurationDlg_chkImportDistance;
             this.chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
-            this.chkDetectPausesFromSpeed.Text = Properties.Resources.DeviceConfigurationDlg_chkDetectPauses;
+            this.optDetectPausesFromSpeed.Text = Properties.Resources.DeviceConfigurationDlg_chkDetectPauses;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;
@@ -59,7 +59,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             btnCancel.Click += new EventHandler(btnCancel_Click);
             this.chkImportOnlyNew.Checked = this.fitnessDevice.configInfo.ImportOnlyNew;
             this.chkImportDistance.Checked = this.fitnessDevice.configInfo.ImportSpeedDistanceTrack;
-            this.chkDetectPausesFromSpeed.Checked = this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack;
+            this.optDetectPausesFromSpeed.Checked = this.fitnessDevice.configInfo.DetectPauses == 1 ? true : false;
+            this.optDetectPausesFromSpeedCadence.Checked = this.fitnessDevice.configInfo.DetectPauses == 2 ? true : false;
+            this.optDetectPausesOff.Checked = this.fitnessDevice.configInfo.DetectPauses == 0 ? true : false;
             this.txtHoursOffset.Text = this.fitnessDevice.configInfo.HoursAdjustment.ToString();
             this.buttonDetect.CenterImage = ZoneFiveSoftware.Common.Visuals.CommonResources.Images.Refresh16;
             this.buttonDetect.Text = "";// ZoneFiveSoftware.Common.Visuals.CommonResources.Text.ActionRefresh;
@@ -92,7 +94,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     this.txtHoursOffset.Visible = false;
                     this.chkImportOnlyNew.Visible = false;
                     this.chkImportDistance.Visible = false;
-                    this.chkDetectPausesFromSpeed.Visible = false;
+                    this.groupBoxPauseDetect.Visible = false;
                 }
             }
             //Device Configuration
@@ -126,7 +128,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.fitnessDevice.configInfo.ImportOnlyNew = this.chkImportOnlyNew.Checked;
                 this.fitnessDevice.configInfo.ImportSpeedDistanceTrack = this.chkImportDistance.Checked;
-                this.fitnessDevice.configInfo.DetectPausesFromSpeedTrack = this.chkDetectPausesFromSpeed.Checked;
+                //this.fitnessDevice.configInfo.DetectPauses = this.optDetectPausesFromSpeed.Checked;
                 return this.fitnessDevice.configInfo;
             }
         }
@@ -140,7 +142,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             txtHoursOffset.ThemeChanged(visualTheme);
             this.chkImportOnlyNew.ForeColor = visualTheme.ControlText;
             this.chkImportDistance.ForeColor = visualTheme.ControlText;
-            this.chkDetectPausesFromSpeed.ForeColor = visualTheme.ControlText;
+            this.optDetectPausesFromSpeed.ForeColor = visualTheme.ControlText;
+            this.optDetectPausesFromSpeedCadence.ForeColor = visualTheme.ControlText;
+            this.optDetectPausesOff.ForeColor = visualTheme.ControlText;
             BackColor = visualTheme.Control;
         }
         #endregion
@@ -435,6 +439,30 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                     MessageDialog.Show(msg, "", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
                 }
+            }
+        }
+
+        private void optDetectPausesFromSpeedCadence_CheckedChanged(object sender, EventArgs e)
+        {
+            if ( ((RadioButton)sender).Checked )
+            {
+                this.fitnessDevice.configInfo.DetectPauses = 2;
+            }
+        }
+
+        private void optDetectPausesFromSpeed_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked)
+            {
+                this.fitnessDevice.configInfo.DetectPauses = 1;
+            }
+        }
+
+        private void optDetectPausesOff_CheckedChanged(object sender, EventArgs e)
+        {
+            if (((RadioButton)sender).Checked)
+            {
+                this.fitnessDevice.configInfo.DetectPauses = 0;
             }
         }
     }

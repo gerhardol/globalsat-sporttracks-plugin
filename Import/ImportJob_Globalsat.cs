@@ -139,7 +139,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                             }
                         }
                     }
-                    AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPausesFromSpeedTrack, device.FitnessDevice.configInfo.Verbose);
+                    AddActivities(importResults, trains, device.FitnessDevice.configInfo.ImportSpeedDistanceTrack, device.FitnessDevice.configInfo.DetectPauses, device.FitnessDevice.configInfo.Verbose);
                     result = true;
                 }
             }
@@ -193,7 +193,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             return (IActivity)activities.GetByIndex(index);
         }
 
-        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, bool detectPausesFromSpeed, int verbose)
+        protected void AddActivities(IImportResults importResults, IList<GlobalsatPacket.Train> trains, bool importSpeedTrackAsDistance, int detectPauses, int verbose)
         {
             foreach (GlobalsatPacket.Train train in trains)
             {
@@ -242,6 +242,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     }
                 }
 
+                DateTime pointTimePrev = System.DateTime.Now;
+                DateTime pointTimeNext = System.DateTime.Now;
+                bool insertPauseFirst = false;
+                bool insertPauseLast = false;
                 foreach (GhPacketBase.TrackPoint point in train.TrackPoints)
                 {
                     double time = point.IntervalTime;
@@ -264,114 +268,125 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //Insert pauses when estimated/listed distance differs "too much"
                     //Guess pauses - no info of real pause, but this can at least be marked in the track
                     //Share setting with global split
-                    if (detectPausesFromSpeed &&
-                        (foundGPSPoint && activity.GPSRoute.Count > 0 ||
-                        activity.HeartRatePerMinuteTrack.Count > 0))
+                    if (foundGPSPoint && activity.GPSRoute.Count > 0)
                     {
                         //estimated time for the pause
                         double estimatedSec = 0;
-                        //how far from the first point
-                        double perc = 0;
                         string info = "";
-                        bool insertPause = false;
-                        if (activity.GPSRoute.Count > 0)
-                        {
-                            float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
-                            //Some limit on when to include pause
-                            //gpsDist must be higher than (all) GPS errors
-                            if (gpsDist > 100 && gpsDist > 3 * dist)
+                        
+                        //speed & cadence method
+                        if (detectPauses == 2 )
+                        {                            
+                            if (activity.GPSRoute.Count > 0)
                             {
-                                insertPause = true;
-                                //We cannot know the true time for the expected pause, just set time between as pause to show on map
-                                estimatedSec = time;
-
-                                //Old guess
-                                ////Info on activity is unreliable as distance when paused is included, but average speed at start is too
-                                //if (pointDist > 0 && gpsDist < 10000)
-                                //{
-                                //    //Avarage speed since start, not the last points
-                                //    estimatedSec = 2 * pointElapsed * gpsDist / pointDist;
-                                //    //Sudden jumps can create huge estimations, limit
-                                //    estimatedSec = Math.Min(estimatedSec, 3600);
-                                //}
-                                //else
-                                //{
-                                //    estimatedSec = 4;
-                                //}                                
-                                //if (estimatedSec > 3) { insertPause = true; }
-                                ////The true pause point is somewhere between last and this point
-                                ////Use first part of the interval, insert a new point
-                                if (gpsDist > 0)
+                                float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
+                                //Some limit on when to include pause
+                                //gpsDist must be higher than (all) GPS errors
+                                if (point.Cadence == 0 && point.Speed == 0 && gpsDist > 0 && insertPauseFirst == false)
                                 {
-                                    perc = dist / gpsDist;
-                                }
-                                info += "gps: " + gpsDist;
-                            }
-                        }
-                        //Deactivated for now
-                        //if (estimatedSec == 0)
-                        //{
-                        //    //TODO: from athlete? Should only filter jumps from pauses, but reconnect could give similar?
-                        //    const int minHrStep = 20;
-                        //    const int minHr = 70;
-                        //    const int maxHr = 180;
-                        //    if (activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value > minHr &&
-                        //    activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value < maxHr &&
-                        //    point.HeartRate > minHr &&
-                        //    point.HeartRate < maxHr &&
-                        //    Math.Abs(activity.HeartRatePerMinuteTrack[activity.HeartRatePerMinuteTrack.Count - 1].Value - point.HeartRate) > minHrStep)
-                        //    {
-                        //        estimatedSec = 4;
-                        //    }
-                        //}
-                        if (insertPause)
-                        {
-                            //Use complete seconds only - pause is estimated, ST handles sec internally and this must be synced to laps
-                            estimatedSec = Math.Round(estimatedSec);
-                            IGPSPoint newPoint = (new GPSPoint.ValueInterpolator()).Interpolate(
-                                activity.GPSRoute[activity.GPSRoute.Count - 1].Value, gpsPoint, perc);
-
-                            if (point == train.TrackPoints[train.TrackPoints.Count - 1])
-                            {
-                                //Last point is incorrect, adjust (added normally)
-                                gpsPoint = newPoint;
-                            }
-                            else
-                            {
-                                DateTime pointTimePrev;
-                                DateTime pointTimeNext;
-                                if (estimatedSec <= time+1)
+                                    insertPauseFirst = true;
+                                    //We cannot know the true time for the expected pause, just set time between as pause to show on map
+                                    estimatedSec = time;
+                                    pointTimePrev = pointTime;
+                                } else if (point.Cadence != 0 && point.Speed != 0 && insertPauseFirst)
                                 {
-                                    pointTimePrev = pointTime.AddSeconds(-time);
+                                    //last point
+                                    insertPauseLast = true;
                                     pointTimeNext = pointTime;
+                                }
+                            }
+
+                            if (insertPauseLast)
+                            {
+                                insertPauseFirst = false;
+                                insertPauseLast = false;
+
+                                //Only add rounded pauses, ST only handles complete seconds
+                                activity.TimerPauses.Add(new ValueRange<DateTime>(
+                                       pointTimePrev.AddMilliseconds(-pointTimePrev.Millisecond),
+                                       pointTimeNext.AddMilliseconds(-pointTimeNext.Millisecond)));
+                                if (verbose >= 10)
+                                {
+
+                                    //TODO: Remove remark when stable
+                                    activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, {4}) ",
+                                        pointTimePrev.ToLocalTime(), pointTimeNext.ToLocalTime(), dist, pointTimeNext.Subtract(pointTimePrev).TotalSeconds, info) +
+                                        System.Environment.NewLine;
+                                }
+                            }
+                            
+                        } else if (detectPauses == 1)
+                        {   //distance method
+                            bool insertPause = false;
+                            //how far from the first point
+                            double perc = 0;
+
+                            if (activity.GPSRoute.Count > 0)
+                            {                                
+                                float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);
+                                //Some limit on when to include pause
+                                //gpsDist must be higher than (all) GPS errors
+                                if (gpsDist > 100 && gpsDist > 3 * dist)
+                                {
+                                    insertPause = true;
+                                    //We cannot know the true time for the expected pause, just set time between as pause to show on map
+                                    estimatedSec = time;
+
+                                    if (gpsDist > 0)
+                                    {
+                                        perc = dist / gpsDist;
+                                    }
+                                    info += "gps: " + gpsDist;
+                                }
+                            }
+
+                            if (insertPause)
+                            {
+                                //Use complete seconds only - pause is estimated, ST handles sec internally and this must be synced to laps
+                                estimatedSec = Math.Round(estimatedSec);
+                                IGPSPoint newPoint = (new GPSPoint.ValueInterpolator()).Interpolate(
+                                    activity.GPSRoute[activity.GPSRoute.Count - 1].Value, gpsPoint, perc);
+
+                                if (point == train.TrackPoints[train.TrackPoints.Count - 1])
+                                {
+                                    //Last point is incorrect, adjust (added normally)
+                                    gpsPoint = newPoint;
                                 }
                                 else
                                 {
-                                    //Add extra point
-                                    activity.DistanceMetersTrack.Add(pointTime, pointDist);
+                                    if (estimatedSec <= time+1)
+                                    {
+                                        pointTimePrev = pointTime.AddSeconds(-time);
+                                        pointTimeNext = pointTime;
+                                    }
+                                    else
+                                    {
+                                        //Add extra point
+                                        activity.DistanceMetersTrack.Add(pointTime, pointDist);
 
-                                    if (point.Latitude != 0 || point.Longitude != 0)
-                                    {
-                                        activity.GPSRoute.Add(pointTime, newPoint);
+                                        if (point.Latitude != 0 || point.Longitude != 0)
+                                        {
+                                            activity.GPSRoute.Add(pointTime, newPoint);
+                                        }
+                                        else if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                        {
+                                            activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
+                                        }
+                                        pointTimePrev = pointTime;
+                                        pointTimeNext = pointTime.AddSeconds((int)(estimatedSec - time));
+                                        pointTime = pointTimeNext;
                                     }
-                                    else if (device.FitnessDevice.HasElevationTrack && !float.IsNaN(newPoint.ElevationMeters))
+                                    //Only add rounded pauses, ST only handles complete seconds
+                                    activity.TimerPauses.Add(new ValueRange<DateTime>(
+                                        pointTimePrev.AddMilliseconds(-pointTimePrev.Millisecond+1000),
+                                        pointTimeNext.AddMilliseconds(-pointTimeNext.Millisecond-9000)));
+                                    if (verbose >= 10)
                                     {
-                                        activity.ElevationMetersTrack.Add(pointTime, newPoint.ElevationMeters);
+                                        //TODO: Remove remark when stable
+                                        activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
+                                            pointTimePrev.ToLocalTime(), pointTimeNext.ToLocalTime(), dist, time, perc, info) +
+                                            System.Environment.NewLine;
                                     }
-                                    pointTimePrev = pointTime;
-                                    pointTimeNext = pointTime.AddSeconds((int)(estimatedSec - time));
-                                    pointTime = pointTimeNext;
-                                }
-                                //Only add rounded pauses, ST only handles complete seconds
-                                activity.TimerPauses.Add(new ValueRange<DateTime>(
-                                    pointTimePrev.AddMilliseconds(-pointTimePrev.Millisecond+1000),
-                                    pointTimeNext.AddMilliseconds(-pointTimeNext.Millisecond-10000)));
-                                if (verbose >= 10)
-                                {
-                                    //TODO: Remove remark when stable
-                                    activity.Notes += string.Format("Added pause from {0} to {1} (dist:{2}, elapsedSec:{3}, per:{4} {5}) ",
-                                        pointTimePrev.ToLocalTime(), pointTimeNext.ToLocalTime(), dist, time, perc, info) +
-                                        System.Environment.NewLine;
                                 }
                             }
                         }

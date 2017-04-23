@@ -151,7 +151,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Detect Pauses from Speed to GPS differences.
+        ///   Looks up a localized string similar to Speed to GPS differences.
         /// </summary>
         internal static string DeviceConfigurationDlg_chkDetectPauses {
             get {

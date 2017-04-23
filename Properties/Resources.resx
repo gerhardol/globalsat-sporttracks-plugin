@@ -215,7 +215,7 @@
     <value>..\Resources\Image_48_a_rival_spoq.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="DeviceConfigurationDlg_chkDetectPauses" xml:space="preserve">
-    <value>Detect Pauses from Speed to GPS differences</value>
+    <value>Speed to GPS differences</value>
   </data>
   <data name="DeviceConfigurationDlg_chkImportDistance" xml:space="preserve">
     <value>Import device distance info</value>

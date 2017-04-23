@@ -35,7 +35,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             this.HoursAdjustment = c.HoursAdjustment;
             this.ImportOnlyNew = c.ImportOnlyNew;
-            this.DetectPausesFromSpeedTrack = c.DetectPausesFromSpeedTrack;
+            this.DetectPauses = c.DetectPauses;
         }
 
         //Parse string overlay default configuration
@@ -75,7 +75,13 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                     this.ImportSpeedDistanceTrack = (parts[1] == "1");
                                     break;
                                 case xmlTags.DetectPausesFromSpeedTrack:
-                                    this.DetectPausesFromSpeedTrack = (parts[1] == "1");
+                                    if (parts[1] == "1")
+                                    {
+                                        this.DetectPauses = 1;
+                                    }
+                                    break;
+                                case xmlTags.DetectPauses:
+                                    this.DetectPauses = int.Parse(parts[1]);
                                     break;
                                 case xmlTags.LastValidComPorts:
                                     lastValidComPorts = new List<string>();
@@ -116,7 +122,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                 ";" + xmlTags.BaudRatesText + "=" + this.BaudRatesText +
                 ";" + xmlTags.AllowedIdsText + "=" + this.AllowedIdsText +
                 ";" + xmlTags.ImportSpeedDistanceTrack + "=" + (this.ImportSpeedDistanceTrack ? "1" : "0") +
-                ";" + xmlTags.DetectPausesFromSpeedTrack + "=" + (this.DetectPausesFromSpeedTrack ? "1" : "0") +
+                ";" + xmlTags.DetectPauses + "=" + this.DetectPauses +
                 ";" + xmlTags.LastValidComPorts + "=" + this.LastComPortsText() +
                 ";" + xmlTags.ScanComPorts + "=" + (this.ScanComPorts ? "1" : "0") +
                 ";" + xmlTags.ReadTimeout + "=" + this.ReadTimeout.ToString() +
@@ -134,6 +140,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             public const string AllowedIdsText = "allowedids";
             public const string ImportSpeedDistanceTrack = "ImportSpeedDistanceTrack";
             public const string DetectPausesFromSpeedTrack = "DetectPausesFromSpeedTrack";
+            public const string DetectPauses = "DetectPauses";
             public const string LastValidComPorts = "LastValidComPorts";
             public const string ScanComPorts = "ScanComPorts";
             public const string ReadTimeout = "ReadTimeout";
@@ -146,7 +153,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         public IList<string> AllowedIds = new List<string>();
         public bool ImportOnlyNew = true;
         public bool ImportSpeedDistanceTrack = false;
-        public bool DetectPausesFromSpeedTrack = true;
+        public int DetectPauses;
         public int SecondsAlwaysImport = 0;
         public float HoursAdjustment = 0;
         public IList<string> ComPorts = new List<string>();

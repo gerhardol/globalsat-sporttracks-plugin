@@ -67,10 +67,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDelete = new ZoneFiveSoftware.Common.Visuals.Button();
             this.dateTimePickerOldest = new System.Windows.Forms.DateTimePicker();
             this.labelDelete = new System.Windows.Forms.Label();
-            this.chkDetectPausesFromSpeed = new System.Windows.Forms.CheckBox();
+            this.groupBoxPauseDetect = new System.Windows.Forms.GroupBox();
+            this.optDetectPausesFromSpeed = new System.Windows.Forms.RadioButton();
+            this.optDetectPausesFromSpeedCadence = new System.Windows.Forms.RadioButton();
+            this.optDetectPausesOff = new System.Windows.Forms.RadioButton();
             this.groupBoxDeviceConfig.SuspendLayout();
             this.groupBoxScreenCapture.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.groupBoxPauseDetect.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOk
@@ -83,7 +87,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.btnOk.HyperlinkStyle = false;
             this.btnOk.ImageMargin = 2;
             this.btnOk.LeftImage = null;
-            this.btnOk.Location = new System.Drawing.Point(193, 418);
+            this.btnOk.Location = new System.Drawing.Point(193, 478);
             this.btnOk.Name = "btnOk";
             this.btnOk.PushStyle = true;
             this.btnOk.RightImage = null;
@@ -104,7 +108,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.btnCancel.HyperlinkStyle = false;
             this.btnCancel.ImageMargin = 2;
             this.btnCancel.LeftImage = null;
-            this.btnCancel.Location = new System.Drawing.Point(274, 418);
+            this.btnCancel.Location = new System.Drawing.Point(274, 478);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.PushStyle = true;
             this.btnCancel.RightImage = null;
@@ -115,6 +119,18 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.btnCancel.TextLeftMargin = 2;
             this.btnCancel.TextRightMargin = 2;
             // 
+            // chkImportDistance
+            // 
+            this.chkImportDistance.AutoSize = true;
+            this.chkImportDistance.Checked = true;
+            this.chkImportDistance.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkImportDistance.Location = new System.Drawing.Point(15, 35);
+            this.chkImportDistance.Name = "chkImportDistance";
+            this.chkImportDistance.Size = new System.Drawing.Size(216, 17);
+            this.chkImportDistance.TabIndex = 21;
+            this.chkImportDistance.Text = "<Import distance information from device";
+            this.chkImportDistance.UseVisualStyleBackColor = true;
+            // 
             // chkImportOnlyNew
             // 
             this.chkImportOnlyNew.AutoSize = true;
@@ -122,7 +138,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.chkImportOnlyNew.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkImportOnlyNew.Location = new System.Drawing.Point(15, 12);
             this.chkImportOnlyNew.Name = "chkImportOnlyNew";
-            this.chkImportOnlyNew.Size = new System.Drawing.Size(124, 17);
+            this.chkImportOnlyNew.Size = new System.Drawing.Size(130, 17);
             this.chkImportOnlyNew.TabIndex = 0;
             this.chkImportOnlyNew.Text = "<Import new data only";
             this.chkImportOnlyNew.UseVisualStyleBackColor = true;
@@ -134,7 +150,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.txtHoursOffset.BackColor = System.Drawing.Color.White;
             this.txtHoursOffset.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(123)))), ((int)(((byte)(114)))), ((int)(((byte)(108)))));
             this.txtHoursOffset.ButtonImage = null;
-            this.txtHoursOffset.Location = new System.Drawing.Point(117, 84);
+            this.txtHoursOffset.Location = new System.Drawing.Point(117, 154);
             this.txtHoursOffset.MaxLength = 32767;
             this.txtHoursOffset.Multiline = false;
             this.txtHoursOffset.Name = "txtHoursOffset";
@@ -148,7 +164,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // labelHoursOffset
             // 
-            this.labelHoursOffset.Location = new System.Drawing.Point(12, 87);
+            this.labelHoursOffset.Location = new System.Drawing.Point(12, 157);
             this.labelHoursOffset.Name = "labelHoursOffset";
             this.labelHoursOffset.Size = new System.Drawing.Size(100, 19);
             this.labelHoursOffset.TabIndex = 1;
@@ -163,7 +179,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDetect.HyperlinkStyle = false;
             this.buttonDetect.ImageMargin = 2;
             this.buttonDetect.LeftImage = null;
-            this.buttonDetect.Location = new System.Drawing.Point(15, 112);
+            this.buttonDetect.Location = new System.Drawing.Point(15, 182);
             this.buttonDetect.Name = "buttonDetect";
             this.buttonDetect.PushStyle = true;
             this.buttonDetect.RightImage = null;
@@ -178,7 +194,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // labelDetect
             // 
             this.labelDetect.AutoSize = true;
-            this.labelDetect.Location = new System.Drawing.Point(114, 112);
+            this.labelDetect.Location = new System.Drawing.Point(114, 182);
             this.labelDetect.Name = "labelDetect";
             this.labelDetect.Size = new System.Drawing.Size(134, 13);
             this.labelDetect.TabIndex = 8;
@@ -189,7 +205,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.groupBoxDeviceConfig.Controls.Add(this.labelStatus);
             this.groupBoxDeviceConfig.Controls.Add(this.buttonExportDeviceConfig);
             this.groupBoxDeviceConfig.Controls.Add(this.buttonImportDeviceConfig);
-            this.groupBoxDeviceConfig.Location = new System.Drawing.Point(15, 183);
+            this.groupBoxDeviceConfig.Location = new System.Drawing.Point(15, 253);
             this.groupBoxDeviceConfig.Name = "groupBoxDeviceConfig";
             this.groupBoxDeviceConfig.Size = new System.Drawing.Size(245, 92);
             this.groupBoxDeviceConfig.TabIndex = 13;
@@ -254,7 +270,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.groupBoxScreenCapture.Controls.Add(this.buttonSave);
             this.groupBoxScreenCapture.Controls.Add(this.buttonCaptureScreen);
             this.groupBoxScreenCapture.Controls.Add(this.pictureBox1);
-            this.groupBoxScreenCapture.Location = new System.Drawing.Point(15, 290);
+            this.groupBoxScreenCapture.Location = new System.Drawing.Point(15, 360);
             this.groupBoxScreenCapture.Name = "groupBoxScreenCapture";
             this.groupBoxScreenCapture.Size = new System.Drawing.Size(205, 112);
             this.groupBoxScreenCapture.TabIndex = 14;
@@ -314,7 +330,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // labelRemainingTime
             // 
             this.labelRemainingTime.AutoSize = true;
-            this.labelRemainingTime.Location = new System.Drawing.Point(12, 130);
+            this.labelRemainingTime.Location = new System.Drawing.Point(12, 200);
             this.labelRemainingTime.Name = "labelRemainingTime";
             this.labelRemainingTime.Size = new System.Drawing.Size(118, 13);
             this.labelRemainingTime.TabIndex = 15;
@@ -330,7 +346,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.buttonDelete.HyperlinkStyle = false;
             this.buttonDelete.ImageMargin = 2;
             this.buttonDelete.LeftImage = null;
-            this.buttonDelete.Location = new System.Drawing.Point(15, 156);
+            this.buttonDelete.Location = new System.Drawing.Point(15, 226);
             this.buttonDelete.Name = "buttonDelete";
             this.buttonDelete.PushStyle = true;
             this.buttonDelete.RightImage = null;
@@ -344,7 +360,7 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // 
             // dateTimePickerOldest
             // 
-            this.dateTimePickerOldest.Location = new System.Drawing.Point(40, 156);
+            this.dateTimePickerOldest.Location = new System.Drawing.Point(40, 226);
             this.dateTimePickerOldest.Name = "dateTimePickerOldest";
             this.dateTimePickerOldest.Size = new System.Drawing.Size(200, 20);
             this.dateTimePickerOldest.TabIndex = 18;
@@ -353,43 +369,64 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             // labelDelete
             // 
             this.labelDelete.AutoSize = true;
-            this.labelDelete.Location = new System.Drawing.Point(40, 162);
+            this.labelDelete.Location = new System.Drawing.Point(40, 232);
             this.labelDelete.Name = "labelDelete";
-            this.labelDelete.Size = new System.Drawing.Size(130, 13);
+            this.labelDelete.Size = new System.Drawing.Size(136, 13);
             this.labelDelete.TabIndex = 19;
             this.labelDelete.Text = "<Delete all device activities";
             // 
-            // chkDetectPausesFromSpeed
+            // groupBoxPauseDetect
             // 
-            this.chkDetectPausesFromSpeed.AutoSize = true;
-            this.chkDetectPausesFromSpeed.Checked = true;
-            this.chkDetectPausesFromSpeed.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkDetectPausesFromSpeed.Location = new System.Drawing.Point(15, 61);
-            this.chkDetectPausesFromSpeed.Name = "chkDetectPausesFromSpeed";
-            this.chkDetectPausesFromSpeed.Size = new System.Drawing.Size(251, 17);
-            this.chkDetectPausesFromSpeed.TabIndex = 20;
-            this.chkDetectPausesFromSpeed.Text = "<Detect Pauses from Speed to GPS differences";
-            this.chkDetectPausesFromSpeed.UseVisualStyleBackColor = true;
+            this.groupBoxPauseDetect.Controls.Add(this.optDetectPausesFromSpeed);
+            this.groupBoxPauseDetect.Controls.Add(this.optDetectPausesFromSpeedCadence);
+            this.groupBoxPauseDetect.Controls.Add(this.optDetectPausesOff);
+            this.groupBoxPauseDetect.Location = new System.Drawing.Point(15, 58);
+            this.groupBoxPauseDetect.Name = "groupBoxPauseDetect";
+            this.groupBoxPauseDetect.Size = new System.Drawing.Size(161, 93);
+            this.groupBoxPauseDetect.TabIndex = 23;
+            this.groupBoxPauseDetect.TabStop = false;
+            this.groupBoxPauseDetect.Text = "Detect Pause";
             // 
-            // chkImportDistance
+            // optDetectPausesFromSpeed
             // 
-            this.chkImportDistance.AutoSize = true;
-            this.chkImportDistance.Checked = true;
-            this.chkImportDistance.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkImportDistance.Location = new System.Drawing.Point(15, 35);
-            this.chkImportDistance.Name = "chkImportDistance";
-            this.chkImportDistance.Size = new System.Drawing.Size(251, 17);
-            this.chkImportDistance.TabIndex = 21;
-            this.chkImportDistance.Text = "<Import distance information from device";
-            this.chkImportDistance.UseVisualStyleBackColor = true;
+            this.optDetectPausesFromSpeed.AutoSize = true;
+            this.optDetectPausesFromSpeed.Location = new System.Drawing.Point(13, 19);
+            this.optDetectPausesFromSpeed.Name = "optDetectPausesFromSpeed";
+            this.optDetectPausesFromSpeed.Size = new System.Drawing.Size(148, 17);
+            this.optDetectPausesFromSpeed.TabIndex = 27;
+            this.optDetectPausesFromSpeed.Text = "Speed to GPS differences";
+            this.optDetectPausesFromSpeed.UseVisualStyleBackColor = true;
+            this.optDetectPausesFromSpeed.CheckedChanged += new System.EventHandler(this.optDetectPausesFromSpeed_CheckedChanged);
+            // 
+            // optDetectPausesFromSpeedCadence
+            // 
+            this.optDetectPausesFromSpeedCadence.AutoSize = true;
+            this.optDetectPausesFromSpeedCadence.Location = new System.Drawing.Point(13, 42);
+            this.optDetectPausesFromSpeedCadence.Name = "optDetectPausesFromSpeedCadence";
+            this.optDetectPausesFromSpeedCadence.Size = new System.Drawing.Size(123, 17);
+            this.optDetectPausesFromSpeedCadence.TabIndex = 26;
+            this.optDetectPausesFromSpeedCadence.Text = "Speed and Cadence";
+            this.optDetectPausesFromSpeedCadence.UseVisualStyleBackColor = true;
+            this.optDetectPausesFromSpeedCadence.CheckedChanged += new System.EventHandler(this.optDetectPausesFromSpeedCadence_CheckedChanged);
+            // 
+            // optDetectPausesOff
+            // 
+            this.optDetectPausesOff.AutoSize = true;
+            this.optDetectPausesOff.Checked = true;
+            this.optDetectPausesOff.Location = new System.Drawing.Point(13, 65);
+            this.optDetectPausesOff.Name = "optDetectPausesOff";
+            this.optDetectPausesOff.Size = new System.Drawing.Size(39, 17);
+            this.optDetectPausesOff.TabIndex = 25;
+            this.optDetectPausesOff.TabStop = true;
+            this.optDetectPausesOff.Text = "Off";
+            this.optDetectPausesOff.UseVisualStyleBackColor = true;
+            this.optDetectPausesOff.CheckedChanged += new System.EventHandler(this.optDetectPausesOff_CheckedChanged);
             // 
             // DeviceConfigurationDlg
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            //this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(361, 446);
+            this.ClientSize = new System.Drawing.Size(361, 506);
+            this.Controls.Add(this.groupBoxPauseDetect);
             this.Controls.Add(this.chkImportDistance);
-            this.Controls.Add(this.chkDetectPausesFromSpeed);
             this.Controls.Add(this.labelDelete);
             this.Controls.Add(this.dateTimePickerOldest);
             this.Controls.Add(this.buttonDelete);
@@ -403,7 +440,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.Controls.Add(this.chkImportOnlyNew);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
-            //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "DeviceConfigurationDlg";
@@ -413,6 +449,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.groupBoxDeviceConfig.PerformLayout();
             this.groupBoxScreenCapture.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.groupBoxPauseDetect.ResumeLayout(false);
+            this.groupBoxPauseDetect.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -440,6 +478,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         private Common.Visuals.Button buttonDelete;
         private System.Windows.Forms.DateTimePicker dateTimePickerOldest;
         private System.Windows.Forms.Label labelDelete;
-        private System.Windows.Forms.CheckBox chkDetectPausesFromSpeed;
+        private System.Windows.Forms.GroupBox groupBoxPauseDetect;
+        private System.Windows.Forms.RadioButton optDetectPausesFromSpeed;
+        private System.Windows.Forms.RadioButton optDetectPausesFromSpeedCadence;
+        private System.Windows.Forms.RadioButton optDetectPausesOff;
     }
 }
