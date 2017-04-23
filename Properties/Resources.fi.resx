@@ -58,7 +58,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
     <value>Virhe reittipisteiden poistossa</value>
   </data>
@@ -72,7 +72,7 @@
     <value>Liian vähän muistia</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat laitetta ei löytynyt</value>
+    <value>Laitetta ei löytynyt</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
     <value>Virhe reittiä lähetettäessä</value>

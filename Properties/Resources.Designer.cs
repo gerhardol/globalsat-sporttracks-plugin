@@ -151,15 +151,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Speed to GPS differences.
-        /// </summary>
-        internal static string DeviceConfigurationDlg_chkDetectPauses {
-            get {
-                return ResourceManager.GetString("DeviceConfigurationDlg_chkDetectPauses", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Import device distance info.
         /// </summary>
         internal static string DeviceConfigurationDlg_chkImportDistance {
@@ -183,6 +174,24 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat.Properties {
         internal static string DeviceConfigurationDlg_DeleteAllActivities {
             get {
                 return ResourceManager.GetString("DeviceConfigurationDlg_DeleteAllActivities", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speed to GPS differences.
+        /// </summary>
+        internal static string DeviceConfigurationDlg_optDetectPausesFromSpeed {
+            get {
+                return ResourceManager.GetString("DeviceConfigurationDlg_optDetectPausesFromSpeed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Speed and Cadence.
+        /// </summary>
+        internal static string DeviceConfigurationDlg_optDetectPausesFromSpeedCadence {
+            get {
+                return ResourceManager.GetString("DeviceConfigurationDlg_optDetectPausesFromSpeedCadence", resourceCulture);
             }
         }
         

@@ -44,7 +44,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             Text = CommonResources.Text.Devices.ConfigurationDialog_Title;
             this.chkImportDistance.Text = Properties.Resources.DeviceConfigurationDlg_chkImportDistance;
             this.chkImportOnlyNew.Text = Properties.Resources.DeviceConfigurationDlg_chkImportOnlyNew_Text;
-            this.optDetectPausesFromSpeed.Text = Properties.Resources.DeviceConfigurationDlg_chkDetectPauses;
+            this.optDetectPausesOff.Text = CommonResources.Text.LabelNone;
+            this.optDetectPausesFromSpeed.Text = Properties.Resources.DeviceConfigurationDlg_optDetectPausesFromSpeed;
+            this.optDetectPausesFromSpeedCadence.Text = Properties.Resources.DeviceConfigurationDlg_optDetectPausesFromSpeedCadence;
             labelHoursOffset.Text = CommonResources.Text.Devices.ConfigurationDialog_HoursOffsetLabel_Text;
             btnOk.Text = CommonResources.Text.ActionOk;
             btnCancel.Text = CommonResources.Text.ActionCancel;

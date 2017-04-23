@@ -58,7 +58,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
     <value>Fel vid waypoints borttagning</value>
   </data>
@@ -72,7 +72,7 @@
     <value>Slut på minne i enheten</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat enhet inte hittad</value>
+    <value>Enhet inte hittad</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
     <value>Fel när route skulle skickas</value>
@@ -126,6 +126,18 @@
     <value>{0} på men inte ansluten</value>
   </data>
   <data name="Device_Unsupported" xml:space="preserve">
-    <value>Supportas inte i denna Globalsat enhet</value>
+    <value>Supportas inte i denna enhet</value>
+  </data>
+  <data name="DeviceConfigurationDlg_optDetectPausesFromSpeed" xml:space="preserve">
+    <value>Hastighet mot GPS skillnader</value>
+  </data>
+  <data name="DeviceConfigurationDlg_chkImportDistance" xml:space="preserve">
+    <value>Importera enhetsdistansdata</value>
+  </data>
+  <data name="DeviceConfigurationDlg_DeleteAllActivities" xml:space="preserve">
+    <value>Ta bort alla aktiviteter på enheten</value>
+  </data>
+  <data name="DeviceConfigurationDlg_optDetectPausesFromSpeedCadence" xml:space="preserve">
+    <value>Hastighet och Kadens</value>
   </data>
 </root>

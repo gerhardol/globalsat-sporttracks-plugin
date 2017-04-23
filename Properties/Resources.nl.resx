@@ -58,7 +58,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Device_DeleteWaypoints_Error" xml:space="preserve">
     <value>Fout bij verwijderen waypoints</value>
   </data>
@@ -72,7 +72,7 @@
     <value>Onvoldoende geheugen</value>
   </data>
   <data name="Device_OpenDevice_Error" xml:space="preserve">
-    <value>Globalsat apparaat niet gevonden</value>
+    <value>Apparaat niet gevonden</value>
   </data>
   <data name="Device_SendRoute_Error" xml:space="preserve">
     <value>Fout bij verzenden route</value>
