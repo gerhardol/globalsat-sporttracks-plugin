@@ -315,12 +315,14 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                                 }
                             }
                             
-                        } else if (detectPauses == 1)
+                        }
+                        else if (detectPauses == 1)
                         {   //distance method
                             bool insertPause = false;
                             //how far from the first point
                             double perc = 0;
 
+                            //This code previously had code to detect pauses from HR too
                             if (activity.GPSRoute.Count > 0)
                             {                                
                                 float gpsDist = gpsPoint.DistanceMetersToPoint(activity.GPSRoute[activity.GPSRoute.Count - 1].Value);

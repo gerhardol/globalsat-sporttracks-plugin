@@ -61,10 +61,6 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             this.chkImportDistance.Checked = this.fitnessDevice.configInfo.ImportSpeedDistanceTrack;
             switch (this.fitnessDevice.configInfo.DetectPauses)
             {
-                case 0:
-                    //no pause detect
-                    this.optDetectPausesOff.Checked = true;
-                    break;
                 case 1:
                     //detect pause from speed
                     this.optDetectPausesFromSpeed.Checked = true;
@@ -73,7 +69,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                     //detect pause from speed and cadance track
                     this.optDetectPausesFromSpeedCadence.Checked = true;
                     break;
+                case 0:
                 default:
+                    //no pause detect
                     this.optDetectPausesOff.Checked = true;
                     break;
             }
@@ -143,7 +141,8 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
             {
                 this.fitnessDevice.configInfo.ImportOnlyNew = this.chkImportOnlyNew.Checked;
                 this.fitnessDevice.configInfo.ImportSpeedDistanceTrack = this.chkImportDistance.Checked;
-                this.fitnessDevice.configInfo.DetectPauses = 0;
+                //The Detect Pauses is read from defaults and set at changes
+                //this.fitnessDevice.configInfo.DetectPauses
                 return this.fitnessDevice.configInfo;
             }
         }
