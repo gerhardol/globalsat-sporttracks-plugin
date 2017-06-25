@@ -83,9 +83,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
                         foreach (IActivity activity in Plugin.Instance.Application.Logbook.Activities)
                         {
                             DateTime findTime = activity.StartTime;
-                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.FitnessDevice.configInfo.SecondsAlwaysImport &&
-                                //always import "bad" data
-                                findTime - device.FitnessDevice.NoGpsDate < TimeSpan.FromDays(14))
+                            if (headersByStart.ContainsKey(findTime) && (now - findTime).TotalSeconds > device.FitnessDevice.configInfo.SecondsAlwaysImport
+                                //always import activities close to no-gps date (no new activities should be before this date)
+                                && findTime > device.FitnessDevice.NoGpsDate + TimeSpan.FromDays(14))
                             {
                                 headersByStart.Remove(findTime);
                             }
