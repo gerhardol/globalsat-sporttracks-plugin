@@ -291,12 +291,10 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (!IsLittleEndian)
             {
-                return (Int16)((this.PacketData[offset] << 8) + this.PacketData[offset + 1]);
+                //This will modify the PacketData
+                Array.Reverse(this.PacketData, offset, 2);
             }
-            else
-            {
-                return BitConverter.ToInt16(this.PacketData, offset);
-            }
+            return BitConverter.ToInt16(this.PacketData, offset);
         }
 
         /// <summary>
@@ -306,12 +304,9 @@ namespace ZoneFiveSoftware.SportTracks.Device.Globalsat
         {
             if (!IsLittleEndian)
             {
-                return (this.PacketData[offset] << 24) + (this.PacketData[offset + 1] << 16) + (this.PacketData[offset + 2] << 8) + this.PacketData[offset + 3];
+                Array.Reverse(this.PacketData, offset, 4);
             }
-            else
-            {
-                return BitConverter.ToInt32(this.PacketData, offset);
-            }
+            return BitConverter.ToInt32(this.PacketData, offset);
         }
 
         protected double ReadLatLon(int offset)
